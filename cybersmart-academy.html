@@ -369,8 +369,6 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 
 
 /* DEV RESET BUTTON - remove before production */
-#dev-reset{position:fixed;top:10px;right:10px;z-index:9999;background:rgba(239,68,68,0.85);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--font-ui);letter-spacing:.5px;backdrop-filter:blur(4px);}
-#dev-reset:hover{background:rgba(239,68,68,1);}
 
 
 /* ── MOBILE OPTIMISATION ── */
@@ -439,7 +437,6 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   .cert-mod-tag{font-size:9px;padding:2px 7px;}
 
   /* Dev reset */
-  #dev-reset{font-size:10px;padding:5px 9px;top:6px;right:6px;}
 }
 
 @media(max-width:400px){
@@ -463,7 +460,6 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 </style>
 </head>
 <body>
-<button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress">&#x21BA; Reset</button>
 <!-- WELCOME -->
 <div id="screen-code" class="screen">
   <div class="wlc-center" style="max-width:420px;">
@@ -795,11 +791,6 @@ function applySchoolBranding(){
   }
 }
 
-// DEV ONLY — remove before production
-function devReset(){
-  localStorage.clear();
-  location.reload();
-}
 
 
 // ══════════════════════════════════════════
