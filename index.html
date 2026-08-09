@@ -154,7 +154,7 @@ a{ color:inherit; }
 .header-inner{
   display:flex; align-items:center; justify-content:space-between;
   padding-top:16px; padding-bottom:16px;
-  gap:20px;
+  gap:20px; flex-wrap:wrap;
 }
 .wordmark{
   display:flex; align-items:center; gap:9px;
@@ -520,7 +520,11 @@ a{ color:inherit; }
       <a href="/for-teachers">For teachers</a>
       <a href="#pricing">Pricing</a>
     </nav>
-    <a class="btn btn-primary nav-cta" href="#pricing">Request seats</a>
+    <div style="display:flex;align-items:center;gap:9px;">
+      <a class="btn btn-ghost nav-cta" href="#top">Home</a>
+      <a class="btn btn-ghost nav-cta" href="/cybersmart-academy.html?code=TEACHER-REVIEW">Try the module</a>
+      <a class="btn btn-primary nav-cta" href="#pricing">Request seats</a>
+    </div>
   </div>
 </header>
 
