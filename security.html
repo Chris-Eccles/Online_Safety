@@ -465,7 +465,7 @@ a{ color:inherit; }
 /* ============================================================
    FOOTER
    ============================================================ */
-.site-footer{ padding:58px 0 0; border-top:1px solid var(--border);  position:fixed; left:0; right:0; bottom:0; z-index:50; background:rgba(10,14,36,0.92); backdrop-filter:blur(14px); box-shadow:0 -6px 24px rgba(0,0,0,0.25); max-height:60vh; overflow-y:auto; }
+.site-footer{ padding:58px 0 0; border-top:1px solid var(--border); }
 
 .footer-grid{
   display:grid;
@@ -664,6 +664,8 @@ a{ color:inherit; }
       <a href="/#modules">Modules</a>
       <a href="/#how">How it works</a>
       <a href="/#compliance">Compliance</a>
+      <a href="/curriculum">Curriculum</a>
+      <a href="/for-teachers">For teachers</a>
       <a href="/#pricing">Pricing</a>
     </nav>
     <a class="btn btn-primary nav-cta" href="/order">Request seats</a>
@@ -791,16 +793,6 @@ a{ color:inherit; }
   });
 })();
 
-</script>
-<script>
-// Keep the fixed footer from covering page content - reserve exactly its height.
-(function () {
-  var f = document.querySelector('.site-footer');
-  function pad() { if (f) document.body.style.paddingBottom = f.offsetHeight + 'px'; }
-  pad();
-  window.addEventListener('resize', pad);
-  if (window.ResizeObserver && f) new ResizeObserver(pad).observe(f);
-})();
 </script>
 </body>
 </html>
