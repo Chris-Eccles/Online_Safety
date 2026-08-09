@@ -414,7 +414,40 @@ a{ color:inherit; }
    DEMO
    ============================================================ */
 .demo{ padding:110px 0; }
-.demo-inner{ max-width:640px; }
+.demo-grid{ display:grid; grid-template-columns:1fr 0.82fr; gap:56px; align-items:center; }
+.demo-copy{ max-width:480px; }
+@media (max-width:900px){ .demo-grid{ grid-template-columns:1fr; } .demo-copy{ max-width:none; text-align:center; margin:0 auto; } }
+
+.phone-mockup{
+  position:relative;
+  width:290px; height:600px;
+  margin:0 auto;
+  background:#050813;
+  border-radius:46px;
+  padding:12px;
+  box-sizing:border-box;
+  box-shadow:0 0 0 2px rgba(255,255,255,0.09), 0 40px 80px -24px rgba(0,0,0,0.65), 0 0 70px -14px rgba(52,211,153,0.28);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.phone-notch{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:112px; height:24px; background:#050813; border-radius:0 0 18px 18px; z-index:2;
+}
+.phone-screen-wrap{
+  position:relative; width:100%; height:100%;
+  border-radius:34px; overflow:hidden;
+  background:#0F1B2D;
+}
+.phone-screen{
+  width:100%; height:100%; border:0; display:block;
+}
+.phone-home-bar{
+  position:absolute; bottom:7px; left:50%; transform:translateX(-50%);
+  width:120px; height:4px; border-radius:3px; background:rgba(255,255,255,0.28); z-index:2;
+}
+@media (max-width:480px){
+  .phone-mockup{ width:250px; height:520px; }
+}
 
 /* ============================================================
    PRICING
@@ -656,11 +689,20 @@ a{ color:inherit; }
 
   <!-- DEMO -->
   <section class="demo" id="demo">
-    <div class="wrap demo-inner">
-      <p class="eyebrow">See it first</p>
-      <h2 class="section-title">Sit where your<br>students will sit.</h2>
-      <p class="section-sub">Try a full module exactly as a student would see it — no code, no sign-up.</p>
-      <a href="/cybersmart-academy.html?code=TEACHER-REVIEW" class="btn btn-primary btn-lg">Try Module 1: Cyberbullying →</a>
+    <div class="wrap demo-grid">
+      <div class="demo-copy">
+        <p class="eyebrow">See it first</p>
+        <h2 class="section-title">Sit where your<br>students will sit.</h2>
+        <p class="section-sub">This is the actual course, running live right here — no code, no sign-up. Scroll and tap inside the preview, or open it full screen.</p>
+        <a href="/cybersmart-academy.html?code=TEACHER-REVIEW" class="btn btn-primary btn-lg">Open full screen →</a>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen-wrap">
+          <iframe class="phone-screen" src="/cybersmart-academy.html?code=TEACHER-REVIEW" title="CyberSmart Academy course preview" loading="lazy"></iframe>
+        </div>
+        <div class="phone-home-bar"></div>
+      </div>
     </div>
   </section>
 
