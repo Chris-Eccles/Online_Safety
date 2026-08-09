@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Ready — Get every student to 100% online ready</title>
+<meta name="description" content="A KCSIE-aligned online safety course for Year 7. Seven short modules, one certificate, zero admin for teachers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ONLINE READY — v2, bolder direction
+   Display: Bricolage Grotesque · Body/UI: Manrope · Data: Space Mono
+   The palette IS the product: the 7 module colours drive the mesh
+   background and the readiness meter, rather than an arbitrary theme.
+   ============================================================ */
+
+:root{
+  --bg:         #0A0E24;
+  --bg-2:       #0D1230;
+  --surface:    rgba(255,255,255,0.045);
+  --surface-2:  rgba(255,255,255,0.07);
+  --border:     rgba(255,255,255,0.11);
+  --text:       #F5F4FB;
+  --text-soft:  rgba(245,244,251,0.68);
+  --text-faint: rgba(245,244,251,0.58);
+  --brand:      #34D399;
+  --brand-deep: #1FA97C;
+
+  --m1:#8B5CF6; --m2:#F59E0B; --m3:#06B6D4; --m4:#EC4899;
+  --m5:#10B981; --m6:#F97316; --m7:#A78BFA;
+
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body:    'Manrope', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+
+  --max-w: 1160px;
+  --radius: 18px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+.wrap{ max-width:var(--max-w); margin:0 auto; padding:0 28px; position:relative; z-index:2; }
+a{ color:inherit; }
+
+/* ---------- mesh background: built from the 7 module colours ---------- */
+.mesh{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(680px 520px at 8% -6%,  rgba(139,92,246,0.32), transparent 60%),
+    radial-gradient(620px 480px at 96% 8%,  rgba(6,182,212,0.26), transparent 60%),
+    radial-gradient(700px 560px at 88% 62%, rgba(236,72,153,0.20), transparent 60%),
+    radial-gradient(640px 520px at 6% 58%,  rgba(16,185,129,0.24), transparent 60%),
+    radial-gradient(560px 480px at 50% 92%, rgba(245,158,11,0.16), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 45%, var(--bg) 100%);
+}
+
+/* ---------- eyebrows / section titles ---------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12.5px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--brand);
+  margin:0 0 16px 0;
+  font-weight:700;
+}
+
+.section-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(30px,3.8vw,46px);
+  line-height:1.08;
+  margin:0 0 18px 0;
+  letter-spacing:-0.01em;
+}
+
+.section-sub{
+  font-size:17px;
+  color:var(--text-soft);
+  max-width:56ch;
+  margin:0 0 48px 0;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:15px;
+  padding:13px 22px;
+  border-radius:999px;
+  text-decoration:none;
+  border:1.5px solid transparent;
+  cursor:pointer;
+  transition:transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  touch-action:manipulation;
+  white-space:nowrap;
+}
+.btn:hover{ transform:translateY(-1px); }
+.btn:focus-visible{ outline:2.5px solid var(--brand); outline-offset:3px; }
+
+.btn-lg{ padding:16px 28px; font-size:16px; }
+
+.btn-primary{
+  background:var(--brand);
+  color:#04241A;
+  box-shadow:0 0 0 0 rgba(52,211,153,0.5);
+}
+.btn-primary:hover{
+  background:#4ADFAE;
+  box-shadow:0 8px 30px -8px rgba(52,211,153,0.55);
+}
+
+.btn-ghost{
+  background:rgba(255,255,255,0.03);
+  border-color:var(--border);
+  color:var(--text);
+  backdrop-filter:blur(6px);
+}
+.btn-ghost:hover{ background:rgba(255,255,255,0.08); }
+
+.btn-block{ width:100%; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(10,14,36,0.7);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  padding-top:16px; padding-bottom:16px;
+  gap:20px;
+}
+.wordmark{
+  display:flex; align-items:center; gap:9px;
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:19px;
+  text-decoration:none;
+  color:var(--text);
+  white-space:nowrap;
+}
+.wordmark-tick{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:7px;
+  background:var(--brand); color:#04241A;
+  font-size:14px; font-weight:800; font-family:var(--font-body);
+}
+.wordmark-small{ font-size:16px; }
+
+.main-nav{ display:flex; gap:30px; }
+.main-nav a{
+  text-decoration:none; font-weight:600; font-size:14.5px; color:var(--text-soft);
+  transition:color 0.15s ease;
+}
+.main-nav a:hover{ color:var(--text); }
+
+.nav-cta{ padding:9px 20px; font-size:14px; flex-shrink:0; }
+
+@media (max-width:820px){ .main-nav{ display:none; } }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  display:grid;
+  grid-template-columns:1.05fr 0.95fr;
+  gap:40px;
+  align-items:center;
+  padding:88px 28px 110px;
+}
+@media (max-width:960px){
+  .hero{ grid-template-columns:1fr; padding-top:56px; padding-bottom:64px; }
+}
+
+.hero-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(36px,5.2vw,60px);
+  line-height:1.06;
+  margin:0 0 24px 0;
+  letter-spacing:-0.015em;
+}
+.grad-text{
+  background:linear-gradient(100deg, var(--m1) 0%, var(--m3) 30%, var(--brand) 55%, var(--m2) 80%, var(--m4) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero-sub{
+  font-size:18px;
+  color:var(--text-soft);
+  max-width:50ch;
+  margin:0 0 36px 0;
+}
+
+.hero-actions{ display:flex; gap:14px; flex-wrap:wrap; }
+
+/* ---------- signature element: the Readiness Meter ---------- */
+.hero-visual{ display:flex; flex-direction:column; align-items:center; gap:26px; }
+
+.meter-wrap{ position:relative; width:min(320px,72vw); aspect-ratio:1/1; }
+.meter{ width:100%; height:100%; overflow:visible; }
+
+.meter-track{
+  fill:none; stroke:rgba(255,255,255,0.08); stroke-width:13;
+}
+.seg{
+  fill:none; stroke:var(--c); stroke-width:13; stroke-linecap:round;
+  opacity:0; transform:scale(0.86); transform-origin:100px 100px;
+  transition:opacity 0.55s cubic-bezier(.2,.8,.2,1), transform 0.55s cubic-bezier(.2,.8,.2,1), filter 0.55s ease;
+  filter:drop-shadow(0 0 0 transparent);
+}
+.seg.done{
+  opacity:1; transform:scale(1);
+  filter:drop-shadow(0 0 7px var(--c));
+}
+
+.meter-center{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+}
+.meter-pct{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:44px;
+  line-height:1;
+}
+.meter-label{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-faint);
+  margin-top:6px;
+  transition:color 0.3s ease;
+}
+.meter-label.ready{ color:var(--brand); }
+
+.meter-legend{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:9px 14px;
+  list-style:none; margin:0; padding:0;
+  max-width:340px;
+}
+.meter-legend li{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);
+  padding-left:14px; position:relative;
+  opacity:0.35; transition:opacity 0.4s ease, color 0.4s ease;
+}
+.meter-legend li::before{
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:8px; height:8px; border-radius:50%; background:var(--c);
+}
+.meter-legend li.lit{ opacity:1; color:var(--text-soft); }
+
+/* ============================================================
+   WHY (stat strip)
+   ============================================================ */
+.why{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.why-stat{
+  background:rgba(10,14,36,0.6);
+  padding:38px 30px;
+  text-align:left;
+}
+.stat-figure{
+  display:block;
+  font-family:var(--font-display);
+  font-size:36px;
+  font-weight:700;
+  color:var(--brand);
+  margin-bottom:8px;
+}
+.why-stat p{ margin:0; color:var(--text-soft); font-size:14.5px; max-width:26ch; }
+
+@media (max-width:760px){ .why{ grid-template-columns:1fr; } }
+
+/* ============================================================
+   MODULES
+   ============================================================ */
+.modules{ padding:100px 0; }
+
+.module-grid{
+  list-style:none; margin:0; padding:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+@media (max-width:920px){ .module-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:600px){ .module-grid{ grid-template-columns:1fr; } }
+
+.module-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:3px solid var(--c);
+  border-radius:16px;
+  padding:24px 24px 26px;
+  transition:background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.module-card:hover{
+  background:var(--surface-2);
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px -20px var(--c);
+}
+.module-num{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--c);
+  font-weight:700;
+  margin-bottom:12px;
+}
+.module-card h3{
+  font-family:var(--font-body);
+  font-size:16.5px;
+  font-weight:700;
+  margin:0 0 8px 0;
+  color:var(--text);
+}
+.module-card p{
+  margin:0; font-size:14px; color:var(--text-soft);
+}
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+.how{ padding:20px 0 108px; }
+
+.steps{
+  list-style:none; margin:0; padding:0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:28px;
+}
+@media (max-width:920px){ .steps{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .steps{ grid-template-columns:1fr; } }
+
+.step{ position:relative; padding-top:20px; border-top:2px solid var(--border); }
+.step-num{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:13px;
+  font-weight:700;
+  color:var(--brand);
+  margin-bottom:14px;
+}
+.step h3{ font-family:var(--font-display); font-size:19px; margin:0 0 8px 0; font-weight:700; }
+.step p{ font-size:14.5px; color:var(--text-soft); margin:0; }
+
+/* ============================================================
+   COMPLIANCE
+   ============================================================ */
+.compliance{ padding:100px 0; background:rgba(255,255,255,0.02); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+
+.stamp-grid{
+  list-style:none; margin:0; padding:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+@media (max-width:860px){ .stamp-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .stamp-grid{ grid-template-columns:1fr; } }
+
+.stamp{
+  display:flex; align-items:center; gap:12px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:12px;
+  padding:17px 18px;
+  font-size:14.5px;
+  font-weight:600;
+}
+.stamp-mark{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--brand); color:#04241A;
+  font-size:13px; font-weight:800; flex-shrink:0;
+}
+
+/* ============================================================
+   DEMO
+   ============================================================ */
+.demo{ padding:110px 0; }
+.demo-inner{ max-width:640px; }
+
+/* ============================================================
+   PRICING
+   ============================================================ */
+.pricing{ padding:20px 0 120px; }
+.pricing-inner{
+  display:grid;
+  grid-template-columns:1fr 0.85fr;
+  gap:56px;
+  align-items:center;
+}
+@media (max-width:860px){ .pricing-inner{ grid-template-columns:1fr; } }
+
+.pricing-copy .section-sub{ margin-bottom:0; }
+
+.price-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:38px 34px;
+  backdrop-filter:blur(10px);
+}
+.price-figure{
+  display:block;
+  font-family:var(--font-display);
+  font-size:58px;
+  font-weight:700;
+  background:linear-gradient(100deg, var(--brand), var(--m3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.price-unit{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--text-faint);
+  margin-bottom:26px;
+}
+.price-includes{
+  list-style:none; margin:0 0 30px 0; padding:0;
+  display:grid; gap:11px;
+  font-size:14.5px;
+}
+.price-includes li{ padding-left:22px; position:relative; color:var(--text-soft); }
+.price-includes li::before{
+  content:'✓'; position:absolute; left:0; color:var(--brand); font-weight:700;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{ padding:34px 0 46px; border-top:1px solid var(--border); }
+.footer-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+}
+.footer-inner p{ margin:0; font-size:13.5px; color:var(--text-soft); }
+.footer-inner a{ text-decoration:underline; }
+
+</style>
+</head>
+<body>
+
+<div class="mesh" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="#top">
+      <span class="wordmark-tick" aria-hidden="true">✓</span>
+      Online Ready
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#modules">Modules</a>
+      <a href="#how">How it works</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="#pricing">Request seats</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <p class="eyebrow">An Abity product · Built for KS3</p>
+      <h1 class="hero-title">Get every student<br>to <span class="grad-text">100% online<br>ready.</span></h1>
+      <p class="hero-sub">Seven short modules covering cyberbullying, passwords, privacy, social media, scams, misinformation and wellbeing. One certificate at the end. Built to KCSIE standard — not a leaflet with your school badge stuck on it.</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary btn-lg">Try a free module</a>
+        <a href="#pricing" class="btn btn-ghost btn-lg">See pricing</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="meter-wrap" id="meterWrap">
+        <svg class="meter" viewBox="0 0 200 200" role="img" aria-label="Readiness meter showing all seven modules complete">
+          <circle class="meter-track" cx="100" cy="100" r="84"/>
+          <g class="meter-segments" transform="rotate(-90 100 100)">
+            <circle class="seg" data-i="0" style="--c:#8B5CF6" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-0.0"/>
+            <circle class="seg" data-i="1" style="--c:#F59E0B" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-75.4"/>
+            <circle class="seg" data-i="2" style="--c:#06B6D4" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-150.8"/>
+            <circle class="seg" data-i="3" style="--c:#EC4899" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-226.19"/>
+            <circle class="seg" data-i="4" style="--c:#10B981" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-301.59"/>
+            <circle class="seg" data-i="5" style="--c:#F97316" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-376.99"/>
+            <circle class="seg" data-i="6" style="--c:#A78BFA" cx="100" cy="100" r="84" stroke-dasharray="69.40 458.39" stroke-dashoffset="-452.39"/>
+          </g>
+        </svg>
+        <div class="meter-center">
+          <span class="meter-pct" id="meterPct">0%</span>
+          <span class="meter-label" id="meterLabel">starting out</span>
+        </div>
+      </div>
+      <ul class="meter-legend" id="meterLegend">
+        <li style="--c:#8B5CF6">Cyberbullying</li>
+        <li style="--c:#F59E0B">Passwords</li>
+        <li style="--c:#06B6D4">Privacy</li>
+        <li style="--c:#EC4899">Social media</li>
+        <li style="--c:#10B981">Phishing</li>
+        <li style="--c:#F97316">Misinformation</li>
+        <li style="--c:#A78BFA">Wellbeing</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="why wrap">
+    <div class="why-stat">
+      <span class="stat-figure">1 in 5</span>
+      <p>young people in the UK have experienced cyberbullying — most never tell an adult.</p>
+    </div>
+    <div class="why-stat">
+      <span class="stat-figure">7 hrs</span>
+      <p>average daily screen time for UK teenagers, and the number keeps climbing.</p>
+    </div>
+    <div class="why-stat">
+      <span class="stat-figure">0</span>
+      <p>spreadsheets you'll need to track who's done it, who's passed, and what they said.</p>
+    </div>
+  </section>
+
+  <!-- MODULES -->
+  <section class="modules" id="modules">
+    <div class="wrap">
+      <p class="eyebrow">The course</p>
+      <h2 class="section-title">Seven modules.<br>Nothing skipped, nothing wasted.</h2>
+      <p class="section-sub">Around 30 minutes each, self-paced, with scenario-based questions rather than tick-box quizzes — and content written for a reading age of 9, so it lands with every student, not just confident readers.</p>
+
+      <ol class="module-grid">
+        <li class="module-card" style="--c:#8B5CF6">
+          <span class="module-num">01</span>
+          <h3>Cyberbullying &amp; child-on-child abuse</h3>
+          <p>What it is, why it hurts, and exactly what to do — including image-based abuse and upskirting, named plainly.</p>
+        </li>
+        <li class="module-card" style="--c:#F59E0B">
+          <span class="module-num">02</span>
+          <h3>Passwords &amp; account security</h3>
+          <p>Building a password that actually holds up, and spotting the messages designed to talk it out of you.</p>
+        </li>
+        <li class="module-card" style="--c:#06B6D4">
+          <span class="module-num">03</span>
+          <h3>Privacy &amp; personal data</h3>
+          <p>Digital footprints, age restrictions, and the rights every student already has over their own data.</p>
+        </li>
+        <li class="module-card" style="--c:#EC4899">
+          <span class="module-num">04</span>
+          <h3>Social media safety</h3>
+          <p>Fake profiles, grooming red flags, and the pressure of online challenges — covered directly, not hinted at.</p>
+        </li>
+        <li class="module-card" style="--c:#10B981">
+          <span class="module-num">05</span>
+          <h3>Phishing &amp; online scams</h3>
+          <p>Real examples of scam texts and emails, plus how to spot the apps designed to keep them hooked.</p>
+        </li>
+        <li class="module-card" style="--c:#F97316">
+          <span class="module-num">06</span>
+          <h3>Misinformation &amp; critical thinking</h3>
+          <p>A simple method for checking what's true online, before it gets shared any further.</p>
+        </li>
+        <li class="module-card" style="--c:#A78BFA">
+          <span class="module-num">07</span>
+          <h3>Wellbeing &amp; screen time</h3>
+          <p>The comparison trap, healthy habits, and why some scrolling feels worse than others.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="wrap">
+      <p class="eyebrow">For teachers</p>
+      <h2 class="section-title">Set it up once.<br>Forget it exists.</h2>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">01</span>
+          <h3>Buy seats</h3>
+          <p>Pick how many students you need, pop in your email and your school's finance contact. An invoice goes straight to finance.</p>
+        </li>
+        <li class="step">
+          <span class="step-num">02</span>
+          <h3>Personalise</h3>
+          <p>Add your school's name, logo, and your DSL's name and location — so the safeguarding message points somewhere real.</p>
+        </li>
+        <li class="step">
+          <span class="step-num">03</span>
+          <h3>Share codes</h3>
+          <p>One code per student. Hand them out however suits your lesson — printed, projected, or dropped into Teams.</p>
+        </li>
+        <li class="step">
+          <span class="step-num">04</span>
+          <h3>Get results</h3>
+          <p>Pass/fail, scores, and full reflections per student — land in one place, ready for your safeguarding file.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE -->
+  <section class="compliance" id="compliance">
+    <div class="wrap">
+      <p class="eyebrow">Built to standard</p>
+      <h2 class="section-title">Not just<br>"online safety-shaped."</h2>
+      <p class="section-sub">Written against the actual guidance schools are inspected on — not a general internet-safety pamphlet with a school logo bolted on.</p>
+
+      <ul class="stamp-grid">
+        <li class="stamp"><span class="stamp-mark">✓</span>KCSIE-aligned content</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>Online Safety Act 2023 covered</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>DSL identified by name, not role</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>Reflections handled with care — never a script for harm</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>UK-hosted data</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>Built by a working UK computer science teacher</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo" id="demo">
+    <div class="wrap demo-inner">
+      <p class="eyebrow">See it first</p>
+      <h2 class="section-title">Sit where your<br>students will sit.</h2>
+      <p class="section-sub">Try a full module exactly as a student would see it — no code, no sign-up.</p>
+      <a href="#" class="btn btn-primary btn-lg">Try Module 1: Cyberbullying →</a>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="wrap pricing-inner">
+      <div class="pricing-copy">
+        <p class="eyebrow">Pricing</p>
+        <h2 class="section-title">One price.<br>No tiers to work out.</h2>
+        <p class="section-sub">Pay once per student, per year. Invoiced to your school's finance team — no card details, no faff.</p>
+      </div>
+
+      <div class="price-card">
+        <span class="price-figure">£1</span>
+        <span class="price-unit">per student, per year</span>
+        <ul class="price-includes">
+          <li>All 7 modules</li>
+          <li>Certificates for every student</li>
+          <li>Full results &amp; reflections</li>
+          <li>Branded with your school &amp; DSL</li>
+        </ul>
+        <a href="mailto:hello@abity.co.uk?subject=Online%20Ready%20-%20seat%20enquiry" class="btn btn-primary btn-block">Request seats</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span class="wordmark wordmark-small">
+      <span class="wordmark-tick" aria-hidden="true">✓</span>
+      Online Ready
+    </span>
+    <p>An Abity product · <a href="mailto:hello@abity.co.uk">hello@abity.co.uk</a></p>
+  </div>
+</footer>
+
+<script>
+// Readiness meter — fills through all 7 module colours to 100% on load.
+// Purely decorative; respects reduced-motion preference.
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var segs = document.querySelectorAll('.seg');
+  var legendItems = document.querySelectorAll('#meterLegend li');
+  var pctEl = document.getElementById('meterPct');
+  var labelEl = document.getElementById('meterLabel');
+  var total = segs.length;
+
+  function setPct(n) {
+    if (pctEl) pctEl.textContent = Math.round((n / total) * 100) + '%';
+  }
+
+  if (reduceMotion) {
+    segs.forEach(function (s) { s.classList.add('done'); });
+    legendItems.forEach(function (li) { li.classList.add('lit'); });
+    setPct(total);
+    if (labelEl) { labelEl.textContent = '100% ready'; labelEl.classList.add('ready'); }
+    return;
+  }
+
+  segs.forEach(function (seg, i) {
+    setTimeout(function () {
+      seg.classList.add('done');
+      if (legendItems[i]) legendItems[i].classList.add('lit');
+      setPct(i + 1);
+      if (i === total - 1 && labelEl) {
+        setTimeout(function () {
+          labelEl.textContent = '100% ready';
+          labelEl.classList.add('ready');
+        }, 250);
+      }
+    }, 500 + i * 260);
+  });
+})();
+
+</script>
+</body>
+</html>
