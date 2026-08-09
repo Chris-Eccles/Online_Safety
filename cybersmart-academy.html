@@ -128,6 +128,8 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .reflection-box textarea{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:9px;color:var(--warm-white);font-family:var(--font-ui);font-size:15px;padding:10px 12px;resize:vertical;min-height:84px;outline:none;transition:border-color .2s;line-height:1.6;}
 .reflection-box textarea:focus{border-color:var(--teal);}
 .reflection-box textarea::placeholder{color:var(--slate);}
+.preview-cheat-btn{margin-top:8px;width:100%;background:rgba(245,158,11,.12);border:1.5px dashed var(--amber);color:var(--amber);font-family:var(--font-ui);font-weight:700;font-size:12px;padding:8px 12px;border-radius:9px;cursor:pointer;transition:background .15s;}
+.preview-cheat-btn:hover{background:rgba(245,158,11,.22);}
 .ref-word-count{font-size:12px;margin-top:5px;color:var(--slate);transition:color .2s;}
 .ref-word-count.ok{color:var(--green);font-weight:700;}
 .ref-word-count.warn{color:var(--amber);font-weight:600;}
@@ -1293,6 +1295,20 @@ function renderCurrentSlide(){
         reflectionData[currentModuleId][currentSlide+'_'+idx]=ta.value;
         saveProgress();
       });
+      // Preview mode only - lets a teacher previewing the demo skip typing a
+      // real reflection so they can see the rest of the module quickly.
+      if(PREVIEW_MODE){
+        const box=ta.closest('.reflection-box');
+        const cheatBtn=document.createElement('button');
+        cheatBtn.type='button';
+        cheatBtn.className='preview-cheat-btn';
+        cheatBtn.textContent='\u{1F393} Teacher preview: fill this in for me';
+        cheatBtn.onclick=function(){
+          ta.value='This is a placeholder answer used to preview the course quickly - a real student would write their own thoughtful response here.';
+          ta.dispatchEvent(new Event('input',{bubbles:true}));
+        };
+        box.appendChild(cheatBtn);
+      }
     });
     const btn=document.getElementById('btn-next');btn.disabled=false;btn.style.display='flex';
     btn.textContent=currentSlide===total-1?'→ Take the Quiz':'Next →';
