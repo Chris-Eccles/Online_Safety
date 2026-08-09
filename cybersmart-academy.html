@@ -1169,6 +1169,12 @@ function proceedToDashboard(n,restored){
 }
 
 function goToDashboard(){
+  if(PREVIEW_MODE){
+    // Preview only ever shows the one module - there's no dashboard or other
+    // modules to fall back to here, so "back" just restarts this module clean.
+    currentSlide=0; quizState={}; renderCurrentSlide();
+    return;
+  }
   if(currentModuleId){
     if(!moduleProgress[currentModuleId]||currentSlide>moduleProgress[currentModuleId])
       moduleProgress[currentModuleId]=currentSlide;
@@ -1747,6 +1753,8 @@ window.addEventListener('DOMContentLoaded', function(){
       currentSlide = 0;
       quizState = {};
       document.getElementById('mod-header-title').textContent = firstMod.title;
+      const previewBackBtn = document.querySelector('.btn-back');
+      if (previewBackBtn) previewBackBtn.textContent = '\u21BA Restart';
       showScreen('screen-module');
       renderCurrentSlide();
       return;
