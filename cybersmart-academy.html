@@ -887,6 +887,12 @@ const AppState = {
 let studentName='', completedModules={}, currentModuleId=null, currentSlide=0,
     quizState={}, reflectionData={}, teacherEmail='', moduleProgress={};
 
+/** Set when loaded as ?preview=1 (e.g. embedded in the landing page's phone mockup).
+ * Skips straight past the code/name screens into real module content, and never
+ * writes to localStorage, so a marketing-page preview can't pollute or be confused
+ * with a real student's saved progress on this same origin. */
+let PREVIEW_MODE = false;
+
 /** ═══════════════════════════════════════════════════════════════════════
  * SCHOOL SAFEGUARDING CONTACTS — EDIT THIS BLOCK FOR YOUR SCHOOL
  * KCSIE requires pupils to know who their Designated Safeguarding Lead
@@ -1596,7 +1602,7 @@ const SAVE_KEY='cybersmart_progress_v1';
  * =========================================================================
  * Saves and restores student progress, reflections, and module state.
  */
-function saveProgress(){const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,savedAt:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));showToast();}catch(e){}}
+function saveProgress(){if(PREVIEW_MODE)return;const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,savedAt:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));showToast();}catch(e){}}
 function loadProgress(){try{const r=localStorage.getItem(SAVE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
 function showToast(){/* save popup disabled per teacher preference */}
 function resumeProgress(){
@@ -1735,6 +1741,27 @@ function renderWelcomeDslCard(){
 
 window.addEventListener('DOMContentLoaded', function(){
   renderWelcomeDslCard();
+
+  // Preview mode - used by the phone-mockup embed on the marketing site.
+  // Skips code entry, name entry, and the module-intro overlay entirely.
+  try {
+    const previewParams = new URLSearchParams(window.location.search);
+    if (previewParams.get('preview') === '1') {
+      PREVIEW_MODE = true;
+      studentName = 'Preview Student';
+      const nameEl = document.getElementById('dash-name');
+      if (nameEl) nameEl.textContent = 'Preview';
+      const firstMod = modules[0];
+      currentModuleId = firstMod.id;
+      currentSlide = 0;
+      quizState = {};
+      document.getElementById('mod-header-title').textContent = firstMod.title;
+      showScreen('screen-module');
+      renderCurrentSlide();
+      return;
+    }
+  } catch (e) {}
+
   // Auto-extract ?code= from URL — this always skips the code-entry screen (magic link)
   let urlCode=null;
   try {
