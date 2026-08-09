@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ============================================================
    ONLINE READY — v2, bolder direction
@@ -660,6 +661,25 @@ a{ color:inherit; }
   outline:none; border-color:var(--brand); background:rgba(255,255,255,0.06);
 }
 .form-input::placeholder{ color:var(--text-faint); }
+.form-section-label{
+  font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--text-faint); margin:28px 0 4px;
+}
+.form-file{
+  width:100%; box-sizing:border-box;
+  background:rgba(255,255,255,0.04); border:1.5px dashed var(--border);
+  border-radius:10px; padding:12px 14px; color:var(--text-soft);
+  font-family:var(--font-body); font-size:13.5px;
+}
+.dsl-photo-preview{
+  display:none; margin-top:10px; align-items:center; gap:10px;
+}
+.dsl-photo-preview.show{ display:flex; }
+.dsl-photo-preview img{
+  width:44px; height:44px; border-radius:50%; object-fit:cover;
+  border:1.5px solid var(--border);
+}
+.dsl-photo-preview span{ font-size:12.5px; color:var(--text-faint); }
 .pricing-toggle{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
 .pricing-toggle label{
   flex:1; min-width:180px;
@@ -784,7 +804,28 @@ a{ color:inherit; }
           <input class="form-input" type="text" id="poNumber">
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Send request</button>
+        <p class="form-section-label">Safeguarding lead (optional)</p>
+        <p class="form-hint" style="margin-top:-2px;margin-bottom:14px;">
+          Add these now and we'll build them straight into your school's course content —
+          or skip this and add it later by replying to your welcome email.
+        </p>
+
+        <div class="form-row">
+          <label class="form-label" for="dslName">DSL name</label>
+          <input class="form-input" type="text" id="dslName" placeholder="e.g. Mrs J. Ahmed">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="dslPhoto">DSL photo <span style="font-weight:400;color:var(--text-faint);">(optional)</span></label>
+          <input class="form-file" type="file" id="dslPhoto" accept="image/*">
+          <p class="form-hint">Helps students recognise their DSL by sight — shown alongside their name in the course.</p>
+          <div class="dsl-photo-preview" id="dslPhotoPreview">
+            <img id="dslPhotoPreviewImg" alt="">
+            <span id="dslPhotoPreviewName"></span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="orderSubmitBtn">Send request</button>
         <div class="form-status" id="orderStatus"></div>
       </form>
     </div>
@@ -792,7 +833,32 @@ a{ color:inherit; }
 
 
 <script>
-document.getElementById('orderForm').addEventListener('submit', function(e){
+var SUPABASE_URL = 'https://amgttjgfryfsvalmyptr.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtZ3R0amdmcnlmc3ZhbG15cHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyNzI3NDgsImV4cCI6MjEwMTg0ODc0OH0.qnTVzMlW81CSSQ0qjQhOSVzng29cS_Va9qZw2fF-GQs';
+var supabaseClient = null;
+function getSupabase(){
+  if(!supabaseClient){
+    if(!window.supabase) return null;
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabaseClient;
+}
+
+// live preview when a DSL photo is chosen
+document.getElementById('dslPhoto').addEventListener('change', function(e){
+  var file = e.target.files[0];
+  var preview = document.getElementById('dslPhotoPreview');
+  if(!file){ preview.classList.remove('show'); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    document.getElementById('dslPhotoPreviewImg').src = ev.target.result;
+    document.getElementById('dslPhotoPreviewName').textContent = file.name;
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('orderForm').addEventListener('submit', async function(e){
   e.preventDefault();
   var teacherName = document.getElementById('teacherName').value.trim();
   var teacherEmail = document.getElementById('teacherEmail').value.trim();
@@ -801,7 +867,10 @@ document.getElementById('orderForm').addEventListener('submit', function(e){
   var pricingOption = document.querySelector('input[name="pricingOption"]:checked').value;
   var seats = document.getElementById('seatsRequested').value.trim();
   var po = document.getElementById('poNumber').value.trim();
+  var dslName = document.getElementById('dslName').value.trim();
+  var dslPhotoFile = document.getElementById('dslPhoto').files[0] || null;
   var status = document.getElementById('orderStatus');
+  var submitBtn = document.getElementById('orderSubmitBtn');
 
   if(!teacherName || !teacherEmail || !schoolName || !financeEmail){
     status.className = 'form-status show error';
@@ -809,6 +878,49 @@ document.getElementById('orderForm').addEventListener('submit', function(e){
     return;
   }
 
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending request…';
+
+  // 1. Record the order in Supabase (best-effort - a failure here should never
+  //    block the school from getting their request through, so we fall back
+  //    to the mailto either way).
+  try{
+    var sb = getSupabase();
+    if(sb){
+      var dslPhotoUrl = null;
+
+      if(dslPhotoFile){
+        var ext = (dslPhotoFile.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+        var path = Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+        var upload = await sb.storage.from('dsl-photos').upload(path, dslPhotoFile, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: dslPhotoFile.type || 'image/jpeg'
+        });
+        if(!upload.error){
+          var pub = sb.storage.from('dsl-photos').getPublicUrl(path);
+          dslPhotoUrl = pub && pub.data ? pub.data.publicUrl : null;
+        }
+      }
+
+      await sb.from('orders').insert({
+        teacher_name: teacherName,
+        teacher_email: teacherEmail,
+        school_name: schoolName,
+        finance_email: financeEmail,
+        pricing_option: pricingOption,
+        seats_requested: seats ? parseInt(seats, 10) : null,
+        po_number: po || null,
+        dsl_name: dslName || null,
+        dsl_photo_url: dslPhotoUrl
+      });
+    }
+  }catch(err){
+    console.warn('Could not record order in Supabase, continuing with email fallback:', err);
+  }
+
+  // 2. Notify Chris immediately by opening a pre-filled email (until automated
+  //    email sending is wired up, this is still the fastest way he sees it).
   var pricingLabel = pricingOption === 'whole-school' ? 'Whole school flat rate (quote needed)' : 'Per student (£1/seat)';
   var bodyLines = [
     'Teacher name: ' + teacherName,
@@ -817,14 +929,18 @@ document.getElementById('orderForm').addEventListener('submit', function(e){
     'Finance email: ' + financeEmail,
     'Pricing option: ' + pricingLabel,
     'Seats requested: ' + (seats || 'n/a'),
-    'PO number: ' + (po || 'n/a')
+    'PO number: ' + (po || 'n/a'),
+    'DSL name: ' + (dslName || 'n/a'),
+    'DSL photo: ' + (dslPhotoFile ? 'attached via order form (see Supabase orders table)' : 'n/a')
   ];
   var subject = 'Online Ready - seat request from ' + schoolName;
   var body = bodyLines.join('\n');
   var mailto = 'mailto:hello@abity.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
   status.className = 'form-status show ok';
-  status.textContent = "Opening your email client to send this request. If nothing opens, email hello@abity.co.uk directly with your details.";
+  status.textContent = "Request recorded. Opening your email client to send it through as well — if nothing opens, email hello@abity.co.uk directly with your details.";
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Send request';
   window.location.href = mailto;
 });
 </script>
@@ -872,8 +988,8 @@ document.getElementById('orderForm').addEventListener('submit', function(e){
   </div>
 
   <div class="wrap footer-bottom">
-    <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · hello@abity.co.uk</p>
+    <p>© <span id="footerYear">2026</span> Abity Academy. All rights reserved.</p>
+    <p class="footer-bottom-meta">Abity Academy · [company number / registered address to add] · hello@abity.co.uk</p>
   </div>
 </footer>
 
