@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard — Online Ready</title>
+<meta name="description" content="See your students' progress, scores, and certificates at a glance.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);min-height:100vh;line-height:1.5;}
+button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2.5px solid var(--teal);outline-offset:2px;border-radius:6px;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+
+/* ---------- gate screen ---------- */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.gate-card{max-width:420px;width:100%;text-align:center;}
+.gate-shield{width:56px;height:56px;margin:0 auto 18px;}
+.gate h1{font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;}
+.gate p{color:var(--slate-light);font-size:14.5px;margin-bottom:24px;}
+.gate-input{width:100%;background:var(--card-bg);border:1.5px solid var(--border);border-radius:11px;color:var(--warm-white);font-size:15px;padding:13px 16px;margin-bottom:12px;outline:none;transition:border-color .2s;font-family:var(--font-ui);}
+.gate-input:focus{border-color:var(--teal);}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--teal);color:var(--navy);font-weight:800;font-size:15px;padding:13px 24px;border-radius:50px;border:none;cursor:pointer;width:100%;transition:transform .15s,background .15s;}
+.btn-primary:hover{background:var(--teal-dark);}
+.btn-primary:disabled{opacity:.6;cursor:default;}
+.gate-error{margin-top:14px;padding:11px 14px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:9px;color:#FCA5A5;font-size:13.5px;display:none;}
+.gate-error.show{display:block;}
+.gate-hint{margin-top:18px;font-size:12.5px;color:var(--slate);}
+
+/* ---------- dashboard ---------- */
+.dash-header{border-bottom:1px solid var(--border);padding:22px 0;}
+.dash-header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.dash-brand{display:flex;align-items:center;gap:10px;}
+.dash-brand-icon{width:34px;height:34px;border-radius:9px;background:var(--teal-glow);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.dash-brand-text{font-family:var(--font-head);font-weight:800;font-size:16px;}
+.dash-school{font-size:13px;color:var(--slate-light);}
+.btn-logout{background:transparent;border:1.5px solid var(--border);color:var(--slate-light);font-size:13px;font-weight:700;padding:9px 16px;border-radius:50px;cursor:pointer;}
+.btn-logout:hover{border-color:var(--teal);color:var(--warm-white);}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:22px 0;}
+@media (max-width:700px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.stat-num{font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--teal);line-height:1;margin-bottom:5px;}
+.stat-label{font-size:12px;color:var(--slate-light);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:6px 0 16px;}
+.search-input{flex:1;min-width:180px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;color:var(--warm-white);padding:10px 14px;font-size:14px;outline:none;}
+.search-input:focus{border-color:var(--teal);}
+.btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--warm-white);font-weight:700;font-size:13.5px;padding:10px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;}
+.btn-secondary:hover{border-color:var(--teal);}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;margin-bottom:40px;}
+table{width:100%;border-collapse:collapse;min-width:760px;}
+th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--slate-light);font-weight:800;padding:12px 16px;background:var(--card-bg);border-bottom:1px solid var(--border);}
+td{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.student-name{font-weight:700;}
+.module-dots{display:flex;gap:4px;}
+.mod-dot{width:9px;height:9px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.mod-dot.pass{background:var(--green);}
+.mod-dot.fail{background:var(--red);}
+.progress-text{font-size:12px;color:var(--slate-light);margin-left:8px;}
+.status-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.status-chip.certified{background:rgba(16,185,129,.14);color:var(--green);}
+.status-chip.progress{background:rgba(245,158,11,.14);color:var(--amber);}
+.status-chip.notstarted{background:rgba(255,255,255,.06);color:var(--slate-light);}
+.reflect-lock{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--slate-light);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--slate-light);}
+.empty-state-icon{font-size:32px;margin-bottom:10px;}
+
+.reflect-banner{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:13.5px;color:var(--slate-light);display:flex;gap:12px;}
+.reflect-banner-icon{flex-shrink:0;font-size:16px;}
+.reflect-banner strong{color:var(--warm-white);}
+
+.loading{text-align:center;padding:60px 20px;color:var(--slate-light);}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.screen{display:none;}
+.screen.active{display:block;}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="screen-gate" class="screen active">
+  <div class="gate">
+    <div class="gate-card">
+      <svg class="gate-shield" viewBox="0 0 100 100" fill="none">
+        <path d="M50 8L84 22L84 54C84 72 69 86 50 93C31 86 16 72 16 54L16 22Z" fill="rgba(0,201,177,0.12)" stroke="#00C9B1" stroke-width="2.5"/>
+        <path d="M37 50L46 59L64 41" stroke="#00C9B1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1>Teacher Dashboard</h1>
+      <p>Enter the dashboard link your invoice or setup email included. This is different from the class code you gave your students - keep it private.</p>
+      <input type="text" id="tokenInput" class="gate-input" placeholder="Paste your dashboard token" autocomplete="off" spellcheck="false">
+      <button class="btn-primary" id="gateBtn" onclick="submitToken()">View my dashboard →</button>
+      <div id="gateError" class="gate-error" role="alert" aria-live="assertive"></div>
+      <p class="gate-hint">Lost your token? Email hello@abity.co.uk from the address you registered with.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="screen-loading" class="screen">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading your class...</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="screen-dashboard" class="screen">
+  <header class="dash-header">
+    <div class="wrap dash-header-inner">
+      <div class="dash-brand">
+        <span class="dash-brand-icon">✓</span>
+        <div>
+          <div class="dash-brand-text">Online Ready</div>
+          <div class="dash-school" id="schoolName">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">Log out</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statStudents">0</div>
+        <div class="stat-label">Students started</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statCertified">0</div>
+        <div class="stat-label">Certified</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statAvgProgress">0%</div>
+        <div class="stat-label">Average progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statSeats">0 / 0</div>
+        <div class="stat-label">Seats used</div>
+      </div>
+    </div>
+
+    <div id="reflectBanner" class="reflect-banner" style="display:none;">
+      <span class="reflect-banner-icon">📄</span>
+      <div><strong>Reflections appear once a student earns their certificate.</strong> Written answers are kept private (encrypted, unreadable by anyone but the student) while they're still working through the course. The moment a student finishes and gets certified, a PDF of their finished reflections is generated and becomes visible here - that's what the "View" button opens. Students still mid-course won't have one yet.</div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name..." oninput="renderTable()">
+      <button class="btn-secondary" onclick="exportCsv()">⬇ Export CSV</button>
+      <button class="btn-secondary" onclick="loadDashboard(true)">↻ Refresh</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Modules</th>
+            <th>Avg. score</th>
+            <th>Status</th>
+            <th>Certificate</th>
+            <th>Reflections</th>
+          </tr>
+        </thead>
+        <tbody id="studentRows"></tbody>
+      </table>
+      <div id="emptyState" class="empty-state" style="display:none;">
+        <div class="empty-state-icon">🗒️</div>
+        <p>No students have started yet. Once someone enters your class code, they'll show up here.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://amgttjgfryfsvalmyptr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtZ3R0amdmcnlmc3ZhbG15cHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyNzI3NDgsImV4cCI6MjEwMTg0ODc0OH0.qnTVzMlW81CSSQ0qjQhOSVzng29cS_Va9qZw2fF-GQs';
+const MODULE_IDS = ['cyberbullying','passwords','privacy','socialmedia','phishing','misinformation','wellbeing'];
+
+let supabaseClient = null;
+function getSupabase(){
+  if(!supabaseClient){
+    if(!window.supabase) throw new Error('Supabase library not loaded. Check your internet connection.');
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabaseClient;
+}
+
+let currentLicense = null; // {code, school_name, dsl_name, seats_allowed, seats_used}
+let currentStudents = [];  // raw student_records rows
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showGateError(msg){
+  const el = document.getElementById('gateError');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearGateError(){
+  document.getElementById('gateError').classList.remove('show');
+}
+
+/** TEACHER-DEMO is a hardcoded testing bypass with fake sample data, so the
+ * dashboard can be tried before Supabase is actually connected. Remove this
+ * before giving real schools access - see the same note on the course app's
+ * MGS2026 bypass for why. */
+const DEMO_LICENSE = {code:'DEMO2026',school_name:'Maidstone Grammar School (demo)',dsl_name:'Mrs J. Example',seats_allowed:60,seats_used:23};
+const DEMO_STUDENTS = [
+  {display_name:'Alfie Johnson',completed_modules:{cyberbullying:{score:6,total:7,passed:true},passwords:{score:5,total:7,passed:true},privacy:{score:6,total:7,passed:true},socialmedia:{score:6,total:7,passed:true},phishing:{score:5,total:7,passed:true},misinformation:{score:6,total:7,passed:true},wellbeing:{score:5,total:7,passed:true}},cert_id:'OR-4F9K21',cert_issued_at:'2026-01-14T09:12:00Z',updated_at:'2026-01-14',reflections_pdf_path:'DEMO2026/alfie johnson.pdf'},
+  {display_name:'Bea Carter',completed_modules:{cyberbullying:{score:7,total:7,passed:true},passwords:{score:6,total:7,passed:true},privacy:{score:3,total:7,passed:false},socialmedia:{score:5,total:7,passed:true}},cert_id:null,cert_issued_at:null,updated_at:'2026-01-13'},
+  {display_name:'Charlie Day',completed_modules:{},cert_id:null,cert_issued_at:null,updated_at:null},
+  {display_name:'Daisy Ahmed',completed_modules:{cyberbullying:{score:7,total:7,passed:true}},cert_id:null,cert_issued_at:null,updated_at:'2026-01-15'},
+  {display_name:'Ewan Blake',completed_modules:{cyberbullying:{score:4,total:7,passed:false},passwords:{score:6,total:7,passed:true},privacy:{score:5,total:7,passed:true},socialmedia:{score:6,total:7,passed:true},phishing:{score:4,total:7,passed:false},misinformation:{score:5,total:7,passed:true},wellbeing:{score:6,total:7,passed:true}},cert_id:null,cert_issued_at:null,updated_at:'2026-01-12'},
+  {display_name:'Freya Novak',completed_modules:{cyberbullying:{score:7,total:7,passed:true},passwords:{score:7,total:7,passed:true},privacy:{score:6,total:7,passed:true},socialmedia:{score:7,total:7,passed:true},phishing:{score:6,total:7,passed:true},misinformation:{score:7,total:7,passed:true},wellbeing:{score:7,total:7,passed:true}},cert_id:'OR-8P2M40',cert_issued_at:'2026-01-11T14:03:00Z',updated_at:'2026-01-11',reflections_pdf_path:'DEMO2026/freya novak.pdf'},
+  {display_name:'George Patel',completed_modules:{cyberbullying:{score:5,total:7,passed:true},passwords:{score:3,total:7,passed:false}},cert_id:null,cert_issued_at:null,updated_at:'2026-01-10'}
+];
+
+async function submitToken(){
+  clearGateError();
+  const input = document.getElementById('tokenInput');
+  const token = input.value.trim();
+  if(!token){ input.style.borderColor='var(--red)'; input.focus(); return; }
+  input.style.borderColor='';
+
+  const btn = document.getElementById('gateBtn');
+  const origText = btn.textContent;
+
+  if(token.toUpperCase() === 'TEACHER-DEMO'){
+    currentLicense = DEMO_LICENSE;
+    currentStudents = DEMO_STUDENTS;
+    try{ sessionStorage.setItem('or_dash_token', token); }catch(e){}
+    renderHeader(); renderStats(); renderTable();
+    showScreen('screen-dashboard');
+    return;
+  }
+
+  btn.textContent = 'Checking...'; btn.disabled = true;
+
+  try{
+    // dashboard_token is a separate secret from the public class `code` - never derived
+    // from or interchangeable with the code students use to join the course.
+    const {data, error} = await getSupabase()
+      .from('license_keys')
+      .select('code,school_name,dsl_name,seats_allowed,seats_used')
+      .eq('dashboard_token', token)
+      .maybeSingle();
+
+    if(error || !data){
+      showGateError("That dashboard link doesn't match any school we have on file. Double-check it, or email hello@abity.co.uk.");
+      btn.textContent = origText; btn.disabled = false;
+      return;
+    }
+
+    currentLicense = data;
+    try{ sessionStorage.setItem('or_dash_token', token); }catch(e){}
+    await loadDashboard();
+  }catch(e){
+    showGateError('Connection error - please check you\'re online and try again.');
+    btn.textContent = origText; btn.disabled = false;
+  }
+}
+
+function logout(){
+  try{ sessionStorage.removeItem('or_dash_token'); }catch(e){}
+  currentLicense = null; currentStudents = [];
+  document.getElementById('tokenInput').value = '';
+  showScreen('screen-gate');
+}
+
+async function loadDashboard(isRefresh){
+  if(currentLicense && currentLicense.code === DEMO_LICENSE.code){
+    currentStudents = DEMO_STUDENTS;
+    renderHeader(); renderStats(); renderTable();
+    showScreen('screen-dashboard');
+    return;
+  }
+  if(!isRefresh) showScreen('screen-loading');
+  try{
+    const {data, error} = await getSupabase()
+      .from('student_records')
+      .select('display_name,completed_modules,cert_id,cert_issued_at,updated_at,reflections_pdf_path')
+      .eq('license_code', currentLicense.code);
+
+    if(error){
+      showScreen('screen-gate');
+      showGateError('Could not load your class just now - please try again.');
+      return;
+    }
+
+    currentStudents = data || [];
+    renderHeader();
+    renderStats();
+    renderTable();
+    showScreen('screen-dashboard');
+  }catch(e){
+    showScreen('screen-gate');
+    showGateError('Connection error - please check you\'re online and try again.');
+  }
+}
+
+function renderHeader(){
+  document.getElementById('schoolName').textContent = currentLicense.school_name || currentLicense.code;
+}
+
+function moduleScore(student, modId){
+  const rec = (student.completed_modules || {})[modId];
+  return rec || null;
+}
+
+function studentProgress(student){
+  const done = MODULE_IDS.filter(id => moduleScore(student, id)).length;
+  return done;
+}
+
+function studentAvgScore(student){
+  const scores = MODULE_IDS
+    .map(id => moduleScore(student, id))
+    .filter(Boolean)
+    .map(r => (r.score / r.total) * 100);
+  if(scores.length === 0) return null;
+  return Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+}
+
+function renderStats(){
+  const total = currentStudents.length;
+  const certified = currentStudents.filter(s => s.cert_id).length;
+  const avgProgress = total === 0 ? 0 : Math.round(
+    currentStudents.reduce((sum, s) => sum + (studentProgress(s) / MODULE_IDS.length) * 100, 0) / total
+  );
+
+  document.getElementById('statStudents').textContent = total;
+  document.getElementById('statCertified').textContent = certified;
+  document.getElementById('statAvgProgress').textContent = avgProgress + '%';
+  document.getElementById('statSeats').textContent = (currentLicense.seats_used ?? 0) + ' / ' + (currentLicense.seats_allowed ?? 0);
+
+  // Show the reflections-are-private banner only if at least one student has synced
+  // progress at all (i.e. cross-device PIN sync is genuinely in use for this class).
+  document.getElementById('reflectBanner').style.display = total > 0 ? 'flex' : 'none';
+}
+
+function renderTable(){
+  const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const tbody = document.getElementById('studentRows');
+  const filtered = currentStudents.filter(s => s.display_name.toLowerCase().includes(search));
+
+  document.getElementById('emptyState').style.display = currentStudents.length === 0 ? 'block' : 'none';
+
+  tbody.innerHTML = filtered.map(s => {
+    const progress = studentProgress(s);
+    const avg = studentAvgScore(s);
+    const dots = MODULE_IDS.map(id => {
+      const rec = moduleScore(s, id);
+      const cls = !rec ? '' : (rec.passed ? 'pass' : 'fail');
+      const title = !rec ? 'Not attempted' : (rec.passed ? 'Passed (' + rec.score + '/' + rec.total + ')' : 'Not yet passed (' + rec.score + '/' + rec.total + ')');
+      return '<span class="mod-dot ' + cls + '" title="' + title + '"></span>';
+    }).join('');
+
+    let statusChip;
+    if(s.cert_id) statusChip = '<span class="status-chip certified">🏆 Certified</span>';
+    else if(progress > 0) statusChip = '<span class="status-chip progress">In progress</span>';
+    else statusChip = '<span class="status-chip notstarted">Not started</span>';
+
+    const certCell = s.cert_id
+      ? '<span title="' + (s.cert_issued_at ? new Date(s.cert_issued_at).toLocaleDateString('en-GB') : '') + '">' + s.cert_id + '</span>'
+      : '<span style="color:var(--slate);">—</span>';
+
+    const reflectCell = s.reflections_pdf_path
+      ? '<button class="btn-secondary" style="padding:6px 12px;font-size:12.5px;" onclick="viewReflections(\'' + s.reflections_pdf_path.replace(/'/g,"\\'") + '\', this)">📄 View</button>'
+      : '<span class="reflect-lock" title="No certificate yet, or reflections weren\u2019t generated">—</span>';
+
+    return '<tr>'
+      + '<td class="student-name">' + escapeHtml(s.display_name) + '</td>'
+      + '<td><div class="module-dots">' + dots + '<span class="progress-text">' + progress + '/' + MODULE_IDS.length + '</span></div></td>'
+      + '<td>' + (avg === null ? '—' : avg + '%') + '</td>'
+      + '<td>' + statusChip + '</td>'
+      + '<td>' + certCell + '</td>'
+      + '<td>' + reflectCell + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+/** Generates a short-lived signed URL for a student's reflections PDF and opens it.
+ * Nothing here is a permanent public link - the URL expires in 60 seconds, generated
+ * fresh only at the moment a teacher actually clicks to view it. */
+async function viewReflections(path, btn){
+  const origText = btn.textContent;
+  btn.textContent = 'Loading...'; btn.disabled = true;
+  try{
+    if(currentLicense && currentLicense.code === DEMO_LICENSE.code){
+      alert('This is demo data - there\'s no real PDF to open. Once Supabase is connected, this button opens the actual reflections PDF for ' + path.split('/')[1].replace('.pdf','') + '.');
+      btn.textContent = origText; btn.disabled = false;
+      return;
+    }
+    const {data, error} = await getSupabase().storage.from('reflection-pdfs').createSignedUrl(path, 60);
+    if(error || !data){
+      alert('Could not open this PDF right now - please try again.');
+      btn.textContent = origText; btn.disabled = false;
+      return;
+    }
+    window.open(data.signedUrl, '_blank');
+  }catch(e){
+    alert('Connection error - please check you\'re online and try again.');
+  }
+  btn.textContent = origText; btn.disabled = false;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function exportCsv(){
+  const rows = [['Student','Modules completed','Average score (%)','Status','Certificate ID','Certificate date']];
+  currentStudents.forEach(s => {
+    const progress = studentProgress(s);
+    const avg = studentAvgScore(s);
+    const status = s.cert_id ? 'Certified' : (progress > 0 ? 'In progress' : 'Not started');
+    rows.push([
+      s.display_name,
+      progress + '/' + MODULE_IDS.length,
+      avg === null ? '' : avg,
+      status,
+      s.cert_id || '',
+      s.cert_issued_at ? new Date(s.cert_issued_at).toLocaleDateString('en-GB') : ''
+    ]);
+  });
+  const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'online-ready-' + (currentLicense.code || 'class') + '-results.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// Auto-resume: if this browser already has a token from earlier this session, skip the gate
+window.addEventListener('DOMContentLoaded', function(){
+  let saved = null;
+  try{ saved = sessionStorage.getItem('or_dash_token'); }catch(e){}
+  if(saved){
+    document.getElementById('tokenInput').value = saved;
+    submitToken();
+  }
+});
+</script>
+</body>
+</html>
