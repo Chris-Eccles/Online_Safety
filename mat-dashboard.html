@@ -459,6 +459,17 @@ function escapeHtml(str){
 }
 
 window.addEventListener('DOMContentLoaded', function(){
+  let urlToken = null;
+  try{
+    urlToken = new URLSearchParams(window.location.search).get('token');
+  }catch(e){}
+
+  if(urlToken){
+    document.getElementById('tokenInput').value = urlToken.trim();
+    submitToken();
+    return;
+  }
+
   let saved = null;
   try{ saved = sessionStorage.getItem('or_mat_token'); }catch(e){}
   if(saved){

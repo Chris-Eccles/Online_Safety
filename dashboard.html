@@ -448,8 +448,21 @@ function exportCsv(){
   URL.revokeObjectURL(url);
 }
 
-// Auto-resume: if this browser already has a token from earlier this session, skip the gate
+// Auto-login: a dashboard link from an email carries ?token= directly, so the
+// teacher should never have to copy/paste it by hand. Falls back to resuming
+// a token already submitted earlier this session, then to the manual gate.
 window.addEventListener('DOMContentLoaded', function(){
+  let urlToken = null;
+  try{
+    urlToken = new URLSearchParams(window.location.search).get('token');
+  }catch(e){}
+
+  if(urlToken){
+    document.getElementById('tokenInput').value = urlToken.trim();
+    submitToken();
+    return;
+  }
+
   let saved = null;
   try{ saved = sessionStorage.getItem('or_dash_token'); }catch(e){}
   if(saved){

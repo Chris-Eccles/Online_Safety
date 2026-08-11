@@ -5,11 +5,16 @@
  * order form, this function:
  *   1. Generates a class code + dashboard token per teacher (and a trust +
  *      mat_dashboard_token if it's a MAT), and writes them to Supabase.
- *   2. Emails EVERY teacher their own "here are your logins" email via Resend
- *      (including the purchaser, who is always also set up as a teacher).
- *   3. If it's a MAT, additionally emails the purchaser their trust dashboard
+ *   2. Records the order (gets back a real sequential invoice number).
+ *   3. Emails EVERY teacher their own "here are your logins" email via Resend
+ *      (including the purchaser, who is always also set up as a teacher) -
+ *      the course link lands students on the name/PIN screen, never straight
+ *      into a module; the dashboard link auto-signs the teacher in.
+ *   4. If it's a MAT, additionally emails the purchaser their trust dashboard
  *      link, in a separate email from their own teacher login.
- *   4. Emails the finance contact an invoice notice.
+ *   5. Emails the finance contact a real, numbered invoice.
+ *   6. Emails you (INTERNAL_NOTIFY_EMAIL) a quiet "a school just ordered"
+ *      notice - never seen by the customer.
  *
  * ENVIRONMENT VARIABLES THIS NEEDS (set these in Vercel → Settings → Environment
  * Variables, not in this file):
@@ -23,6 +28,26 @@
  *   SENDER_EMAIL              - e.g. 'Online Ready <hello@post.abity.co.uk>' -
  *                               must be an address on a domain verified in
  *                               your Resend dashboard (Domains tab).
+ *   SITE_URL                  - e.g. 'https://www.abity.co.uk'
+ *
+ * OPTIONAL - INVOICE / NOTIFICATIONS (safe to leave unset; the invoice email
+ * shows an obvious placeholder wherever one of these is missing, so nothing
+ * breaks, it just looks unfinished until you fill them in):
+ *   INTERNAL_NOTIFY_EMAIL   - where YOU get told "a school just ordered".
+ *                             Defaults to chriseccles001@gmail.com.
+ *   INVOICE_BUSINESS_NAME   - the legal name that should appear on invoices,
+ *                             e.g. 'Abity Academy Ltd' or your own name if
+ *                             you're a sole trader.
+ *   INVOICE_BUSINESS_ADDRESS- your registered/business address, one line
+ *                             (use <br> for line breaks if you want more than one).
+ *   INVOICE_COMPANY_NUMBER  - Companies House number. Leave unset if you're
+ *                             a sole trader - the line is omitted entirely.
+ *   INVOICE_VAT_NUMBER      - only set this if you're VAT-registered; the
+ *                             VAT line is omitted entirely if unset.
+ *   INVOICE_BANK_DETAILS    - how schools should actually pay you, e.g.
+ *                             'Account name: ...<br>Sort code: XX-XX-XX<br>Account number: XXXXXXXX'.
+ *                             This is sensitive - set it only here as an env
+ *                             var, never commit it to the repo.
  * ============================================================================
  */
 const { Resend } = require('resend');
@@ -32,6 +57,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const SENDER = process.env.SENDER_EMAIL || 'Online Ready <hello@abity.co.uk>';
 const SITE_URL = process.env.SITE_URL || 'https://www.abity.co.uk';
+const INTERNAL_NOTIFY_EMAIL = process.env.INTERNAL_NOTIFY_EMAIL || 'chriseccles001@gmail.com';
+
+const INVOICE = {
+  businessName: process.env.INVOICE_BUSINESS_NAME || '[Add your legal business name - INVOICE_BUSINESS_NAME]',
+  address: process.env.INVOICE_BUSINESS_ADDRESS || '[Add your business address - INVOICE_BUSINESS_ADDRESS]',
+  companyNumber: process.env.INVOICE_COMPANY_NUMBER || '',
+  vatNumber: process.env.INVOICE_VAT_NUMBER || '',
+  bankDetails: process.env.INVOICE_BANK_DETAILS || '[Add payment details - INVOICE_BANK_DETAILS - reply to this email in the meantime and we\'ll send them separately]'
+};
 
 function randomToken() {
   return (require('crypto').randomUUID)();
@@ -93,17 +127,108 @@ function matAdminEmailHtml({ teacherName, trustName, matDashboardToken }) {
   `;
 }
 
-function financeEmailHtml({ schoolOrTrustName, seats, pricingLabel, po }) {
+function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate }) {
+  const isPerStudent = pricingOption !== 'whole-school';
+  const unitPrice = 1; // £1 per seat, per year
+  const seatCount = Number(seats) || 0;
+  const total = isPerStudent ? (unitPrice * seatCount) : null;
+  const reference = po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName);
+
+  const companyNumberRow = INVOICE.companyNumber
+    ? `<p style="margin:2px 0;">Company number: ${INVOICE.companyNumber}</p>` : '';
+  const vatRow = INVOICE.vatNumber
+    ? `<p style="margin:2px 0;">VAT number: ${INVOICE.vatNumber}</p>` : '';
+
+  const lineItemRow = isPerStudent
+    ? `<tr>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;">Online Ready — per-student annual licence</td>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:center;">${seatCount}</td>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">£${unitPrice.toFixed(2)}</td>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">£${total.toFixed(2)}</td>
+       </tr>`
+    : `<tr>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;" colspan="3">Online Ready — whole-school/trust flat rate (${seatCount || 'to confirm'} seats requested)</td>
+         <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">Quote to follow</td>
+       </tr>`;
+
+  const totalRow = isPerStudent
+    ? `<tr>
+         <td colspan="3" style="padding:10px 0;text-align:right;font-weight:bold;">Total due</td>
+         <td style="padding:10px 0;text-align:right;font-weight:bold;">£${total.toFixed(2)}</td>
+       </tr>`
+    : '';
+
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F1B2D;">
+      <table style="width:100%;margin-bottom:20px;">
+        <tr>
+          <td>
+            <h2 style="margin:0;">Invoice</h2>
+            <p style="margin:2px 0;color:#718096;">${invoiceNumber ? 'INV-' + invoiceNumber : 'Reference: ' + reference}</p>
+          </td>
+          <td style="text-align:right;color:#718096;">
+            <p style="margin:2px 0;">Date: ${invoiceDate}</p>
+          </td>
+        </tr>
+      </table>
+
+      <table style="width:100%;margin-bottom:24px;">
+        <tr>
+          <td style="vertical-align:top;width:50%;">
+            <p style="margin:0 0 4px;font-weight:bold;">From</p>
+            <p style="margin:2px 0;">${INVOICE.businessName}</p>
+            <p style="margin:2px 0;">${INVOICE.address}</p>
+            ${companyNumberRow}
+            ${vatRow}
+          </td>
+          <td style="vertical-align:top;width:50%;">
+            <p style="margin:0 0 4px;font-weight:bold;">Bill to</p>
+            <p style="margin:2px 0;">${schoolOrTrustName}</p>
+            <p style="margin:2px 0;">${financeEmail}</p>
+          </td>
+        </tr>
+      </table>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px 0;border-bottom:2px solid #0F1B2D;">Description</th>
+            <th style="text-align:center;padding:8px 0;border-bottom:2px solid #0F1B2D;">Qty</th>
+            <th style="text-align:right;padding:8px 0;border-bottom:2px solid #0F1B2D;">Unit price</th>
+            <th style="text-align:right;padding:8px 0;border-bottom:2px solid #0F1B2D;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lineItemRow}
+        </tbody>
+        <tfoot>
+          ${totalRow}
+        </tfoot>
+      </table>
+
+      <div style="background:#F7F9FC;border-radius:10px;padding:14px 18px;margin-bottom:20px;">
+        <p style="margin:0 0 6px;font-weight:bold;">How to pay</p>
+        <p style="margin:2px 0;">${INVOICE.bankDetails}</p>
+        <p style="margin:8px 0 0;">Please use <strong>${reference}</strong> as your payment reference so we can match it up automatically.</p>
+      </div>
+
+      <p style="font-size:13px;color:#718096;">This confirms the order only — it isn't a legal advice document. Any questions, just reply to this email.</p>
+    </div>
+  `;
+}
+
+function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber }) {
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
-      <h2>Invoice for ${schoolOrTrustName}</h2>
-      <p>An order for Online Ready has just been placed for <strong>${schoolOrTrustName}</strong>.</p>
-      <table style="width:100%;border-collapse:collapse;margin:20px 0;">
-        <tr><td style="padding:8px 0;border-bottom:1px solid #eee;">Seats requested</td><td style="padding:8px 0;border-bottom:1px solid #eee;">${seats || 'to confirm'}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #eee;">Pricing</td><td style="padding:8px 0;border-bottom:1px solid #eee;">${pricingLabel}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #eee;">PO number</td><td style="padding:8px 0;border-bottom:1px solid #eee;">${po || 'n/a'}</td></tr>
+      <h2 style="margin-bottom:4px;">New order: ${schoolOrTrustName}</h2>
+      <p>${seats || '0'} seats · ${pricingLabel}${isMat ? ' · MAT' : ''}</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Teacher</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${teacherName} (${teacherEmail})</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Finance contact</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${financeEmail}</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">PO number</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${po || 'n/a'}</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Invoice</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${invoiceNumber ? 'INV-' + invoiceNumber : 'not recorded'}</td></tr>
       </table>
-      <p>A formal invoice with bank transfer details will follow separately. If you have any questions in the meantime, just reply to this email.</p>
+      <p style="font-size:12.5px;color:#718096;">Automatic notification - not sent to the customer.</p>
     </div>
   `;
 }
@@ -202,6 +327,34 @@ module.exports = async (req, res) => {
       provisioned.push({ ...t, code, dashboardToken });
     }
 
+    // Record the order first (before sending the invoice) so we have a real,
+    // sequential invoice number to put on the finance email. The Monzo webhook
+    // (a Supabase Edge Function) later matches incoming bank transfers against
+    // unpaid rows here by PO number or school/trust name.
+    let invoiceNumber = null;
+    try {
+      const { data: orderRow, error: orderInsertErr } = await supabase.from('orders').insert({
+        teacher_name: teacherName,
+        teacher_email: teacherEmail,
+        school_name: isMat ? matName : schoolName,
+        finance_email: financeEmail,
+        pricing_option: pricingOption === 'whole-school' ? 'whole-school' : 'per-student',
+        seats_requested: Number(seats) || 0,
+        po_number: po || null,
+        dsl_name: dslName || null,
+        dsl_photo_url: dslPhotoUrl,
+        license_code: provisioned[0] ? provisioned[0].code : null
+      }).select('invoice_number').single();
+      if (orderInsertErr) throw orderInsertErr;
+      invoiceNumber = orderRow ? orderRow.invoice_number : null;
+    } catch (orderErr) {
+      // Non-fatal: still provision and email the school even if we can't record
+      // the order row - just means the invoice email won't have a real number
+      // and this order needs manual reconciliation later.
+      console.error('Could not record order for invoice tracking:', orderErr.message);
+    }
+    const invoiceDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
     // Send every teacher their own login email
     const emailResults = await Promise.allSettled(provisioned.map(t =>
       resend.emails.send({
@@ -225,35 +378,31 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Finance gets the invoice notice
+    // Finance gets the actual invoice
     await resend.emails.send({
       from: SENDER,
       to: financeEmail,
-      subject: 'Invoice — Online Ready for ' + (isMat ? matName : schoolName),
-      html: financeEmailHtml({ schoolOrTrustName: isMat ? matName : schoolName, seats, pricingLabel, po })
+      subject: (invoiceNumber ? 'Invoice INV-' + invoiceNumber : 'Invoice') + ' — Online Ready for ' + (isMat ? matName : schoolName),
+      html: financeEmailHtml({
+        schoolOrTrustName: isMat ? matName : schoolName, financeEmail, seats,
+        pricingOption, pricingLabel, po, invoiceNumber, invoiceDate
+      })
     });
 
-    // Record the order itself for invoice + payment tracking. The Monzo
-    // webhook (a Supabase Edge Function) matches incoming bank transfers
-    // against unpaid rows here by PO number or school/trust name.
+    // Quiet internal notification - never seen by the customer, just tells
+    // you a school ordered without you needing to check the dashboard.
     try {
-      await supabase.from('orders').insert({
-        teacher_name: teacherName,
-        teacher_email: teacherEmail,
-        school_name: isMat ? matName : schoolName,
-        finance_email: financeEmail,
-        pricing_option: pricingOption === 'whole-school' ? 'whole-school' : 'per-student',
-        seats_requested: Number(seats) || 0,
-        po_number: po || null,
-        dsl_name: dslName || null,
-        dsl_photo_url: dslPhotoUrl,
-        license_code: provisioned[0] ? provisioned[0].code : null
+      await resend.emails.send({
+        from: SENDER,
+        to: INTERNAL_NOTIFY_EMAIL,
+        subject: 'New order: ' + (isMat ? matName : schoolName) + ' (' + (Number(seats) || 0) + ' seats)',
+        html: internalNotifyEmailHtml({
+          schoolOrTrustName: isMat ? matName : schoolName, seats, pricingLabel,
+          teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber
+        })
       });
-    } catch (orderErr) {
-      // Non-fatal: the school is already provisioned and emailed at this point,
-      // so a failure here should never surface as an error to the requester -
-      // just log it for manual reconciliation.
-      console.error('Could not record order for invoice tracking:', orderErr.message);
+    } catch (notifyErr) {
+      console.error('Internal notify email failed:', notifyErr.message);
     }
 
     const failedEmails = emailResults.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value && r.value.error));
