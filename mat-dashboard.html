@@ -224,6 +224,7 @@ let currentTrust = null;      // {id, trust_name, seats_allocated}
 let currentTeachers = [];     // rows from license_keys where trust_id = currentTrust.id
 let studentsByCode = {};      // license_code -> [student_records rows]
 let activeTeacherCode = null; // which teacher's class the drill-down view is showing
+let currentToken = null;      // the mat_dashboard_token itself - every fetch is re-scoped through it server-side
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -258,6 +259,13 @@ const DEMO_STUDENTS_BY_CODE = {
   'WEALD-E03':[]
 };
 
+/** Demo/testing bypass only works off the real production domain, so it can't be
+ * found and used by anyone just by viewing page source on the live site. */
+function isDemoBypassAllowed(){
+  var h = window.location.hostname;
+  return h !== 'abity.co.uk' && h !== 'www.abity.co.uk';
+}
+
 async function submitToken(){
   clearGateError();
   const input = document.getElementById('tokenInput');
@@ -268,7 +276,7 @@ async function submitToken(){
   const btn = document.getElementById('gateBtn');
   const origText = btn.textContent;
 
-  if(token.toUpperCase() === 'DEMO-TRUST'){
+  if(isDemoBypassAllowed() && token.toUpperCase() === 'DEMO-TRUST'){
     currentTrust = DEMO_TRUST;
     currentTeachers = DEMO_TEACHERS;
     studentsByCode = DEMO_STUDENTS_BY_CODE;
@@ -282,11 +290,10 @@ async function submitToken(){
   btn.textContent = 'Checking...'; btn.disabled = true;
   try{
     // mat_dashboard_token is its own separate secret, distinct from any individual
-    // teacher's dashboard_token and from any student-facing class code.
+    // teacher's dashboard_token and from any student-facing class code. Every lookup
+    // after this goes through server-side functions keyed on this same token.
     const {data, error} = await getSupabase()
-      .from('trusts')
-      .select('id,trust_name,seats_allocated')
-      .eq('mat_dashboard_token', token)
+      .rpc('get_trust_by_token', {p_token: token})
       .maybeSingle();
 
     if(error || !data){
@@ -295,6 +302,7 @@ async function submitToken(){
       return;
     }
     currentTrust = data;
+    currentToken = token;
     try{ sessionStorage.setItem('or_mat_token', token); }catch(e){}
     await loadTrust();
   }catch(e){
@@ -305,7 +313,7 @@ async function submitToken(){
 
 function logout(){
   try{ sessionStorage.removeItem('or_mat_token'); }catch(e){}
-  currentTrust = null; currentTeachers = []; studentsByCode = {}; activeTeacherCode = null;
+  currentTrust = null; currentTeachers = []; studentsByCode = {}; activeTeacherCode = null; currentToken = null;
   document.getElementById('tokenInput').value = '';
   showScreen('screen-gate');
 }
@@ -320,9 +328,7 @@ async function loadTrust(isRefresh){
   if(!isRefresh) showScreen('screen-loading');
   try{
     const {data: teachers, error: teacherErr} = await getSupabase()
-      .from('license_keys')
-      .select('code,display_name,school_name,dsl_name,seats_allowed,seats_used')
-      .eq('trust_id', currentTrust.id);
+      .rpc('get_trust_teachers_by_token', {p_token: currentToken});
 
     if(teacherErr){
       showScreen('screen-gate');
@@ -331,19 +337,14 @@ async function loadTrust(isRefresh){
     }
     currentTeachers = teachers || [];
 
-    const codes = currentTeachers.map(t => t.code);
+    const {data: students, error: studentErr} = await getSupabase()
+      .rpc('get_trust_roster_by_token', {p_token: currentToken});
     studentsByCode = {};
-    if(codes.length > 0){
-      const {data: students, error: studentErr} = await getSupabase()
-        .from('student_records')
-        .select('license_code,display_name,completed_modules,cert_id,cert_issued_at')
-        .in('license_code', codes);
-      if(!studentErr && students){
-        students.forEach(s => {
-          if(!studentsByCode[s.license_code]) studentsByCode[s.license_code] = [];
-          studentsByCode[s.license_code].push(s);
-        });
-      }
+    if(!studentErr && students){
+      students.forEach(s => {
+        if(!studentsByCode[s.license_code]) studentsByCode[s.license_code] = [];
+        studentsByCode[s.license_code].push(s);
+      });
     }
 
     renderTrustHeader(); renderTrustStats(); renderTeacherTable();

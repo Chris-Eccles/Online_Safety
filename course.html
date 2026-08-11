@@ -855,15 +855,17 @@ function buildReflectionsPdfBlob(){
  * nothing here is ever a permanently public link. Runs in the background after a
  * certificate is issued; failure here never blocks the student's own certificate. */
 async function generateAndAttachReflectionsPdf(){
-  if(!studentRecordActive||!studentRecordKey)return;
+  if(!studentRecordActive||!studentRecordKey||!sessionPinHash)return;
   try{
     const blob=buildReflectionsPdfBlob();
     if(!blob)return;
     const path=studentRecordKey.licenseCode+'/'+studentRecordKey.nameKey+'.pdf';
     const {error:uploadErr}=await getSupabase().storage.from('reflection-pdfs').upload(path,blob,{contentType:'application/pdf',upsert:true});
     if(uploadErr)return;
-    await getSupabase().from('student_records').update({reflections_pdf_path:path})
-      .eq('license_code',studentRecordKey.licenseCode).eq('name_key',studentRecordKey.nameKey);
+    await getSupabase().rpc('push_student_record',{
+      p_code:studentRecordKey.licenseCode, p_name:studentRecordKey.nameKey,
+      p_pin_hash:sessionPinHash, p_update:{reflections_pdf_path:path}
+    });
   }catch(e){ /* best-effort only - never blocks the student's certificate */ }
 }
 
@@ -1197,20 +1199,26 @@ function clearAccessError(){
   if(el)el.style.display='none';
 }
 
+/** Demo/testing bypass codes only work off the real production domain, so they can't
+ * be found and used by an actual student just by viewing page source on the live site. */
+function isDemoBypassAllowed(){
+  var h = window.location.hostname;
+  return h !== 'abity.co.uk' && h !== 'www.abity.co.uk';
+}
+
 /** Looks up a code against Supabase, and consumes a seat the first time this device uses it.
  * Returns {ok:true, data} on success, or {ok:false, message} on failure. */
 async function checkAndConsumeSeat(code){
-  if(!code||code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026') return {ok:true,data:null};
+  if(!code||(isDemoBypassAllowed()&&(code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026'))) return {ok:true,data:null};
   try{
     const{data,error}=await getSupabase()
-      .from('license_keys')
-      .select('code,seats_used,seats_allowed,logo_url,dsl_name,dsl_photo_url,school_name')
-      .eq('code',code).single();
+      .rpc('get_license_public',{p_code:code})
+      .single();
     if(error||!data) return {ok:false,message:'That code doesn\'t look right. Please check with your teacher and try again.'};
     if(data.seats_used>=data.seats_allowed) return {ok:false,message:'This class has reached its limit. Please tell your teacher.'};
     const seatKey='cybersmart_seat_'+code;
     if(!localStorage.getItem(seatKey)){
-      await getSupabase().from('license_keys').update({seats_used:data.seats_used+1}).eq('code',code);
+      await getSupabase().rpc('consume_seat',{p_code:code});
       localStorage.setItem(seatKey,'1');
     }
     if(data.dsl_name)liveDslName=data.dsl_name;
@@ -1253,6 +1261,7 @@ async function submitAccessCode(){
 let studentRecordActive = false;
 let studentRecordKey = null; // {licenseCode, nameKey}
 let sessionPinCryptoKey = null; // AES-GCM key derived from the PIN, kept in memory only (never saved anywhere)
+let sessionPinHash = null; // pin_hash re-sent with every write so the server can verify it before accepting changes
 
 /** Hashes a PIN together with the class code and name, so raw PINs are never stored or sent as plain text. */
 async function hashPin(pin, code, name){
@@ -1335,24 +1344,26 @@ async function syncStudentRecord(code, name, pin){
   const pinHash=await hashPin(pin, licenseCode, name);
   const pinKey=await derivePinKey(pin, licenseCode, name);
   try{
-    const {data,error}=await getSupabase()
-      .from('student_records')
-      .select('pin_hash,completed_modules,cert_id,reflections_ct,reflections_iv,current_module_id,current_slide,module_progress,updated_at')
-      .eq('license_code',licenseCode).eq('name_key',nameKey).maybeSingle();
+    // All of the read-or-create-or-verify logic now happens server-side inside
+    // sync_student_record, including a lockout after repeated wrong PINs - the
+    // client never gets direct table access, so it can't be bypassed from devtools.
+    const {data,error}=await getSupabase().rpc('sync_student_record',{
+      p_code:licenseCode, p_name:name.trim(), p_pin_hash:pinHash
+    });
     if(error)return {ok:false,message:'Connection error — please check you\'re online and try again.'};
-    if(!data){
-      const {error:insertErr}=await getSupabase().from('student_records').insert({
-        license_code:licenseCode, name_key:nameKey, display_name:name.trim(),
-        pin_hash:pinHash, completed_modules:{}
-      });
-      if(insertErr)return {ok:false,message:'Couldn\'t save your PIN just now — please try again.'};
-      studentRecordActive=true;studentRecordKey={licenseCode,nameKey};sessionPinCryptoKey=pinKey;
-      return {ok:true,restored:null};
+
+    if(data.status==='locked'){
+      return {ok:false,message:'Too many incorrect PIN attempts for '+name.trim()+'. Please wait a few minutes and try again, or ask your teacher for help.'};
     }
-    if(data.pin_hash!==pinHash){
+    if(data.status==='mismatch'){
       return {ok:false,message:'That PIN doesn\'t match our records for '+name.trim()+'. Double-check your PIN, or add your surname if this isn\'t you.'};
     }
-    studentRecordActive=true;studentRecordKey={licenseCode,nameKey};sessionPinCryptoKey=pinKey;
+    if(data.status==='new'){
+      studentRecordActive=true;studentRecordKey={licenseCode,nameKey};sessionPinCryptoKey=pinKey;sessionPinHash=pinHash;
+      return {ok:true,restored:null};
+    }
+    // status === 'ok'
+    studentRecordActive=true;studentRecordKey={licenseCode,nameKey};sessionPinCryptoKey=pinKey;sessionPinHash=pinHash;
     const restoredReflections=await decryptWithPinKey(data.reflections_ct,data.reflections_iv);
     return {ok:true,restored:{
       completedModules:data.completed_modules||{},
@@ -1373,20 +1384,23 @@ async function syncStudentRecord(code, name, pin){
  * Includes exact slide position so a student can leave mid-module on one device and land back on the
  * exact same slide on another, not just "somewhere in this module." */
 async function pushStudentRecord(certId){
-  if(!studentRecordActive||!studentRecordKey)return;
+  if(!studentRecordActive||!studentRecordKey||!sessionPinHash)return;
   try{
     const update={
       completed_modules:completedModules,
       current_module_id:currentModuleId,
       current_slide:currentSlide,
-      module_progress:moduleProgress,
-      updated_at:new Date().toISOString()
+      module_progress:moduleProgress
     };
     const enc=await encryptWithPinKey(reflectionData);
     if(enc){update.reflections_ct=enc.ct;update.reflections_iv=enc.iv;}
-    if(certId){update.cert_id=certId;update.cert_issued_at=new Date().toISOString();}
-    await getSupabase().from('student_records').update(update)
-      .eq('license_code',studentRecordKey.licenseCode).eq('name_key',studentRecordKey.nameKey);
+    if(certId){update.cert_id=certId;}
+    // push_student_record re-checks the PIN hash server-side before writing anything -
+    // a write attempt with a wrong/missing PIN hash is silently rejected, not just hidden by the UI.
+    await getSupabase().rpc('push_student_record',{
+      p_code:studentRecordKey.licenseCode, p_name:studentRecordKey.nameKey,
+      p_pin_hash:sessionPinHash, p_update:update
+    });
   }catch(e){ /* best-effort only */ }
 }
 
@@ -1410,7 +1424,7 @@ async function startCourse(){
   const origText=btn.innerHTML;
 
   // Already validated on the code screen this session, or no code needed at all
-  const needsCodeCheck=!(codeAlreadyValidated||!code||code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026');
+  const needsCodeCheck=!(codeAlreadyValidated||!code||(isDemoBypassAllowed()&&(code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026')));
   if(needsCodeCheck){
     btn.innerHTML='Checking...';btn.disabled=true;
     const result=await checkAndConsumeSeat(code);

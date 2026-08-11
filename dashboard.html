@@ -196,6 +196,7 @@ function getSupabase(){
 
 let currentLicense = null; // {code, school_name, dsl_name, seats_allowed, seats_used}
 let currentStudents = [];  // raw student_records rows
+let currentToken = null;   // the dashboard_token itself - every roster fetch is re-scoped through it server-side
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -226,6 +227,13 @@ const DEMO_STUDENTS = [
   {display_name:'George Patel',completed_modules:{cyberbullying:{score:5,total:7,passed:true},passwords:{score:3,total:7,passed:false}},cert_id:null,cert_issued_at:null,updated_at:'2026-01-10'}
 ];
 
+/** Demo/testing bypass only works off the real production domain, so it can't be
+ * found and used by anyone just by viewing page source on the live site. */
+function isDemoBypassAllowed(){
+  var h = window.location.hostname;
+  return h !== 'abity.co.uk' && h !== 'www.abity.co.uk';
+}
+
 async function submitToken(){
   clearGateError();
   const input = document.getElementById('tokenInput');
@@ -236,7 +244,7 @@ async function submitToken(){
   const btn = document.getElementById('gateBtn');
   const origText = btn.textContent;
 
-  if(token.toUpperCase() === 'TEACHER-DEMO'){
+  if(isDemoBypassAllowed() && token.toUpperCase() === 'TEACHER-DEMO'){
     currentLicense = DEMO_LICENSE;
     currentStudents = DEMO_STUDENTS;
     try{ sessionStorage.setItem('or_dash_token', token); }catch(e){}
@@ -249,11 +257,11 @@ async function submitToken(){
 
   try{
     // dashboard_token is a separate secret from the public class `code` - never derived
-    // from or interchangeable with the code students use to join the course.
+    // from or interchangeable with the code students use to join the course. The lookup
+    // and every roster fetch after it goes through a server-side function keyed on this
+    // token, so no amount of guessing a class code alone can ever reveal a class list.
     const {data, error} = await getSupabase()
-      .from('license_keys')
-      .select('code,school_name,dsl_name,seats_allowed,seats_used')
-      .eq('dashboard_token', token)
+      .rpc('get_dashboard_by_token', {p_token: token})
       .maybeSingle();
 
     if(error || !data){
@@ -263,6 +271,7 @@ async function submitToken(){
     }
 
     currentLicense = data;
+    currentToken = token;
     try{ sessionStorage.setItem('or_dash_token', token); }catch(e){}
     await loadDashboard();
   }catch(e){
@@ -273,7 +282,7 @@ async function submitToken(){
 
 function logout(){
   try{ sessionStorage.removeItem('or_dash_token'); }catch(e){}
-  currentLicense = null; currentStudents = [];
+  currentLicense = null; currentStudents = []; currentToken = null;
   document.getElementById('tokenInput').value = '';
   showScreen('screen-gate');
 }
@@ -288,9 +297,7 @@ async function loadDashboard(isRefresh){
   if(!isRefresh) showScreen('screen-loading');
   try{
     const {data, error} = await getSupabase()
-      .from('student_records')
-      .select('display_name,completed_modules,cert_id,cert_issued_at,updated_at,reflections_pdf_path')
-      .eq('license_code', currentLicense.code);
+      .rpc('get_class_roster_by_token', {p_token: currentToken});
 
     if(error){
       showScreen('screen-gate');
