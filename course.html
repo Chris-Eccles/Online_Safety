@@ -10,7 +10,7 @@
 <style>
 
 
-:root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
+:root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--blue:#3B82F6;--blue-glow:rgba(59,130,246,0.16);--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 button,.module-card,.quiz-opt,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 button,.module-card[role="button"],.quiz-opt{min-height:44px;}
@@ -138,7 +138,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
    ============================================================ */
 .activity-box{border:2px solid var(--border);border-radius:14px;padding:18px;margin:18px 0;background:var(--card-bg);}
 .activity-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.activity-instructions{font-size:13.5px;color:var(--slate-light);margin-bottom:16px;line-height:1.55;}
+.activity-instructions{font-size:14.5px;color:var(--warm-white);font-weight:700;margin-bottom:16px;line-height:1.5;}
 .activity-status{font-size:12.5px;margin-top:12px;min-height:18px;font-weight:700;transition:color .2s;}
 .activity-status.ok{color:var(--green);}
 .activity-status.warn{color:var(--amber);}
@@ -146,38 +146,45 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 /* ---- sort activity ---- */
 .sort-bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 @media (max-width:480px){.sort-bins{grid-template-columns:1fr;}}
-.sort-bin{border:2px dashed var(--border);border-radius:11px;padding:10px;min-height:64px;transition:border-color .2s,background .2s;}
-.sort-bin.drag-over{border-color:var(--teal);background:var(--teal-glow);}
+.sort-bin{border:2px dashed var(--border);border-radius:11px;padding:10px;min-height:64px;transition:border-color .2s,background .2s,box-shadow .2s;box-shadow:0 0 10px rgba(0,201,177,.1);}
+.sort-bin.drag-over{border-color:var(--teal);background:var(--teal-glow);box-shadow:0 0 16px rgba(0,201,177,.3);}
 .sort-bin-label{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:var(--warm-white);margin-bottom:8px;text-align:center;}
 .sort-bin-drop{display:flex;flex-direction:column;gap:6px;min-height:24px;}
 .sort-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.sort-chip{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s;}
+.sort-chip{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
 .sort-chip:active{cursor:grabbing;}
-.sort-chip.placed-correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;}
+.sort-chip.placed-correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
 .sort-chip.placed-correct::before{content:'✓ ';color:var(--green);font-weight:800;}
-.sort-chip.dragging{opacity:.3;}
+.sort-chip.dragging{opacity:.3;box-shadow:none;}
 .sort-chip.shake{animation:sortShake .4s;}
 .sort-ghost{position:fixed;pointer-events:none;z-index:999;opacity:.92;transform:scale(1.04) rotate(-2deg);box-shadow:0 10px 24px rgba(0,0,0,.35);}
 @keyframes sortShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 
 /* ---- fill-in-the-blank activity ---- */
 .fill-sentence{font-family:var(--font-head);font-size:15.5px;line-height:2.1;color:var(--warm-white);margin-bottom:18px;}
-.fill-blank{display:inline-flex;align-items:center;justify-content:center;min-width:74px;height:30px;padding:0 10px;margin:0 3px;border-radius:8px;border:2px dashed var(--teal);background:var(--navy-mid);font-family:var(--font-ui);font-weight:700;font-size:13.5px;color:var(--slate-light);cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s;}
-.fill-blank.filled{border-style:solid;color:var(--warm-white);}
-.fill-blank.correct{border-color:var(--green);background:rgba(16,185,129,.14);color:var(--green);cursor:default;}
+.fill-blank{display:inline-flex;align-items:center;justify-content:center;min-width:74px;height:30px;padding:0 10px;margin:0 3px;border-radius:8px;border:2px dashed var(--teal);background:var(--navy-mid);font-family:var(--font-ui);font-weight:700;font-size:13.5px;color:var(--slate-light);cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.14);}
+.fill-blank.filled{border-style:solid;border-color:var(--blue);background:rgba(59,130,246,.14);color:var(--warm-white);box-shadow:0 0 10px var(--blue-glow);}
+.fill-blank.wrong-position{border-style:solid;border-color:var(--amber);background:rgba(245,158,11,.16);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.35);cursor:pointer;animation:amberPulse 1.6s ease-in-out infinite;}
+.fill-blank.correct{border-color:var(--green);background:rgba(16,185,129,.14);color:var(--green);cursor:default;box-shadow:none;}
 .fill-blank.incorrect{border-color:var(--red);background:rgba(239,68,68,.14);color:var(--red);animation:sortShake .4s;}
+@keyframes amberPulse{0%,100%{box-shadow:0 0 10px rgba(245,158,11,.3);}50%{box-shadow:0 0 16px rgba(245,158,11,.55);}}
 .fill-wordbank{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.fill-word{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:8px 14px;font-size:13.5px;font-weight:700;cursor:pointer;transition:opacity .15s,border-color .15s;}
+.fill-word{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:8px 14px;font-size:13.5px;font-weight:700;cursor:pointer;transition:opacity .15s,border-color .15s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
 .fill-word:hover{border-color:var(--teal);}
-.fill-word.used{opacity:.25;pointer-events:none;}
+.fill-word.armed{border-color:var(--teal);background:var(--teal-glow);box-shadow:0 0 0 3px rgba(0,201,177,.3);}
+.fill-word.wrong{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.12);box-shadow:0 0 10px rgba(239,68,68,.3);}
+.fill-word.used{opacity:.25;pointer-events:none;box-shadow:none;}
+.fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
+.fill-submit-btn:not(:disabled):hover{background:var(--teal-dark);}
+.fill-submit-btn:disabled{background:var(--navy-mid);color:var(--slate-light);cursor:not-allowed;opacity:.65;}
 
 /* ---- spot-the-mistake activity ---- */
 .spot-list{display:flex;flex-direction:column;gap:9px;}
-.spot-card{display:flex;align-items:flex-start;gap:10px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:var(--warm-white);cursor:pointer;width:100%;font-family:var(--font-ui);transition:border-color .15s,background .15s;}
+.spot-card{display:flex;align-items:flex-start;gap:10px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:var(--warm-white);cursor:pointer;width:100%;font-family:var(--font-ui);transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
 .spot-card:hover{border-color:var(--teal);}
 .spot-card:disabled{cursor:default;}
-.spot-card.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.1);opacity:.6;}
-.spot-card.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);}
+.spot-card.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.1);opacity:.6;box-shadow:none;}
+.spot-card.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
 .spot-marker{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:2px solid var(--slate);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px;}
 .spot-card.wrong-pick .spot-marker{border-color:var(--red);color:var(--red);}
 .spot-card.correct-pick .spot-marker{border-color:var(--green);color:var(--green);background:var(--green);color:var(--navy);}
@@ -189,14 +196,14 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .match-col{display:flex;flex-direction:column;gap:8px;}
 .match-col-head{font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--teal);margin-bottom:2px;padding-left:2px;}
 .match-col-head-def{color:var(--amber);}
-.match-item{display:flex;align-items:flex-start;gap:9px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.4;color:var(--warm-white);cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s,transform .1s;}
+.match-item{display:flex;align-items:flex-start;gap:9px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.4;color:var(--warm-white);cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
 .match-badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(0,201,177,.18);color:var(--teal);font-family:var(--font-head);font-weight:800;font-size:11px;margin-top:1px;}
 .match-badge-num{background:rgba(245,158,11,.18);color:var(--amber);border-radius:50%;}
 .match-term{border-left:3px solid var(--teal);}
 .match-def{border-left:3px solid var(--amber);}
 .match-item:hover:not(:disabled){border-color:var(--teal);}
 .match-item.selected{border-color:var(--teal);background:var(--teal-glow);}
-.match-item.matched{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;opacity:.85;}
+.match-item.matched{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;opacity:.85;box-shadow:none;}
 .match-item.matched .match-badge{background:var(--green);color:var(--navy);}
 .match-item.matched::after{content:'✓';margin-left:auto;color:var(--green);font-weight:800;flex-shrink:0;}
 .match-item.mismatch{border-color:var(--red);background:rgba(239,68,68,.12);animation:sortShake .4s;}
@@ -205,25 +212,25 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 /* ---- order (sequence) activity ---- */
 .order-sequence{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;transition:transform .1s;}
 .order-sequence.shake{animation:sortShake .4s;}
-.order-slot{display:flex;align-items:center;gap:10px;min-height:44px;border:2px dashed var(--border);border-radius:10px;padding:9px 13px;font-size:13.5px;color:var(--slate-light);}
-.order-slot.filled{border-style:solid;border-color:var(--teal);background:var(--navy-mid);color:var(--warm-white);cursor:pointer;}
-.order-slot.filled.correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;}
+.order-slot{display:flex;align-items:center;gap:10px;min-height:44px;border:2px dashed var(--border);border-radius:10px;padding:9px 13px;font-size:13.5px;color:var(--slate-light);box-shadow:0 0 8px rgba(0,201,177,.1);transition:box-shadow .15s,border-color .15s,background .15s;}
+.order-slot.filled{border-style:solid;border-color:var(--teal);background:var(--navy-mid);color:var(--warm-white);cursor:pointer;box-shadow:0 0 10px rgba(0,201,177,.2);}
+.order-slot.filled.correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
 .order-slot-num{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,201,177,.18);color:var(--teal);font-family:var(--font-head);font-weight:800;font-size:11.5px;}
 .order-slot.filled.correct .order-slot-num{background:var(--green);color:var(--navy);}
 .order-slot-empty{font-style:italic;opacity:.7;}
 .order-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.order-chip{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s;}
+.order-chip{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
 .order-chip:hover{border-color:var(--teal);}
-.order-chip.used{opacity:.25;pointer-events:none;}
+.order-chip.used{opacity:.25;pointer-events:none;box-shadow:none;}
 
 /* ---- true/false activity ---- */
 .tf-statement{font-family:var(--font-head);font-size:15px;font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--warm-white);}
 .tf-buttons{display:flex;gap:10px;margin-bottom:6px;}
-.tf-btn{flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--border);background:var(--navy-mid);color:var(--warm-white);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s;}
+.tf-btn{flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--border);background:var(--navy-mid);color:var(--warm-white);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.14);}
 .tf-btn:hover:not(:disabled){border-color:var(--teal);}
-.tf-btn.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);}
-.tf-btn.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.14);animation:sortShake .4s;}
-.tf-btn:disabled{cursor:default;}
+.tf-btn.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
+.tf-btn.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.14);animation:sortShake .4s;box-shadow:none;}
+.tf-btn:disabled{cursor:default;box-shadow:none;}
 .tf-explanation{margin-top:12px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
 
 /* ---- required reveal cards (flip to read, no scoring) ---- */
@@ -1890,79 +1897,139 @@ function restoreSortComplete(slide,container){
   });
 }
 
-/* ---------------- FILL IN THE BLANK ---------------- */
+/* ---------------- FILL IN THE BLANK ----------------
+ * Tap a word in the bank to "arm" it (it glows teal), then tap the gap you
+ * want it in - any gap, in any order, not just left-to-right. Nothing is
+ * marked right or wrong as you go, so placing a correct word in the wrong
+ * gap never soft-locks you - it just sits there, tap it again (or tap a
+ * different word) to move it, same as any other gap, until you hit "Check
+ * my answers". Only then do gaps turn green (correct word, correct gap -
+ * locked in), amber (the right word, just the wrong gap - still movable),
+ * or send the word back to the bank in red (not one of this sentence's
+ * answers - the bank keeps a red tint on it so it's obvious it's already
+ * been tried and didn't fit anywhere). */
 function buildFillHtml(slide){
   let sentence=slide.sentence;
   slide.blanks.forEach(b=>{
     sentence=sentence.replace('{{'+b.id+'}}','<span class="fill-blank" data-blank="'+b.id+'" data-answer="'+b.answer+'">?</span>');
   });
   const bankHtml=slide.wordbank.map(w=>'<div class="fill-word" data-word="'+w+'">'+w+'</div>').join('');
-  return '<div class="fill-sentence">'+sentence+'</div><div class="fill-wordbank">'+bankHtml+'</div>';
+  return '<div class="fill-sentence">'+sentence+'</div><div class="fill-wordbank">'+bankHtml+'</div><button type="button" class="fill-submit-btn" disabled>Check my answers</button>';
 }
 
 function initFillActivity(slide,container,complete){
   const blanks=[...container.querySelectorAll('.fill-blank')];
   const words=[...container.querySelectorAll('.fill-word')];
+  const submitBtn=container.querySelector('.fill-submit-btn');
+  const status=container.querySelector('.activity-status');
+  const correctWords=slide.blanks.map(b=>b.answer.toLowerCase());
+  let armedWord=null;
 
-  function checkAllFilled(){
-    const filled=blanks.filter(b=>b.classList.contains('filled')&&!b.classList.contains('correct'));
-    if(filled.length===0)return;
-    let anyWrong=false;
-    filled.forEach(b=>{
-      const isRight=b.textContent.trim().toLowerCase()===b.dataset.answer.toLowerCase();
-      if(isRight){
-        b.classList.add('correct');
-      } else {
-        anyWrong=true;
-        b.classList.add('incorrect');
-        setTimeout(()=>{
-          const returnedWord=b.textContent.trim();
-          b.textContent='?';
-          b.classList.remove('filled','incorrect');
-          const bankChip=container.querySelector('.fill-word[data-word="'+returnedWord+'"]');
-          if(bankChip)bankChip.classList.remove('used');
-        },700);
-      }
-    });
-    const allBlanksCorrect=blanks.every(b=>b.classList.contains('correct'));
-    if(allBlanksCorrect) complete({});
-    else if(anyWrong){
-      const status=container.querySelector('.activity-status');
-      if(status){status.textContent='Not quite - the red one will reset, try again.';status.className='activity-status warn';}
-    }
+  function setStatus(text,cls){
+    if(!status)return;
+    status.textContent=text||'';
+    status.className='activity-status'+(cls?' '+cls:'');
+  }
+
+  function updateSubmitState(){
+    const ready=blanks.every(b=>b.classList.contains('filled')||b.classList.contains('correct')||b.classList.contains('wrong-position'));
+    submitBtn.disabled=!ready;
+  }
+
+  function armWord(word){
+    if(armedWord)armedWord.classList.remove('armed');
+    if(armedWord===word){armedWord=null;return;}
+    armedWord=word;
+    word.classList.add('armed');
+  }
+
+  function returnWordToBank(text,markWrong){
+    const chip=words.find(w=>w.dataset.word===text);
+    if(!chip)return;
+    chip.classList.remove('used');
+    chip.classList.toggle('wrong',!!markWrong);
+  }
+
+  function placeWordInBlank(word,blank){
+    const existing=blank.textContent.trim();
+    if(existing&&existing!=='?')returnWordToBank(existing,false);
+    blank.textContent=word.dataset.word;
+    blank.classList.remove('correct','wrong-position');
+    blank.classList.add('filled');
+    word.classList.add('used');
+    word.classList.remove('wrong','armed');
+    armedWord=null;
+    setStatus('');
+    updateSubmitState();
+  }
+
+  function clearBlank(blank){
+    const text=blank.textContent.trim();
+    if(text&&text!=='?')returnWordToBank(text,false);
+    blank.textContent='?';
+    blank.classList.remove('filled','wrong-position');
+    updateSubmitState();
   }
 
   words.forEach(word=>{
     word.addEventListener('click',()=>{
       if(word.classList.contains('used'))return;
-      const emptyBlank=blanks.find(b=>!b.classList.contains('filled'));
-      if(!emptyBlank)return;
-      emptyBlank.textContent=word.dataset.word;
-      emptyBlank.classList.add('filled');
-      word.classList.add('used');
-      checkAllFilled();
+      armWord(word);
     });
   });
 
   blanks.forEach(blank=>{
     blank.addEventListener('click',()=>{
       if(blank.classList.contains('correct'))return;
-      if(!blank.classList.contains('filled'))return;
-      const returnedWord=blank.textContent.trim();
-      blank.textContent='?';
-      blank.classList.remove('filled');
-      const bankChip=container.querySelector('.fill-word[data-word="'+returnedWord+'"]');
-      if(bankChip)bankChip.classList.remove('used');
+      if(armedWord){
+        placeWordInBlank(armedWord,blank);
+      } else if(blank.classList.contains('filled')||blank.classList.contains('wrong-position')){
+        clearBlank(blank);
+      }
     });
   });
+
+  submitBtn.addEventListener('click',()=>{
+    if(submitBtn.disabled)return;
+    let allCorrect=true;
+    blanks.forEach(blank=>{
+      if(blank.classList.contains('correct'))return;
+      const word=blank.textContent.trim();
+      const isRightHere=word.toLowerCase()===blank.dataset.answer.toLowerCase();
+      const isRightWord=correctWords.includes(word.toLowerCase());
+      if(isRightHere){
+        blank.classList.remove('filled','wrong-position');
+        blank.classList.add('correct');
+      } else if(isRightWord){
+        allCorrect=false;
+        blank.classList.remove('filled');
+        blank.classList.add('wrong-position');
+      } else {
+        allCorrect=false;
+        returnWordToBank(word,true);
+        blank.textContent='?';
+        blank.classList.remove('filled','wrong-position','correct');
+      }
+    });
+    updateSubmitState();
+    if(allCorrect){
+      complete({});
+    } else {
+      setStatus('Green gaps are locked in. Amber is the right word in the wrong gap - move it. Red words in the bank weren\'t needed - try them somewhere else, or leave them out.','warn');
+    }
+  });
+
+  updateSubmitState();
 }
 
 function restoreFillComplete(slide,container){
   slide.blanks.forEach(b=>{
     const el=container.querySelector('.fill-blank[data-blank="'+b.id+'"]');
-    if(el){el.textContent=b.answer;el.classList.add('filled','correct');}
+    if(el){el.textContent=b.answer;el.classList.remove('wrong-position','filled');el.classList.add('correct');}
   });
-  container.querySelectorAll('.fill-word').forEach(w=>w.classList.add('used'));
+  container.querySelectorAll('.fill-word').forEach(w=>{w.classList.add('used');w.classList.remove('wrong','armed');});
+  const btn=container.querySelector('.fill-submit-btn');
+  if(btn)btn.style.display='none';
 }
 
 /* ---------------- SPOT THE MISTAKE ---------------- */
