@@ -7,6 +7,7 @@
 <meta name="description" content="See your students' progress, scores, and certificates at a glance.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 :root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -155,8 +156,10 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <div class="toolbar">
       <input type="text" id="searchInput" class="search-input" placeholder="Search by name..." oninput="renderTable()">
       <button class="btn-secondary" onclick="exportCsv()">⬇ Export CSV</button>
+      <button class="btn-secondary" id="exportAllBtn" onclick="exportAllReflections()">⬇ Export all reflections (.zip)</button>
       <button class="btn-secondary" onclick="loadDashboard(true)">↻ Refresh</button>
     </div>
+    <p style="font-size:12.5px;color:var(--slate-light);margin:-8px 0 16px;">Download every certified student's written reflections in one file - worth doing before the yearly data reset each September, since this is your only copy afterwards.</p>
 
     <div class="table-wrap">
       <table>
@@ -397,6 +400,17 @@ function renderTable(){
   }).join('');
 }
 
+/** Asks the get-reflection-url Edge Function to sign one reflections PDF path -
+ * it checks server-side that this dashboard's token actually owns that class
+ * before signing anything, rather than the browser signing it directly. */
+async function requestSignedReflectionUrl(path){
+  const {data, error} = await getSupabase().functions.invoke('get-reflection-url', {
+    body: {token: currentToken, path: path}
+  });
+  if(error || !data || !data.signedUrl) return null;
+  return data.signedUrl;
+}
+
 /** Generates a short-lived signed URL for a student's reflections PDF and opens it.
  * Nothing here is a permanent public link - the URL expires in 60 seconds, generated
  * fresh only at the moment a teacher actually clicks to view it. */
@@ -409,13 +423,13 @@ async function viewReflections(path, btn){
       btn.textContent = origText; btn.disabled = false;
       return;
     }
-    const {data, error} = await getSupabase().storage.from('reflection-pdfs').createSignedUrl(path, 60);
-    if(error || !data){
+    const signedUrl = await requestSignedReflectionUrl(path);
+    if(!signedUrl){
       alert('Could not open this PDF right now - please try again.');
       btn.textContent = origText; btn.disabled = false;
       return;
     }
-    window.open(data.signedUrl, '_blank');
+    window.open(signedUrl, '_blank');
   }catch(e){
     alert('Connection error - please check you\'re online and try again.');
   }
@@ -453,6 +467,55 @@ function exportCsv(){
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/** Downloads every certified student's reflections PDF as a single zip. Each
+ * signed URL is requested one at a time through get-reflection-url (never a
+ * direct storage call), same authorization check as the single "View" button. */
+async function exportAllReflections(){
+  const btn = document.getElementById('exportAllBtn');
+  const origText = btn.textContent;
+
+  if(currentLicense && currentLicense.code === DEMO_LICENSE.code){
+    alert('This is demo data - there are no real PDFs to bundle. Once Supabase is connected, this button downloads every certified student\'s reflections as one zip.');
+    return;
+  }
+
+  const withReflections = currentStudents.filter(s => s.reflections_pdf_path);
+  if(withReflections.length === 0){
+    alert('No students have a certificate with reflections yet - nothing to export.');
+    return;
+  }
+
+  btn.textContent = 'Preparing ' + withReflections.length + ' PDFs...'; btn.disabled = true;
+  try{
+    const zip = new JSZip();
+    let failed = 0;
+    for(const s of withReflections){
+      try{
+        const signedUrl = await requestSignedReflectionUrl(s.reflections_pdf_path);
+        if(!signedUrl){ failed++; continue; }
+        const resp = await fetch(signedUrl);
+        if(!resp.ok){ failed++; continue; }
+        const blob = await resp.blob();
+        const safeName = (s.display_name || 'student').replace(/[\\/:*?"<>|]/g, '_');
+        zip.file(safeName + '.pdf', blob);
+      }catch(e){ failed++; }
+    }
+    const zipBlob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'online-ready-' + (currentLicense.code || 'class') + '-reflections.zip';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    if(failed > 0) alert(failed + ' of ' + withReflections.length + ' PDFs couldn\'t be included - the rest downloaded fine. Try again for the missing ones.');
+  }catch(e){
+    alert('Could not build the export right now - please try again.');
+  }
+  btn.textContent = origText; btn.disabled = false;
 }
 
 // Auto-login: a dashboard link from an email carries ?token= directly, so the

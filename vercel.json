@@ -1,4 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "crons": [
+    { "path": "/api/annual-purge", "schedule": "0 0 1 9 *" }
+  ]
 }
