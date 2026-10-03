@@ -42,15 +42,16 @@ module.exports = async (req, res) => {
     if (codes.length) {
       const { data: licenses } = await supabase
         .from('license_keys')
-        .select('code, seats_allowed, seats_used')
+        .select('code, seats_allowed, seats_used, dsl_team')
         .in('code', codes);
-      (licenses || []).forEach(l => { usageByCode[l.code] = { seats_allowed: l.seats_allowed, seats_used: l.seats_used }; });
+      (licenses || []).forEach(l => { usageByCode[l.code] = { seats_allowed: l.seats_allowed, seats_used: l.seats_used, dsl_team: l.dsl_team }; });
     }
 
     const rows = (orders || []).map(o => ({
       ...o,
       seats_allowed: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_allowed : null,
-      seats_used: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_used : null
+      seats_used: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_used : null,
+      dsl_team: usageByCode[o.license_code] ? (usageByCode[o.license_code].dsl_team || []) : []
     }));
 
     const summary = {

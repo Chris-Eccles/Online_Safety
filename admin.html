@@ -99,6 +99,21 @@
   </div>
 </div>
 
+<div id="dslAdminModal" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:14px;padding:28px;max-width:460px;width:100%;">
+    <h3 style="color:#fff;font-size:18px;margin:0 0 4px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);">🛡 Safeguarding team</h3>
+    <p id="dslAdminSchool" style="color:var(--text-soft,#9AA6B8);font-size:13px;margin:0 0 16px;"></p>
+    <p style="color:var(--text-soft,#9AA6B8);font-size:12.5px;margin:0 0 12px;">Safety net for schools that haven't set their own team yet via their dashboard. Saving here overwrites their team with whatever's below.</p>
+    <div id="dslAdminRows"></div>
+    <button type="button" onclick="addDslAdminRow('','')" style="padding:7px 13px;border-radius:7px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:12.5px;margin-bottom:16px;">+ Add another</button>
+    <div id="dslAdminErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeDslAdminModal()" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">Cancel</button>
+      <button onclick="saveDslAdmin()" id="dslAdminSaveBtn" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--brand,#00C9B1);color:#06241f;font-weight:800;cursor:pointer;font-size:13px;">Save DSL team</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const ADMIN_KEY_STORAGE = 'oready_admin_key';
 let allOrders = [];
@@ -209,11 +224,17 @@ function render(){
   }
 
   let html = '<table><thead><tr>' +
-    '<th>Date</th><th>School / Trust</th><th>Pricing</th><th>Seats req.</th><th>Seats used</th><th>Payment</th><th>PO / Ref</th>' +
+    '<th>Date</th><th>School / Trust</th><th>Pricing</th><th>Seats req.</th><th>Seats used</th><th>Payment</th><th>PO / Ref</th><th>DSL team</th>' +
     '</tr></thead><tbody>';
 
   rows.forEach(o => {
     const paid = !!o.payment_received_at;
+    const dslCount = Array.isArray(o.dsl_team) ? o.dsl_team.length : 0;
+    const dslIdx = allOrders.indexOf(o);
+    const dslCell = o.license_code
+      ? '<button type="button" onclick="openDslAdminModal(' + dslIdx + ')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:transparent;color:' + (dslCount ? 'var(--text-soft,#9AA6B8)' : '#FBBF24') + ';cursor:pointer;font-size:12px;">' +
+          (dslCount ? (dslCount + ' set ✓') : 'Not set — add') + '</button>'
+      : '<span style="color:var(--slate);">—</span>';
     html += '<tr>' +
       '<td class="mono">' + fmtDate(o.created_at) + '</td>' +
       '<td class="school-cell"><strong>' + escapeHtml(o.school_name) + '</strong><div>' + escapeHtml(o.teacher_name) + ' · ' + escapeHtml(o.teacher_email) + '</div></td>' +
@@ -224,11 +245,71 @@ function render(){
           ? '<span class="pill paid">Paid ' + fmtDate(o.payment_received_at) + '</span>'
           : '<span class="pill unpaid">Awaiting payment</span>') + '</td>' +
       '<td class="mono">' + (o.payment_ref ? escapeHtml(o.payment_ref) : (o.po_number ? escapeHtml(o.po_number) : '—')) + '</td>' +
+      '<td>' + dslCell + '</td>' +
       '</tr>';
   });
 
   html += '</tbody></table>';
   document.getElementById('tableWrap').innerHTML = html;
+}
+
+// ---- Admin DSL/safeguarding-team safety net -------------------------------
+// Lets you set a school's DSL team directly from here, for the case where a
+// school (often one in a MAT drawing seats from a shared pool) never got
+// round to setting their own via their dashboard.
+let dslAdminOrder = null;
+
+function openDslAdminModal(orderIdx){
+  const o = allOrders[orderIdx];
+  if(!o || !o.license_code){ alert('This order has no licence code yet (order not provisioned).'); return; }
+  dslAdminOrder = o;
+  document.getElementById('dslAdminSchool').textContent = o.school_name + ' (' + o.license_code + ')';
+  document.getElementById('dslAdminErr').textContent = '';
+  const rowsWrap = document.getElementById('dslAdminRows');
+  rowsWrap.innerHTML = '';
+  const team = Array.isArray(o.dsl_team) && o.dsl_team.length ? o.dsl_team : [{name:'',room:''}];
+  team.forEach(m => addDslAdminRow(m.name || '', m.room || ''));
+  document.getElementById('dslAdminModal').style.display = 'flex';
+}
+function closeDslAdminModal(){
+  document.getElementById('dslAdminModal').style.display = 'none';
+  dslAdminOrder = null;
+}
+function addDslAdminRow(name, room){
+  const rowsWrap = document.getElementById('dslAdminRows');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+  row.innerHTML =
+    '<input type="text" placeholder="Name" value="' + escapeHtml(name || '') + '" class="dsl-admin-name" style="flex:2;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;">' +
+    '<input type="text" placeholder="Room / office" value="' + escapeHtml(room || '') + '" class="dsl-admin-room" style="flex:1;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;">' +
+    '<button type="button" onclick="this.closest(\'div\').remove()" style="padding:9px 12px;border-radius:7px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">✕</button>';
+  rowsWrap.appendChild(row);
+}
+async function saveDslAdmin(){
+  const errEl = document.getElementById('dslAdminErr');
+  if(!dslAdminOrder){ return; }
+  const names = Array.from(document.querySelectorAll('#dslAdminRows .dsl-admin-name'));
+  const rooms = Array.from(document.querySelectorAll('#dslAdminRows .dsl-admin-room'));
+  const dslTeam = names.map((n, i) => ({ name: n.value.trim(), room: rooms[i].value.trim() })).filter(m => m.name);
+  if(!dslTeam.length){ errEl.textContent = 'Add at least one name.'; return; }
+  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  const btn = document.getElementById('dslAdminSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try{
+    const res = await fetch('/api/admin-set-dsl', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'x-admin-key': key},
+      body: JSON.stringify({ licenseCode: dslAdminOrder.license_code, dslTeam })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || ('Server error (' + res.status + ')'));
+    closeDslAdminModal();
+    loadOrders();
+  }catch(err){
+    errEl.textContent = 'Failed: ' + err.message;
+  }finally{
+    btn.disabled = false; btn.textContent = 'Save DSL team';
+  }
 }
 
 // If a key is already remembered for this browser tab/session, skip the gate.

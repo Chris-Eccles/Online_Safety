@@ -611,7 +611,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 </style>
 </head>
 <body>
-<button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress">&#x21BA; Reset</button>
+<button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress" style="display:none;">&#x21BA; Reset</button>
 <!-- WELCOME -->
 <div id="screen-code" class="screen">
   <div class="wlc-center" style="max-width:420px;">
@@ -3260,6 +3260,12 @@ function renderWelcomeDslCard(){
 }
 
 window.addEventListener('DOMContentLoaded', function(){
+  // The dev reset button only ever shows off the real production domain
+  // (preview deployments, localhost) - never to an actual student.
+  if(isDemoBypassAllowed()){
+    const devBtn=document.getElementById('dev-reset');
+    if(devBtn) devBtn.style.display='';
+  }
   if(TRIAL_MODE){ startTrialPreview(); return; }
   renderWelcomeDslCard();
   // Auto-extract ?code= from URL — this always skips the code-entry screen (magic link)

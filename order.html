@@ -160,15 +160,16 @@
     </div>
   </div>
 
-  <!-- SENDING OVERLAY — shown from the moment the request actually goes to the server until it's done -->
-  <div id="sendingOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.88);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;text-align:center;">
-    <div>
-      <div style="width:46px;height:46px;border-radius:50%;border:3.5px solid rgba(255,255,255,0.15);border-top-color:var(--brand);margin:0 auto 20px;animation:sendingSpin 0.8s linear infinite;"></div>
-      <h3 style="font-family:var(--font-display);font-size:19px;color:var(--warm-white,#fff);margin:0 0 8px;">Setting everything up…</h3>
-      <p style="color:var(--text-soft);font-size:14px;max-width:320px;margin:0 auto;">Creating your class code and sending the emails. This usually takes a few seconds — occasionally up to a minute.</p>
+  <!-- THANK YOU OVERLAY — shown the instant the request is sent, and stays up as the final
+       screen on success. Deliberately shows nothing about what's happening behind it (no
+       "setting up", no spinner) - just a clean, immediate thank-you. -->
+  <div id="sendingOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.92);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;text-align:center;">
+    <div style="max-width:380px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(0,201,177,0.12);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px;">✓</div>
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--warm-white,#fff);margin:0 0 10px;">Thank you for your order!</h3>
+      <p style="color:var(--text-soft);font-size:14.5px;margin:0 auto;">You should receive your emails shortly.</p>
     </div>
   </div>
-  <style>@keyframes sendingSpin{to{transform:rotate(360deg);}}</style>
 
 
 <script>
@@ -394,9 +395,11 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
 
   submitBtn.disabled = true;
   var origBtnText = submitBtn.textContent;
-  submitBtn.textContent = 'Setting up your account...';
+  submitBtn.textContent = 'Sending...';
   status.className = 'form-status';
   status.textContent = '';
+  // Show the thank-you screen the instant they submit - the actual work
+  // (creating the class code, sending emails) happens behind it, out of sight.
   var sendingOverlay = document.getElementById('sendingOverlay');
   sendingOverlay.style.display = 'flex';
 
@@ -412,11 +415,8 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
       throw new Error(result.error || 'Server error');
     }
 
-    sendingOverlay.style.display = 'none';
-    status.className = 'form-status show ok';
-    status.textContent = "You're all set! Login details are on their way by email to " +
-      (isMat ? 'you and every teacher you added' : 'you') +
-      ", and an invoice is on its way to your finance contact. Nothing else for you to do.";
+    // Success - leave the thank-you screen up as the final state, no need to
+    // go back to the form at all.
     document.getElementById('orderForm').reset();
     document.getElementById('matNameRow').style.display = 'none';
     document.getElementById('matTeachersSection').style.display = 'none';
@@ -425,6 +425,8 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     // duplicate order.
     submitBtn.textContent = '✓ Request sent';
   }catch(err){
+    // Only hide the thank-you screen if something actually went wrong -
+    // then fall back to the real form + mailto so they can still get through.
     sendingOverlay.style.display = 'none';
     status.className = 'form-status show error';
     status.textContent = "We couldn't set this up automatically just now, so we're opening an email instead - we'll get it sorted by hand.";
