@@ -170,7 +170,10 @@ tr:hover td{background:rgba(255,255,255,.02);}
           <div class="dash-school" id="schoolName">—</div>
         </div>
       </div>
-      <button class="btn-logout" onclick="logout()">Log out</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-secondary" onclick="openDslModal()">🛡 Safeguarding team</button>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
     </div>
   </header>
 
@@ -227,6 +230,21 @@ tr:hover td{background:rgba(255,255,255,.02);}
       </div>
     </div>
   </main>
+</div>
+
+<!-- DSL / SAFEGUARDING TEAM MODAL -->
+<div id="dslModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:9998;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeDslModal()">
+  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:26px;max-width:460px;width:100%;max-height:85vh;overflow-y:auto;">
+    <h3 style="font-family:var(--font-head);font-size:18px;margin:0 0 6px;">Your safeguarding team</h3>
+    <p style="color:var(--slate-light);font-size:13px;margin:0 0 16px;">Shown to your own students on the course welcome screen and in Module 1 - just this school's team, independent of any other school in your trust. Photos aren't editable here yet; email us a photo and we'll add it for you.</p>
+    <div id="dslRows"></div>
+    <button type="button" class="btn-secondary" style="margin:10px 0 18px;" onclick="addDslRow()">+ Add a safeguarding lead</button>
+    <div id="dslSaveErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeDslModal()" class="btn-secondary" style="flex:1;">Cancel</button>
+      <button onclick="saveDslTeam()" id="dslSaveBtn" class="btn-primary" style="flex:1;">Save</button>
+    </div>
+  </div>
 </div>
 
 <!-- CERTIFICATE MODAL -->
@@ -477,6 +495,65 @@ function openCertificate(studentIndex){
 }
 function closeCertModal(){
   document.getElementById('certModalOverlay').classList.remove('show');
+}
+
+/** Safeguarding team editor - each school's own dashboard (own dashboard_token)
+ * can set its own team, independently of every other school, including other
+ * schools in the same trust. Name + room only for now; photos still go via email. */
+function openDslModal(){
+  const rows = document.getElementById('dslRows');
+  rows.innerHTML = '';
+  const team = (currentLicense && Array.isArray(currentLicense.dsl_team) && currentLicense.dsl_team.length)
+    ? currentLicense.dsl_team
+    : [{name:'', room:''}];
+  team.forEach(member => addDslRow(member.name, member.room));
+  document.getElementById('dslSaveErr').textContent = '';
+  document.getElementById('dslModalOverlay').style.display = 'flex';
+}
+function closeDslModal(){
+  document.getElementById('dslModalOverlay').style.display = 'none';
+}
+function addDslRow(name, room){
+  const rows = document.getElementById('dslRows');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+  row.innerHTML =
+    '<input type="text" placeholder="Name (e.g. Mrs J. Example)" class="dsl-name-input" value="' + escapeHtml(name||'') + '" style="flex:2;background:var(--navy,#0A0F1E);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:9px 11px;font-size:13.5px;">' +
+    '<input type="text" placeholder="Room (optional)" class="dsl-room-input" value="' + escapeHtml(room||'') + '" style="flex:1;background:var(--navy,#0A0F1E);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:9px 11px;font-size:13.5px;">' +
+    '<button type="button" onclick="this.parentElement.remove()" style="background:transparent;border:none;color:var(--slate-light);cursor:pointer;font-size:16px;padding:4px;" title="Remove">✕</button>';
+  rows.appendChild(row);
+}
+async function saveDslTeam(){
+  const rows = [...document.getElementById('dslRows').children];
+  const existing = (currentLicense && Array.isArray(currentLicense.dsl_team)) ? currentLicense.dsl_team : [];
+  const team = rows.map(r => {
+    const name = r.querySelector('.dsl-name-input').value.trim();
+    // This editor doesn't touch photos - carry over whatever photo this person
+    // already had (matched by name) rather than wiping it out on every save.
+    const matched = existing.find(m => (m.name||'').trim().toLowerCase() === name.toLowerCase());
+    return { name, room: r.querySelector('.dsl-room-input').value.trim(), photoUrl: matched ? (matched.photoUrl||null) : null };
+  }).filter(m => m.name);
+
+  const errEl = document.getElementById('dslSaveErr');
+  const btn = document.getElementById('dslSaveBtn');
+  if(currentLicense && currentLicense.code === DEMO_LICENSE.code){
+    currentLicense.dsl_team = team;
+    closeDslModal();
+    alert('This is demo data - nothing was really saved. Once Supabase is connected, this saves for real.');
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try{
+    const { data, error } = await getSupabase().rpc('update_dsl_team_by_token', {p_token: currentToken, p_dsl_team: team});
+    if(error || !data) throw new Error(error ? error.message : 'Could not save - please try again.');
+    // Keep any existing photoUrls that were already set server-side (this editor doesn't touch photos).
+    currentLicense.dsl_team = team;
+    closeDslModal();
+  }catch(err){
+    errEl.textContent = err.message;
+  }finally{
+    btn.disabled = false; btn.textContent = 'Save';
+  }
 }
 
 function renderTable(){

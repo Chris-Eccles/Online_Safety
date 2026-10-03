@@ -1,0 +1,87 @@
+/**
+ * POST /api/admin-wipe-data
+ * ============================================================================
+ * Deletes EVERY row of real data - orders, license_keys, student_records,
+ * trusts, payment_events - and empties the dsl-photos/reflection-pdfs storage
+ * buckets. Built for one specific moment: wiping out test/demo orders you
+ * placed yourself before the site goes properly live, so you start with a
+ * clean database. This is NOT the same thing as the yearly annual-purge -
+ * there's no archiving, no "keep unpaid orders", nothing survives.
+ *
+ * Protected the same way as /api/admin-orders - the "x-admin-key" header must
+ * match ADMIN_SECRET. On top of that, the request body must also include
+ * {"confirm":"DELETE EVERYTHING"} exactly, so this can never fire by
+ * accident from a stray click or a replayed request.
+ * ============================================================================
+ */
+const { createClient } = require('@supabase/supabase-js');
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const CONFIRM_PHRASE = 'DELETE EVERYTHING';
+
+async function emptyBucket(bucket) {
+  const { data: files, error } = await supabase.storage.from(bucket).list('', { limit: 1000 });
+  if (error || !files || files.length === 0) return 0;
+  let deleted = 0;
+  for (const f of files) {
+    if (f.id === null && f.name) {
+      // This entry is itself a folder - list and remove what's inside it too
+      // (reflection-pdfs is one folder per class code).
+      const { data: inner } = await supabase.storage.from(bucket).list(f.name, { limit: 1000 });
+      if (inner && inner.length) {
+        const paths = inner.map(x => f.name + '/' + x.name);
+        const { error: rmErr } = await supabase.storage.from(bucket).remove(paths);
+        if (!rmErr) deleted += paths.length;
+        continue;
+      }
+    }
+    const { error: rmErr } = await supabase.storage.from(bucket).remove([f.name]);
+    if (!rmErr) deleted += 1;
+  }
+  return deleted;
+}
+
+module.exports = async (req, res) => {
+  const key = req.headers['x-admin-key'];
+  if (!process.env.ADMIN_SECRET || key !== process.env.ADMIN_SECRET) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+
+  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+  if (body.confirm !== CONFIRM_PHRASE) {
+    res.status(400).json({ error: 'Missing or incorrect confirmation phrase.' });
+    return;
+  }
+
+  const result = {};
+  try {
+    const { error: srErr, count: srCount } = await supabase.from('student_records').delete({ count: 'exact' }).not('id', 'is', null);
+    if (srErr) throw new Error('student_records: ' + srErr.message);
+    result.studentRecordsDeleted = srCount || 0;
+
+    const { error: lkErr, count: lkCount } = await supabase.from('license_keys').delete({ count: 'exact' }).not('code', 'is', null);
+    if (lkErr) throw new Error('license_keys: ' + lkErr.message);
+    result.licenseKeysDeleted = lkCount || 0;
+
+    const { error: trErr, count: trCount } = await supabase.from('trusts').delete({ count: 'exact' }).not('id', 'is', null);
+    if (trErr) throw new Error('trusts: ' + trErr.message);
+    result.trustsDeleted = trCount || 0;
+
+    const { error: peErr, count: peCount } = await supabase.from('payment_events').delete({ count: 'exact' }).not('id', 'is', null);
+    if (peErr) throw new Error('payment_events: ' + peErr.message);
+    result.paymentEventsDeleted = peCount || 0;
+
+    const { error: ordErr, count: ordCount } = await supabase.from('orders').delete({ count: 'exact' }).not('id', 'is', null);
+    if (ordErr) throw new Error('orders: ' + ordErr.message);
+    result.ordersDeleted = ordCount || 0;
+
+    result.dslPhotosDeleted = await emptyBucket('dsl-photos');
+    result.reflectionPdfsDeleted = await emptyBucket('reflection-pdfs');
+
+    res.status(200).json({ ok: true, result });
+  } catch (err) {
+    console.error('admin-wipe-data failed:', err);
+    res.status(500).json({ error: err.message || String(err), partial: result });
+  }
+};

@@ -78,6 +78,25 @@
 
   <div id="tableWrap"></div>
   <div class="refresh-note">Data refreshes whenever you click Refresh — it's a live read of Supabase, not cached.</div>
+
+  <div style="margin-top:48px;padding:18px 20px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.06);border-radius:12px;">
+    <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#F87171;font-weight:800;margin-bottom:6px;">Danger zone</div>
+    <p style="font-size:13px;color:var(--text-soft,#9AA6B8);margin:0 0 12px;max-width:620px;">Permanently deletes every order, licence/class code, student record and payment event in Supabase, and empties the DSL photo/reflections storage buckets. Use this once, to clear out test data before the site goes properly live — there's no undo.</p>
+    <button onclick="openWipeModal()" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.12);color:#F87171;cursor:pointer;font-size:13px;font-weight:700;">🗑 Clear all Supabase data…</button>
+  </div>
+</div>
+
+<div id="wipeModal" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg-2,#121a2e);border:1px solid rgba(239,68,68,.4);border-radius:14px;padding:28px;max-width:420px;width:100%;">
+    <h3 style="color:#F87171;font-size:18px;margin:0 0 10px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);">⚠ This can't be undone</h3>
+    <p style="color:var(--text-soft,#9AA6B8);font-size:13.5px;margin:0 0 14px;">This deletes every order, class code, student record and payment event, and empties storage. Type <strong style="color:#fff;">DELETE EVERYTHING</strong> below to confirm.</p>
+    <input type="text" id="wipeConfirmInput" placeholder="DELETE EVERYTHING" style="width:100%;box-sizing:border-box;padding:10px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:14px;">
+    <div id="wipeErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeWipeModal()" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">Cancel</button>
+      <button onclick="confirmWipe()" id="wipeConfirmBtn" style="flex:1;padding:10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:800;cursor:pointer;font-size:13px;">Delete everything</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -115,6 +134,44 @@ async function tryLoad(){
 }
 
 async function loadOrders(){ await tryLoad(); }
+
+function openWipeModal(){
+  document.getElementById('wipeConfirmInput').value = '';
+  document.getElementById('wipeErr').textContent = '';
+  document.getElementById('wipeModal').style.display = 'flex';
+}
+function closeWipeModal(){
+  document.getElementById('wipeModal').style.display = 'none';
+}
+async function confirmWipe(){
+  const phrase = document.getElementById('wipeConfirmInput').value.trim();
+  const errEl = document.getElementById('wipeErr');
+  if(phrase !== 'DELETE EVERYTHING'){
+    errEl.textContent = 'Type it exactly: DELETE EVERYTHING';
+    return;
+  }
+  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  const btn = document.getElementById('wipeConfirmBtn');
+  btn.disabled = true; btn.textContent = 'Deleting…';
+  try{
+    const res = await fetch('/api/admin-wipe-data', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'x-admin-key': key},
+      body: JSON.stringify({confirm: phrase})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || ('Server error (' + res.status + ')'));
+    closeWipeModal();
+    alert('Done. Deleted: ' + data.result.ordersDeleted + ' orders, ' + data.result.licenseKeysDeleted + ' licences, ' +
+      data.result.studentRecordsDeleted + ' student records, ' + data.result.trustsDeleted + ' trusts, ' +
+      data.result.paymentEventsDeleted + ' payment events. Storage emptied too.');
+    loadOrders();
+  }catch(err){
+    errEl.textContent = 'Failed: ' + err.message;
+  }finally{
+    btn.disabled = false; btn.textContent = 'Delete everything';
+  }
+}
 
 function renderSummary(s){
   if(!s) return;
