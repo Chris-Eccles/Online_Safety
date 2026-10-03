@@ -28,7 +28,7 @@
   /* Fixed, deliberately NEVER re-declared by any theme below: buttons/badges
      with a bright accent background (teal/green) always use dark text for
      contrast, in every theme, because those accent colours stay bright in
-     every theme too. This used to be done with color:var(--on-accent), which
+     every theme too. This used to be done with color:var(--navy), which
      happened to work by accident in dark mode (--navy was dark) and broke
      in light/cream mode (--navy becomes a near-white page background,
      making the text the same colour as whatever it sits near) - that was
@@ -103,7 +103,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 
 
 
-.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:16px;padding:14px 30px;border-radius:50px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;width:100%;justify-content:center;}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:16px;padding:14px 30px;border-radius:50px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;width:100%;justify-content:center;}
 .btn-primary:hover{background:var(--teal-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,201,177,.3);}
 
 
@@ -259,7 +259,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .fill-word[draggable="true"]:active{cursor:grabbing;}
 .fill-word.dragging{opacity:.3;box-shadow:none;}
 .fill-blank.drag-over{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);box-shadow:0 0 16px rgba(0,201,177,.3);}
-.fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--mod-color,var(--teal));color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
+.fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
 .fill-submit-btn:not(:disabled):hover{background:var(--teal-dark);}
 .fill-submit-btn:disabled{background:var(--navy-mid);color:var(--slate-light);cursor:not-allowed;opacity:.65;}
 
@@ -270,11 +270,9 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .spot-card:disabled{cursor:default;}
 .spot-card.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.1);opacity:.6;box-shadow:none;}
 .spot-card.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
-.spot-card.wrong-pick::after{content:'✗';margin-left:auto;flex-shrink:0;font-weight:800;color:var(--red);}
-.spot-card.correct-pick::after{content:'✓';margin-left:auto;flex-shrink:0;font-weight:800;color:var(--green);}
 .spot-marker{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:2px solid var(--slate);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px;}
 .spot-card.wrong-pick .spot-marker{border-color:var(--red);color:var(--red);}
-.spot-card.correct-pick .spot-marker{border-color:var(--green);background:var(--green);color:var(--on-accent);}
+.spot-card.correct-pick .spot-marker{border-color:var(--green);color:var(--green);background:var(--green);color:var(--navy);}
 .spot-explanation{margin-top:14px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--mod-color,var(--teal));border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
 
 /* ---- match-to-pair activity ---- */
@@ -294,7 +292,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .match-item:hover:not(:disabled){border-color:var(--mod-color,var(--teal));}
 .match-item.selected{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
 .match-item.matched{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;opacity:.85;box-shadow:none;}
-.match-item.matched .match-badge{background:var(--green);color:var(--on-accent);}
+.match-item.matched .match-badge{background:var(--green);color:var(--navy);}
 .match-item.matched::after{content:'✓';margin-left:auto;color:var(--green);font-weight:800;flex-shrink:0;}
 .match-item.mismatch{border-color:var(--red);background:rgba(239,68,68,.12);animation:sortShake .4s;}
 .match-item:disabled{cursor:default;}
@@ -306,10 +304,10 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .order-slot.filled{border-style:solid;border-color:var(--mod-color,var(--teal));background:var(--navy-mid);color:var(--warm-white);cursor:pointer;box-shadow:0 0 10px rgba(0,201,177,.2);}
 .order-slot.filled.correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
 .order-slot-num{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,201,177,.18);color:var(--mod-color,var(--teal));font-family:var(--font-head);font-weight:800;font-size:11.5px;}
-.order-slot.filled.correct .order-slot-num{background:var(--green);color:var(--on-accent);}
+.order-slot.filled.correct .order-slot-num{background:var(--green);color:var(--navy);}
 .order-slot-empty{font-style:italic;opacity:.9;}
 .order-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.order-chip{background:var(--mod-color,var(--teal));color:var(--on-accent);font-weight:700;border:1.5px solid var(--mod-color,var(--teal));border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s,box-shadow .15s,background .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
+.order-chip{background:var(--mod-color,var(--teal));color:var(--navy);font-weight:700;border:1.5px solid var(--mod-color,var(--teal));border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s,box-shadow .15s,background .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
 .order-chip:hover{opacity:.85;}
 .order-chip.used{opacity:.25;pointer-events:none;box-shadow:none;}
 
@@ -320,8 +318,6 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .tf-btn:hover:not(:disabled){border-color:var(--mod-color,var(--teal));}
 .tf-btn.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
 .tf-btn.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.14);animation:sortShake .4s;box-shadow:none;}
-.tf-btn.correct-pick::after{content:' \2713';font-weight:800;color:var(--green);}
-.tf-btn.wrong-pick::after{content:' \2717';font-weight:800;color:var(--red);}
 .tf-btn:disabled{cursor:default;box-shadow:none;}
 .tf-explanation{margin-top:12px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--mod-color,var(--teal));border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
 
@@ -361,28 +357,13 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .quiz-opt:hover:not(.locked){border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
 .quiz-opt.correct{border-color:var(--green);background:rgba(16,185,129,.12);}
 .quiz-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.09);}
-/* Shape, not just colour, marks which answer was right - so this still
-   reads correctly for anyone who can't reliably tell the border tint apart
-   by colour alone, red-green colour-blind or not. */
-.quiz-opt.correct::after{content:'✓';margin-left:auto;flex-shrink:0;font-weight:800;color:var(--green);}
-.quiz-opt.wrong::after{content:'✗';margin-left:auto;flex-shrink:0;font-weight:800;color:var(--red);}
 .quiz-opt.locked{cursor:default;}
 .opt-letter{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px;}
 .quiz-feedback{border-radius:11px;padding:11px 14px;font-size:13px;line-height:1.55;display:none;margin-bottom:11px;font-weight:600;}
 .quiz-feedback.show{display:block;}
-/* These used to be hardcoded hex (#6EE7B7/#FCA5A5), which meant the
-   colour-blind-safe toggle (which swaps --green/--red) had no effect on the
-   single most-seen correct/wrong indicator in the whole course - this is
-   the main reason that toggle looked like it "did nothing". color-mix()
-   blends the theme-aware --green/--red with the current page text colour
-   (--warm-white, which is already correct for every theme), so this reads
-   correctly in dark, light, cream and high-contrast mode, with or without
-   colour-blind mode, with no per-theme special-casing needed. The plain
-   hex fallback above each rule is for the handful of older browsers that
-   don't support color-mix() yet. */
-.quiz-feedback.correct{background:rgba(16,185,129,.12);color:#6EE7B7;background:color-mix(in srgb, var(--green) 16%, transparent);color:color-mix(in srgb, var(--green) 65%, var(--warm-white) 35%);}
-.quiz-feedback.wrong{background:rgba(239,68,68,.09);color:#FCA5A5;background:color-mix(in srgb, var(--red) 14%, transparent);color:color-mix(in srgb, var(--red) 65%, var(--warm-white) 35%);}
-.btn-next-q{background:var(--mod-color,var(--teal));color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;border:none;cursor:pointer;display:none;transition:background .15s;}
+.quiz-feedback.correct{background:rgba(16,185,129,.12);color:#6EE7B7;}
+.quiz-feedback.wrong{background:rgba(239,68,68,.09);color:#FCA5A5;}
+.btn-next-q{background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;border:none;cursor:pointer;display:none;transition:background .15s;}
 .btn-next-q:hover{background:var(--teal-dark);}
 .btn-next-q.show{display:inline-flex;align-items:center;gap:6px;}
 .quiz-result{text-align:center;padding:14px 0;}
@@ -390,7 +371,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .result-circle.pass{background:rgba(16,185,129,.15);border:3px solid var(--green);}
 .result-circle.fail{background:rgba(239,68,68,.09);border:3px solid var(--red);}
 .r-score{font-family:var(--font-head);font-size:26px;font-weight:800;line-height:1;}
-.result-circle.pass .r-score{color:var(--green);}.result-circle.fail .r-score{color:var(--red);}
+.result-circle.pass .r-score{color:var(--green);}.result-circle.fail .r-score{color:#F87171;}
 .r-label{font-size:11px;color:var(--slate-light);}
 .result-title{font-family:var(--font-head);font-size:22px;font-weight:700;margin-bottom:6px;}
 .result-msg{font-size:14px;color:var(--slate-light);line-height:1.6;margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto;}
@@ -398,12 +379,12 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .result-review h4{font-family:var(--font-head);font-size:11px;font-weight:700;margin-bottom:9px;color:var(--slate-light);letter-spacing:1px;text-transform:uppercase;}
 .review-item{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5;}
 .review-item:last-child{border-bottom:none;}
-.btn-retake{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;cursor:pointer;margin-right:9px;transition:background .15s;}
+.btn-retake{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;cursor:pointer;margin-right:9px;transition:background .15s;}
 .btn-retake:hover{background:rgba(239,68,68,.25);}
 .module-nav{padding:11px 18px;display:flex;gap:9px;max-width:760px;margin:0 auto;width:100%;border-top:1px solid var(--border);}
 .btn-secondary{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--warm-white);font-family:var(--font-ui);font-weight:700;font-size:13px;padding:10px 18px;border-radius:50px;cursor:pointer;transition:background .15s;white-space:nowrap;}
 .btn-secondary:hover{background:rgba(255,255,255,.1);}
-.btn-nav-next{flex:1;background:var(--mod-color,var(--teal));color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;transition:background .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-nav-next{flex:1;background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;transition:background .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .btn-nav-next:hover{background:var(--teal-dark);box-shadow:0 5px 18px rgba(0,201,177,.24);}
 .btn-nav-next:disabled{background:rgba(255,255,255,.08);color:var(--slate);cursor:not-allowed;box-shadow:none;}
 #screen-certificate{align-items:center;justify-content:center;padding:32px 18px;background:radial-gradient(ellipse at 50% 0%,rgba(0,201,177,.15) 0%,transparent 60%),var(--navy);text-align:center;}
@@ -447,7 +428,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .cert-date-block .lbl{font-family:var(--font-ui,Georgia);font-size:9px;color:#8A7A52;text-transform:uppercase;letter-spacing:1px;}
 .cert-date-block .val{font-size:13px;font-weight:700;color:#2D3748;}
 .cert-actions{display:flex;gap:11px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
-.btn-print{background:var(--teal);color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:12px 26px;border-radius:50px;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s;}
+.btn-print{background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:12px 26px;border-radius:50px;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s;}
 .btn-print:hover{background:var(--teal-dark);}
 @media print{body>*:not(#screen-certificate){display:none!important;}#screen-certificate{display:flex!important;background:white!important;padding:0!important;}.cert-intro,.cert-actions{display:none!important;}.certificate{box-shadow:none;max-width:100%;}}
 @media(max-width:600px){.two-col{grid-template-columns:1fr;}.stat-row{grid-template-columns:1fr 1fr;}.cert-body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}.module-nav{flex-direction:column;}.modules-grid{grid-template-columns:1fr;}}
@@ -489,7 +470,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 /* ══════════════════════════════
    WELCOME SCREEN  -  CINEMATIC
 ══════════════════════════════ */
-#screen-welcome,#screen-code{flex:1;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;overflow-y:auto;padding:40px 20px;background:var(--navy);box-sizing:border-box;}
+#screen-welcome,#screen-code{flex:1;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;overflow-y:auto;padding:40px 20px;background:#0F1B2D;box-sizing:border-box;}
 .code-entry-input{width:100%;box-sizing:border-box;padding:16px 18px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:14px;color:var(--warm-white);font-family:var(--font-ui);font-size:22px;font-weight:800;text-align:center;letter-spacing:4px;text-transform:uppercase;outline:none;transition:border-color .2s,background .2s;}
 .code-entry-input:focus{border-color:var(--teal);background:rgba(0,201,177,0.06);}
 .code-entry-input::placeholder{color:var(--slate);letter-spacing:2px;font-weight:700;}
@@ -547,7 +528,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .wlc-name-input{flex:1;padding:14px 18px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:14px;color:var(--warm-white);font-family:var(--font-ui);font-size:16px;outline:none;transition:border-color .2s,background .2s;}
 .wlc-name-input:focus{border-color:var(--teal);background:rgba(0,201,177,0.06);}
 .wlc-name-input::placeholder{color:var(--slate);}
-.wlc-btn{display:inline-flex;align-items:center;gap:9px;background:var(--teal);color:var(--on-accent);font-family:var(--font-ui);font-weight:800;font-size:15px;padding:14px 26px;border-radius:14px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;white-space:nowrap;flex-shrink:0;}
+.wlc-btn{display:inline-flex;align-items:center;gap:9px;background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:15px;padding:14px 26px;border-radius:14px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;white-space:nowrap;flex-shrink:0;}
 .wlc-btn:hover{background:var(--teal-dark);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,201,177,0.35);}
 
 /* Pills */
@@ -567,7 +548,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .wlc-code-input{display:none;}
 .wlc-code-input:focus{border-color:var(--teal);background:rgba(0,201,177,0.06);}
 .wlc-code-input::placeholder{color:var(--slate);letter-spacing:0;}
-.wlc-access-error{margin-top:10px;padding:10px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:var(--red);font-size:13px;font-weight:600;line-height:1.5;}
+.wlc-access-error{margin-top:10px;padding:10px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:#FCA5A5;font-size:13px;font-weight:600;line-height:1.5;}
 
 
 /* ── EMAIL GATE ── */
@@ -581,7 +562,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .gate-input{width:100%;padding:14px 18px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:14px;color:var(--warm-white);font-family:var(--font-ui);font-size:16px;outline:none;transition:border-color .2s;}
 .gate-input:focus{border-color:var(--teal);}
 .gate-input::placeholder{color:var(--slate);}
-.gate-error{color:var(--red);font-size:12px;font-weight:600;margin-top:6px;}
+.gate-error{color:#FCA5A5;font-size:12px;font-weight:600;margin-top:6px;}
 .gate-actions{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;}
 .gate-email-btn{width:100%;justify-content:center;font-size:15px;padding:14px 24px;}
 .gate-copy-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--warm-white);font-family:var(--font-ui);font-weight:700;font-size:13px;padding:10px 22px;border-radius:50px;cursor:pointer;transition:background .15s;}
