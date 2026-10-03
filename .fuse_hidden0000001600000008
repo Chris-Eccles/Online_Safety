@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security — Online Ready</title>
+<title>Privacy policy — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="How Online Ready protects student data: encryption, hosting, and access control, explained plainly.">
+<meta name="description" content="How Online Ready collects, stores, and protects student and teacher data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -30,8 +30,6 @@
       <a href="/#how">How it works</a>
       <a href="/#compliance">Compliance</a>
       <a href="/#pricing">Pricing</a>
-    <a href="/curriculum">Curriculum</a>
-    <a href="/gdpr">GDPR</a>
     </nav>
     <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu"><span class="nav-toggle-bar" aria-hidden="true"></span></button>
     <a class="btn btn-primary nav-cta" href="/order">Request seats</a>
@@ -41,29 +39,54 @@
 <main>
 
   <section class="page-hero wrap">
-    <p class="eyebrow">Security</p>
-    <h1 class="section-title">How student data is actually protected.</h1>
-    <p class="section-sub">Plainly, not just in a compliance checkbox.</p>
+    <p class="eyebrow">Privacy policy</p>
+    <h1 class="section-title">Privacy policy</h1>
   </section>
 
   <section class="wrap prose">
-    <h2>Where data lives</h2>
-    <p>Course progress is stored locally on the student's own device by default. If a student sets a personal PIN to continue on a different device, their progress and reflections sync to our database, hosted in the UK.</p>
+    <div class="draft-banner">
+      <span class="draft-banner-icon">⚠️</span>
+      <div><strong>Draft — pending legal review.</strong> This describes what the product does today, in plain language, but has not yet been reviewed by a solicitor or checked against the ICO's Age Appropriate Design Code. Do not treat this as final or legally binding until that review is complete.</div>
+    </div>
+    <p class="meta-updated">Draft — not yet published</p>
 
-    <h2>Reflections are encrypted before they ever leave the device</h2>
-    <p>Written reflection answers are encrypted in the student's browser — using a key derived from their own PIN via PBKDF2, then AES-256-GCM — before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
+    <h2>Who we are</h2>
+    <p>Online Ready is a product built by Abity. If you have any questions about this policy or your data, contact <a href="mailto:hello@abity.co.uk">hello@abity.co.uk</a>.</p>
 
-    <h2>PINs aren't stored</h2>
-    <p>A student's PIN is never saved anywhere. Only a one-way hash of it is stored, purely to check a returning student is who they say they are. The PIN itself only ever exists, briefly, in the student's own browser.</p>
+    <h2>What we collect, and why</h2>
+    <h3>From students</h3>
+    <ul>
+      <li><strong>Name</strong> — so a certificate can be issued in their name.</li>
+      <li><strong>Quiz answers and scores</strong> — to confirm they've completed each module.</li>
+      <li><strong>Written reflections</strong> — only if they choose to set a PIN to continue on another device, in which case they're stored encrypted and unreadable without that PIN.</li>
+      <li><strong>A hashed PIN</strong> — never the PIN itself — only if they choose to set one.</li>
+    </ul>
+    <h3>From teachers and schools</h3>
+    <ul>
+      <li><strong>Name, email, school name</strong> — provided when requesting seats.</li>
+      <li><strong>Finance contact email</strong> — used only to send an invoice.</li>
+    </ul>
 
-    <h2>Access control</h2>
-    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes — never another school's data.</p>
+    <h2>Legal basis</h2>
+    <p>We process student data on the basis of the school's own legitimate educational and safeguarding interest in delivering online safety education, acting as a data processor on the school's behalf. We process teacher and finance contact details to perform the contract of supplying the course.</p>
 
-    <h2>No advertising, no tracking sold on</h2>
-    <p>We don't sell, rent, or share student data with advertisers. This site itself doesn't run advertising trackers.</p>
+    <h2>Children's data</h2>
+    <p>This product is used directly by children. We collect the minimum needed to run the course and issue a certificate, reflections are encrypted client-side by default, and nothing is used for advertising or profiling.</p>
 
-    <h2>Found a security issue?</h2>
-    <p>Please tell us directly at <a href="mailto:security@abity.co.uk">security@abity.co.uk</a> before disclosing it anywhere else, so we can fix it first. We won't take action against anyone reporting a genuine issue in good faith.</p>
+    <h2>How long we keep data</h2>
+    <p><em>[To confirm: a retention period needs setting here — e.g. for the academic year plus a fixed period, then deleted. This needs deciding before publishing.]</em></p>
+
+    <h2>Who else sees it</h2>
+    <p>Data is hosted with Supabase (database) and processed for email delivery via a transactional email provider. We don't sell or share data with advertisers.</p>
+
+    <h2>Your rights</h2>
+    <p>Schools, as the data controller for student data, can ask us to provide, correct, or delete a student's data at any time by contacting <a href="mailto:hello@abity.co.uk">hello@abity.co.uk</a>.</p>
+
+    <h2>Cookies</h2>
+    <p>See our separate <a href="/cookies">cookie policy</a>.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>We'll update the date at the top of this page whenever this policy changes.</p>
   </section>
 
 </main>

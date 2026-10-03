@@ -30,8 +30,6 @@
       <a href="#how">How it works</a>
       <a href="#compliance">Compliance</a>
       <a href="#pricing">Pricing</a>
-    <a href="/curriculum">Curriculum</a>
-    <a href="/gdpr">GDPR</a>
     </nav>
     <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu"><span class="nav-toggle-bar" aria-hidden="true"></span></button>
     <a class="btn btn-primary nav-cta" href="/order">Request seats</a>
