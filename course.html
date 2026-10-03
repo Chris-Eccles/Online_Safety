@@ -87,12 +87,23 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .slide-area{flex:1;padding:26px 18px 14px;max-width:760px;margin:0 auto;width:100%;}
 .slide{display:none;animation:slideIn .3s ease;}.slide.active{display:block;}
 @keyframes slideIn{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
-.slide-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:7px;}
+.slide-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--mod-color,var(--teal));font-weight:700;margin-bottom:7px;}
 .slide h2{font-family:var(--font-head);font-size:clamp(19px,3.5vw,27px);font-weight:700;line-height:1.2;margin-bottom:16px;}
 .slide p{font-size:15px;line-height:1.75;color:rgba(247,249,252,.88);margin-bottom:11px;}
 .slide ul,.slide ol{padding-left:20px;margin:7px 0 12px;}
 .slide li{font-size:14px;line-height:1.7;color:rgba(247,249,252,.85);margin-bottom:5px;}
 .slide strong{color:var(--warm-white);}
+/* On a laptop/desktop screen the content was sitting narrow and small in the
+   middle of the window - widen the reading column and bump text size up a
+   notch there, while leaving phones/tablets exactly as they were. */
+@media(min-width:1000px){
+  .slide-area{max-width:900px;padding-top:34px;}
+  .slide p{font-size:16.5px;line-height:1.8;}
+  .slide li{font-size:15.5px;line-height:1.8;}
+  .slide h2{font-size:30px;}
+  .callout,.scenario-box p,.key-term .term,.match-item,.reveal-card-title,.tf-statement,.reveal-panel,.tf-explanation{font-size:15px;}
+  .tf-statement{font-size:16.5px;}
+}
 .callout{border-left:4px solid var(--teal);background:var(--teal-glow);border-radius:0 11px 11px 0;padding:12px 16px;margin:14px 0;font-size:14px;line-height:1.65;}
 .callout.warning{border-color:var(--amber);background:rgba(245,158,11,.1);}
 .callout.danger{border-color:var(--red);background:rgba(239,68,68,.09);}
@@ -137,7 +148,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
    INTERACTIVE ACTIVITIES — sort / fill-blank / spot-the-mistake
    ============================================================ */
 .activity-box{border:2px solid var(--border);border-radius:14px;padding:18px;margin:18px 0;background:var(--card-bg);}
-.activity-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.activity-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mod-color,var(--teal));font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .activity-instructions{font-size:14.5px;color:var(--warm-white);font-weight:700;margin-bottom:16px;line-height:1.5;}
 .activity-status{font-size:12.5px;margin-top:12px;min-height:18px;font-weight:700;transition:color .2s;}
 .activity-status.ok{color:var(--green);}
@@ -193,16 +204,19 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 /* ---- match-to-pair activity ---- */
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media (max-width:480px){.match-grid{grid-template-columns:1fr;}}
-.match-col{display:flex;flex-direction:column;gap:8px;}
-.match-col-head{font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--teal);margin-bottom:2px;padding-left:2px;}
+.match-col{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.match-col-head{font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:var(--mod-color,var(--teal));margin-bottom:2px;padding-left:2px;}
 .match-col-head-def{color:var(--amber);}
-.match-item{display:flex;align-items:flex-start;gap:9px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.4;color:var(--warm-white);cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
-.match-badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(0,201,177,.18);color:var(--teal);font-family:var(--font-head);font-weight:800;font-size:11px;margin-top:1px;}
+.match-item{display:flex;align-items:center;gap:9px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.4;color:var(--warm-white);cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);min-height:78px;box-sizing:border-box;width:100%;overflow-wrap:break-word;word-break:break-word;}
+.match-item[draggable="true"]{cursor:grab;}
+.match-item[draggable="true"]:active{cursor:grabbing;}
+.match-item.drag-over{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
+.match-badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(0,201,177,.18);color:var(--mod-color,var(--teal));font-family:var(--font-head);font-weight:800;font-size:11px;margin-top:1px;}
 .match-badge-num{background:rgba(245,158,11,.18);color:var(--amber);border-radius:50%;}
-.match-term{border-left:3px solid var(--teal);}
+.match-term{border-left:3px solid var(--mod-color,var(--teal));}
 .match-def{border-left:3px solid var(--amber);}
-.match-item:hover:not(:disabled){border-color:var(--teal);}
-.match-item.selected{border-color:var(--teal);background:var(--teal-glow);}
+.match-item:hover:not(:disabled){border-color:var(--mod-color,var(--teal));}
+.match-item.selected{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
 .match-item.matched{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;opacity:.85;box-shadow:none;}
 .match-item.matched .match-badge{background:var(--green);color:var(--navy);}
 .match-item.matched::after{content:'✓';margin-left:auto;color:var(--green);font-weight:800;flex-shrink:0;}
@@ -227,11 +241,11 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .tf-statement{font-family:var(--font-head);font-size:15px;font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--warm-white);}
 .tf-buttons{display:flex;gap:10px;margin-bottom:6px;}
 .tf-btn{flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--border);background:var(--navy-mid);color:var(--warm-white);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.14);}
-.tf-btn:hover:not(:disabled){border-color:var(--teal);}
+.tf-btn:hover:not(:disabled){border-color:var(--mod-color,var(--teal));}
 .tf-btn.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
 .tf-btn.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.14);animation:sortShake .4s;box-shadow:none;}
 .tf-btn:disabled{cursor:default;box-shadow:none;}
-.tf-explanation{margin-top:12px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
+.tf-explanation{margin-top:12px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--mod-color,var(--teal));border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
 
 /* ---- required reveal cards (flip to read, no scoring) ---- */
 .flip-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;}
@@ -248,15 +262,15 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .flip-card.flipped .flip-card-front{visibility:hidden;}
 
 /* ---- click-to-reveal info cards (not a graded activity - pure reading aid) ---- */
-.reveal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0;}
-.reveal-card{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s;}
-.reveal-card:hover{border-color:var(--teal);}
-.reveal-card.open{border-color:var(--teal);background:var(--teal-glow);}
-.reveal-card-title{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--warm-white);}
-.reveal-card-hint{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:.02em;}
+.reveal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:16px 0;}
+.reveal-card{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,background .15s;min-width:0;box-sizing:border-box;overflow-wrap:break-word;word-break:break-word;}
+.reveal-card:hover{border-color:var(--mod-color,var(--teal));}
+.reveal-card.open{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
+.reveal-card-title{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--warm-white);width:100%;overflow-wrap:break-word;word-break:break-word;}
+.reveal-card-hint{font-size:11px;color:var(--mod-color,var(--teal));font-weight:700;letter-spacing:.02em;}
 .reveal-card.open .reveal-card-hint::before{content:'▲ ';}
 .reveal-card:not(.open) .reveal-card-hint::before{content:'▼ ';}
-.reveal-panel{grid-column:1/-1;background:var(--navy-mid);border-left:4px solid var(--teal);border-radius:0 11px 11px 0;padding:14px 16px;margin:-4px 0 12px 0;font-size:13.5px;line-height:1.65;color:var(--warm-white);}
+.reveal-panel{grid-column:1/-1;background:var(--navy-mid);border-left:4px solid var(--mod-color,var(--teal));border-radius:0 11px 11px 0;padding:14px 16px;margin:-4px 0 12px 0;font-size:13.5px;line-height:1.65;color:var(--warm-white);width:100%;box-sizing:border-box;overflow-wrap:break-word;word-break:break-word;}
 
 .quiz-wrap{max-width:660px;}
 .quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:9px;}
@@ -303,35 +317,42 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .cert-intro{max-width:580px;margin:0 auto 22px;}
 .cert-intro h2{font-family:var(--font-head);font-size:26px;font-weight:700;margin-bottom:7px;}
 .cert-intro p{color:var(--slate-light);font-size:14px;}
-.certificate{background:#fff;color:#1a1a2e;max-width:780px;width:100%;margin:0 auto;border-radius:3px;position:relative;font-family:'Space Grotesk',sans-serif;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.5);}
-.cert-stripe{height:7px;background:linear-gradient(90deg,#00C9B1,#0066CC,#00C9B1);}
-.cert-stripe.bottom{background:linear-gradient(90deg,#0066CC,#00C9B1,#0066CC);}
-.cert-body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
-.cert-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.034;pointer-events:none;}
-.cert-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;}
+.certificate{background:#FBF8F0;color:#1a1a2e;max-width:820px;width:100%;margin:0 auto;border-radius:4px;position:relative;font-family:Georgia,'Times New Roman',serif;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.5);}
+.cert-stripe{height:9px;background:linear-gradient(90deg,#0F1B2D,#00A896,#C9A227,#00A896,#0F1B2D);}
+.cert-stripe.bottom{height:9px;background:linear-gradient(90deg,#0F1B2D,#C9A227,#00A896,#C9A227,#0F1B2D);}
+.cert-body{font-family:Georgia,'Times New Roman',serif;background:#FBF8F0;color:#1a1a2e;overflow-x:hidden;display:flex;flex-direction:column;padding:38px 46px 32px;position:relative;}
+.cert-frame{position:absolute;inset:14px;border:2px solid #C9A227;border-radius:2px;pointer-events:none;}
+.cert-frame::before{content:'';position:absolute;inset:5px;border:1px solid rgba(201,162,39,.55);border-radius:2px;}
+.cert-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.05;pointer-events:none;}
+.cert-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;position:relative;}
 .cert-logo-area{display:flex;align-items:center;gap:11px;}
-.cert-brand-name{font-size:15px;font-weight:700;color:#0F1B2D;line-height:1;}
+.cert-brand-name{font-family:var(--font-ui,Georgia);font-size:14px;font-weight:700;letter-spacing:1px;color:#0F1B2D;line-height:1;}
 .cert-brand-name span{color:#00A896;}
-.cert-brand-sub{font-size:10px;color:#718096;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.cert-brand-sub{font-family:var(--font-ui,Georgia);font-size:9.5px;color:#8A7A52;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
 .cert-id-block{text-align:right;}
-.cert-id-block .lbl{font-size:10px;color:#718096;text-transform:uppercase;letter-spacing:1.5px;}
-.cert-id-block .val{font-size:11px;font-weight:600;color:#4A5568;font-family:monospace;}
-.cert-hr{height:1px;background:#E2E8F0;margin-bottom:24px;}
-.cert-awarded-to{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#718096;margin-bottom:5px;}
-.cert-student-name{font-size:clamp(22px,4vw,36px);font-weight:700;color:#0F1B2D;margin-bottom:6px;line-height:1.1;}
-.cert-for{font-size:12px;color:#718096;margin-bottom:3px;}
-.cert-course-name{font-size:17px;font-weight:700;color:#00A896;margin-bottom:7px;}
-.cert-desc{font-size:11px;color:#718096;line-height:1.6;margin-bottom:10px;max-width:480px;}
-.cert-dfe{font-size:10px;color:#2B6CB0;background:#EBF8FF;border:1px solid #BEE3F8;border-radius:5px;padding:5px 11px;display:inline-block;margin-bottom:16px;font-weight:700;}
-.cert-modules-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:24px;}
-.cert-mod-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#EBF8FF;color:#2B6CB0;border:1px solid #BEE3F8;}
-.cert-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;}
-.cert-sig .sig-line{width:110px;height:1px;background:#CBD5E0;margin-bottom:4px;}
-.cert-sig .sig-name{font-size:12px;font-weight:700;color:#2D3748;}
-.cert-sig .sig-role{font-size:10px;color:#718096;}
+.cert-id-block .lbl{font-family:var(--font-ui,Georgia);font-size:9px;color:#8A7A52;text-transform:uppercase;letter-spacing:1.5px;}
+.cert-id-block .val{font-family:var(--font-ui,monospace);font-size:11px;font-weight:600;color:#4A5568;}
+.cert-hr{height:1px;background:linear-gradient(90deg,transparent,#C9A227,transparent);margin-bottom:22px;}
+.cert-eyebrow-row{text-align:center;margin-bottom:4px;}
+.cert-eyebrow-row span{font-family:var(--font-ui,Georgia);font-size:10.5px;letter-spacing:4px;text-transform:uppercase;color:#8A7A52;}
+.cert-main-title{text-align:center;font-size:clamp(20px,3vw,27px);font-weight:700;color:#0F1B2D;margin-bottom:18px;letter-spacing:1px;}
+.cert-awarded-to{text-align:center;font-family:var(--font-ui,Georgia);font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#8A7A52;margin-bottom:9px;}
+.cert-student-name{text-align:center;font-size:clamp(26px,4.5vw,42px);font-weight:700;color:#0F1B2D;margin-bottom:10px;line-height:1.15;font-style:italic;border-bottom:1.5px solid #C9A227;display:inline-block;padding:0 10px 8px;}
+.cert-student-name-wrap{text-align:center;margin-bottom:16px;}
+.cert-for{text-align:center;font-size:13px;color:#4A5568;margin-bottom:4px;}
+.cert-course-name{text-align:center;font-size:18px;font-weight:700;color:#00756A;margin-bottom:12px;}
+.cert-desc{text-align:center;font-family:var(--font-ui,Georgia);font-size:11.5px;color:#4A5568;line-height:1.7;margin:0 auto 14px;max-width:520px;}
+.cert-dfe{font-family:var(--font-ui,Georgia);font-size:10px;color:#2B6CB0;background:#EBF8FF;border:1px solid #BEE3F8;border-radius:5px;padding:5px 11px;display:block;width:fit-content;margin:0 auto 18px;font-weight:700;}
+.cert-modules-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:26px;justify-content:center;}
+.cert-mod-tag{font-family:var(--font-ui,Georgia);font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:#EBF8FF;color:#2B6CB0;border:1px solid #BEE3F8;}
+.cert-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;position:relative;}
+.cert-sig .sig-line{width:130px;height:1px;background:#1a1a2e;margin-bottom:4px;}
+.cert-sig .sig-name{font-size:13px;font-weight:700;color:#2D3748;font-style:italic;}
+.cert-sig .sig-role{font-family:var(--font-ui,Georgia);font-size:9.5px;color:#8A7A52;letter-spacing:.5px;}
+.cert-seal{width:64px;height:64px;flex-shrink:0;}
 .cert-date-block{text-align:right;}
-.cert-date-block .lbl{font-size:10px;color:#718096;text-transform:uppercase;letter-spacing:1px;}
-.cert-date-block .val{font-size:12px;font-weight:700;color:#2D3748;}
+.cert-date-block .lbl{font-family:var(--font-ui,Georgia);font-size:9px;color:#8A7A52;text-transform:uppercase;letter-spacing:1px;}
+.cert-date-block .val{font-size:13px;font-weight:700;color:#2D3748;}
 .cert-actions{display:flex;gap:11px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
 .btn-print{background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:12px 26px;border-radius:50px;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s;}
 .btn-print:hover{background:var(--teal-dark);}
@@ -665,9 +686,9 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
       <span class="wlc-pill">&#128269; Misinformation</span>
       <span class="wlc-pill">&#129504; Wellbeing</span>
     </div>
-    <div class="dsl-id-card" id="dslCarouselWelcome" style="margin-top:22px;max-width:560px;margin-left:auto;margin-right:auto;background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.3);border-radius:14px;padding:16px 20px;text-align:left;display:flex;gap:14px;align-items:flex-start;">
-      <img class="dsl-carousel-photo" src="" alt="" style="display:none;width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,201,177,0.45);flex-shrink:0;">
-      <div style="flex:1;min-width:0;">
+    <div class="dsl-id-card" id="dslCarouselWelcome" style="margin-top:22px;max-width:560px;margin-left:auto;margin-right:auto;background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.3);border-radius:14px;overflow:hidden;text-align:left;display:flex;align-items:stretch;min-height:88px;">
+      <img class="dsl-carousel-photo" src="" alt="" style="display:none;width:96px;align-self:stretch;object-fit:cover;flex-shrink:0;">
+      <div style="flex:1;min-width:0;padding:16px 20px;">
         <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#00C9B1;font-weight:800;margin-bottom:8px;">&#128737; Before you start — know who to go to</div>
         <p class="dsl-carousel-text" style="font-size:14px;margin:0;"></p>
         <div class="dsl-carousel-dots" style="display:flex;gap:5px;margin-top:9px;"></div>
@@ -775,24 +796,28 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   <div class="certificate" id="certificate">
     <div class="cert-stripe"></div>
     <div class="cert-body">
-      <div class="cert-watermark"><svg viewBox="0 0 200 200" width="160" height="160" fill="none"><path d="M100 10L175 38L175 105C175 148 142 178 100 190C58 178 25 148 25 105L25 38Z" fill="#00A896"/></svg></div>
+      <div class="cert-frame"></div>
+      <div class="cert-watermark"><svg viewBox="0 0 200 200" width="220" height="220" fill="none"><path d="M100 10L175 38L175 105C175 148 142 178 100 190C58 178 25 148 25 105L25 38Z" fill="#00A896"/></svg></div>
       <div class="cert-top">
         <div class="cert-logo-area">
-          <svg viewBox="0 0 48 48" fill="none" width="40" height="40"><path d="M24 3L42 10L42 24C42 34 34 41 24 44C14 41 6 34 6 24L6 10Z" fill="rgba(0,168,150,0.12)" stroke="#00A896" stroke-width="2"/><path d="M15 24L20.5 29.5L33 17" stroke="#00A896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <div><div class="cert-brand-name"><span>Online</span> Ready</div><div class="cert-brand-sub">Online Safety Programme</div></div>
+          <svg viewBox="0 0 48 48" fill="none" width="38" height="38"><path d="M24 3L42 10L42 24C42 34 34 41 24 44C14 41 6 34 6 24L6 10Z" fill="rgba(0,168,150,0.12)" stroke="#00A896" stroke-width="2"/><path d="M15 24L20.5 29.5L33 17" stroke="#00A896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><div class="cert-brand-name"><span>Online</span> Ready</div><div class="cert-brand-sub">Abity Academy</div></div>
         </div>
-        <div class="cert-id-block"><div class="lbl">Certificate ID</div><div class="val" id="cert-id">OR-000000-2026</div></div>
+        <div class="cert-id-block"><div class="lbl">Certificate No.</div><div class="val" id="cert-id">OR-000000-2026</div></div>
       </div>
       <div class="cert-hr"></div>
-      <div class="cert-awarded-to">This certificate is awarded to</div>
-      <div class="cert-student-name" id="cert-name">Student Name</div>
-      <div class="cert-for">for successfully completing all modules of</div>
-      <div class="cert-course-name">Online Safety Certificate</div>
-      <div class="cert-desc">This learner has completed all seven online safety modules and shown they understand how to stay safe, smart, and happy online.</div>
+      <div class="cert-eyebrow-row"><span>Certificate of Achievement</span></div>
+      <div class="cert-main-title">Online Safety Certificate</div>
+      <div class="cert-awarded-to">This certificate is proudly presented to</div>
+      <div class="cert-student-name-wrap"><span class="cert-student-name" id="cert-name">Student Name</span></div>
+      <div class="cert-for">in recognition of successfully completing</div>
+      <div class="cert-course-name">The Online Ready Safety Programme</div>
+      <div class="cert-desc">Having completed all seven modules, the above-named has demonstrated a sound, practical understanding of how to stay safe, smart and happy online &#8212; and is hereby awarded this certificate in testament to that achievement.</div>
       <div class="cert-dfe">&#10003; Covering all the big online safety topics</div>
       <div class="cert-modules-row" id="cert-mods"></div>
       <div class="cert-foot">
         <div class="cert-sig"><div class="sig-line"></div><div class="sig-name">Abity Academy</div><div class="sig-role">Course Director</div></div>
+        <svg class="cert-seal" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" fill="#FBF8F0" stroke="#C9A227" stroke-width="2"/><circle cx="40" cy="40" r="29" fill="none" stroke="#C9A227" stroke-width="1"/><path d="M40 20L46 33L60 35L50 45L52 59L40 52L28 59L30 45L20 35L34 33Z" fill="#00A896" opacity=".88"/><text x="40" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#0F1B2D">PASS</text></svg>
         <div class="cert-date-block"><div class="lbl">Date of Award</div><div class="val" id="cert-date"></div></div>
       </div>
     </div>
@@ -2117,7 +2142,7 @@ function buildMatchHtml(slide){
   const letters='ABCDEFGH';
   const shuffledPairs=shuffleArray(slide.pairs);
   const shuffledDefs=shuffleArray(slide.displayDefs);
-  const termsHtml=shuffledPairs.map((p,i)=>'<button class="match-item match-term" data-id="'+p.id+'"><span class="match-badge">'+letters[i]+'</span>'+p.term+'</button>').join('');
+  const termsHtml=shuffledPairs.map((p,i)=>'<button class="match-item match-term" draggable="true" data-id="'+p.id+'"><span class="match-badge">'+letters[i]+'</span>'+p.term+'</button>').join('');
   const defsHtml=shuffledDefs.map((d,i)=>'<button class="match-item match-def" data-id="'+d.id+'"><span class="match-badge match-badge-num">'+(i+1)+'</span>'+d.text+'</button>').join('');
   return '<div class="match-grid">'
     +'<div class="match-col"><div class="match-col-head">What it\'s called</div>'+termsHtml+'</div>'
@@ -2160,6 +2185,38 @@ function initMatchActivity(slide,container,complete){
     defs.forEach(x=>x!==d&&x.classList.remove('selected'));
     d.classList.add('selected');selDef=d;tryMatch();
   }));
+
+  // Drag-and-drop: drag a term card and drop it onto a definition card -
+  // same tryMatch() logic as the tap-to-select flow, just a different way in.
+  terms.forEach(t=>{
+    t.addEventListener('dragstart',(e)=>{
+      if(t.classList.contains('matched')){e.preventDefault();return;}
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',t.dataset.id);
+      setTimeout(()=>t.classList.add('dragging'),0);
+    });
+    t.addEventListener('dragend',()=>t.classList.remove('dragging'));
+  });
+  defs.forEach(d=>{
+    d.addEventListener('dragover',(e)=>{
+      if(d.classList.contains('matched'))return;
+      e.preventDefault();e.dataTransfer.dropEffect='move';
+      d.classList.add('drag-over');
+    });
+    d.addEventListener('dragleave',()=>d.classList.remove('drag-over'));
+    d.addEventListener('drop',(e)=>{
+      e.preventDefault();d.classList.remove('drag-over');
+      if(d.classList.contains('matched'))return;
+      const draggedId=e.dataTransfer.getData('text/plain');
+      const draggedTerm=terms.find(t=>t.dataset.id===draggedId&&!t.classList.contains('matched'));
+      if(!draggedTerm)return;
+      terms.forEach(x=>x.classList.remove('selected'));
+      defs.forEach(x=>x.classList.remove('selected'));
+      draggedTerm.classList.add('selected');selTerm=draggedTerm;
+      d.classList.add('selected');selDef=d;
+      tryMatch();
+    });
+  });
 }
 
 function restoreMatchComplete(slide,container){
@@ -2334,9 +2391,25 @@ function restoreRevealCardsComplete(slide,container){
   });
 }
 
+/** Returns this attempt's 7 quiz questions. If the module has a `bank` of
+ * extra questions (more than the usual 7), a fresh random 7 are drawn from
+ * it and cached on quizState for the rest of this attempt - so a retake
+ * (which clears quizState) draws a different random set instead of
+ * repeating the same questions. Modules without a bank just use their
+ * normal fixed `questions` array, unchanged. */
+function getQuizQuestions(mod){
+  if(!quizState.activeQuestions){
+    const quizSlide=mod.slides.find(s=>s.type==='quiz');
+    const pool=(quizSlide.bank&&quizSlide.bank.length)?quizSlide.bank:quizSlide.questions;
+    const count=Math.min(7,pool.length);
+    quizState.activeQuestions=shuffleArray(pool).slice(0,count);
+  }
+  return quizState.activeQuestions;
+}
+
 function renderQuizQuestion(){
   const mod=modules.find(m=>m.id===currentModuleId);
-  const qs=mod.slides.find(s=>s.type==='quiz').questions;
+  const qs=getQuizQuestions(mod);
   const qi=quizState.currentQ||0;const q=qs[qi];const letters=['A','B','C','D'];
   document.getElementById('slide-area').innerHTML='<div class="slide active quiz-wrap"><div class="quiz-header"><div class="quiz-title">Quiz time!</div><div class="quiz-prog-chip">Q'+(qi+1)+' of '+qs.length+'</div></div><div class="quiz-q-num">Question '+(qi+1)+'</div><div class="quiz-q-text">'+q.q+'</div><div class="quiz-opts">'+q.opts.map((o,i)=>'<button class="quiz-opt" onclick="selectAnswer('+i+')"><span class="opt-letter">'+letters[i]+'</span>'+o+'</button>').join('')+'</div><div class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></div><button class="btn-next-q" id="btn-next-q" onclick="nextQuestion()"></button></div>';
   const btn=document.getElementById('btn-next');btn.disabled=true;btn.style.display='flex';btn.textContent='Pick an answer to carry on';
@@ -2345,7 +2418,7 @@ function renderQuizQuestion(){
 
 function selectAnswer(i){
   const mod=modules.find(m=>m.id===currentModuleId);
-  const qs=mod.slides.find(s=>s.type==='quiz').questions;
+  const qs=getQuizQuestions(mod);
   const qi=quizState.currentQ||0;const q=qs[qi];
   if(!quizState.answers)quizState.answers={};if(quizState.answers[qi]!==undefined)return;
   quizState.answers[qi]=i;
@@ -2360,7 +2433,7 @@ function selectAnswer(i){
 
 function nextQuestion(){
   const mod=modules.find(m=>m.id===currentModuleId);
-  const qs=mod.slides.find(s=>s.type==='quiz').questions;
+  const qs=getQuizQuestions(mod);
   const qi=quizState.currentQ||0;
   if(qi+1<qs.length){quizState.currentQ=qi+1;renderQuizQuestion();}
   else{
@@ -2373,7 +2446,7 @@ function nextQuestion(){
 
 function renderQuizResults(){
   const mod=modules.find(m=>m.id===currentModuleId);
-  const qs=mod.slides.find(s=>s.type==='quiz').questions;
+  const qs=getQuizQuestions(mod);
   const{score,total,passed,answers}=quizState;const pct=Math.round(score/total*100);
   const ri=qs.map((q,i)=>'<div class="review-item"><span>'+(answers[i]===q.correct?'✅':'❌')+'</span><div><strong>Q'+(i+1)+':</strong> '+q.q+'<br><span style="font-size:11px;color:var(--slate-light)">Correct: '+q.opts[q.correct]+'</span></div></div>').join('');
   document.getElementById('slide-area').innerHTML='<div class="slide active"><div class="quiz-result"><div class="result-circle '+(passed?'pass':'fail')+'"><div class="r-score">'+score+'/'+total+'</div><div class="r-label">'+pct+'%</div></div><div class="result-title">'+(passed?'🎉 You passed!':'😕 Not quite  -  have another go!')+'</div><div class="result-msg">'+(passed?'You scored '+score+'/'+total+'  -  well done! Head back to the dashboard to continue.':'You scored '+score+'/'+total+' ('+pct+'%). You need 70% to pass. Review the answers and try again!')+'</div><div class="result-review"><h4>Answer Review</h4>'+ri+'</div>'+(passed?'':'<button class="btn-retake" onclick="retakeQuiz()">Try again</button>')+'<button class="btn-primary" style="width:auto;display:inline-flex;margin-top:10px" onclick="goToDashboard()">← Back to all modules</button></div></div>';
@@ -2406,7 +2479,7 @@ const modules = [
 {id:'cyberbullying',icon:'🛡️',title:'Cyberbullying & Child-on-Child Abuse',time:'~30 min',color:'#8B5CF6',
  desc:'Find out what cyberbullying is, why it hurts, and what to do if it happens to you or a friend.',
  slides:[
-  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Introduction</div><h2>What is cyberbullying?</h2><p>Cyberbullying is bullying that happens on phones, tablets, computers, or apps.</p><p>It is not just one angry message. It means someone keeps being <strong>unkind on purpose</strong>, again and again, to scare, upset, or hurt another person.</p><div class="stat-row"><div class="stat-card"><div class="num">1 in 5</div><div class="label">young people in the UK have been cyberbullied</div></div><div class="stat-card"><div class="num">24/7</div><div class="label">it can happen any time, even at home</div></div><div class="stat-card"><div class="num">40%</div><div class="label">of victims never tell an adult</div></div></div><div class="callout warning">⚠️ Normal bullying can stop when you get home. Cyberbullying can follow you everywhere, so it can hurt even more.</div><div class="dfe-tag"><strong>What this module covers</strong>What online bullying is, the different types, and why it hurts.</div><div class="callout purple">📋 <strong>Important:</strong> Schools must treat cyberbullying between pupils just as seriously as any other bullying. If it happens to you or a friend, tell your school's <strong>Designated Safeguarding Lead (DSL)</strong> - a trusted adult in school - right away.</div><div class="dfe-tag" id="dslCarouselModule1" style="display:flex;gap:10px;align-items:flex-start;"><img class="dsl-carousel-photo" src="" alt="" style="display:none;width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,201,177,0.45);flex-shrink:0;"><div style="flex:1;min-width:0;"><strong style="display:block;margin-bottom:2px;">Who is my school's DSL?</strong><span class="dsl-carousel-text"></span><div class="dsl-carousel-dots" style="display:flex;gap:5px;margin-top:6px;"></div></div></div>`},
+  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Introduction</div><h2>What is cyberbullying?</h2><p>Cyberbullying is bullying that happens on phones, tablets, computers, or apps.</p><p>It is not just one angry message. It means someone keeps being <strong>unkind on purpose</strong>, again and again, to scare, upset, or hurt another person.</p><div class="stat-row"><div class="stat-card"><div class="num">1 in 5</div><div class="label">young people in the UK have been cyberbullied</div></div><div class="stat-card"><div class="num">24/7</div><div class="label">it can happen any time, even at home</div></div><div class="stat-card"><div class="num">40%</div><div class="label">of victims never tell an adult</div></div></div><div class="callout warning">⚠️ Normal bullying can stop when you get home. Cyberbullying can follow you everywhere, so it can hurt even more.</div><div class="dfe-tag"><strong>What this module covers</strong>What online bullying is, the different types, and why it hurts.</div><div class="callout purple">📋 <strong>Important:</strong> Schools must treat cyberbullying between pupils just as seriously as any other bullying. If it happens to you or a friend, tell your school's <strong>Designated Safeguarding Lead (DSL)</strong> - a trusted adult in school - right away.</div><div class="dfe-tag" id="dslCarouselModule1" style="padding:0;overflow:hidden;display:flex;align-items:stretch;min-height:68px;"><img class="dsl-carousel-photo" src="" alt="" style="display:none;width:68px;align-self:stretch;object-fit:cover;flex-shrink:0;"><div style="flex:1;min-width:0;padding:9px 13px;"><strong style="display:block;margin-bottom:2px;">Who is my school's DSL?</strong><span class="dsl-carousel-text"></span><div class="dsl-carousel-dots" style="display:flex;gap:5px;margin-top:6px;"></div></div></div>`},
   {type:'content',html:`<div class="slide-eyebrow">Module 1 · Types</div><h2>Different kinds of cyberbullying</h2><p>Cyberbullying can look different ways. All of them can hurt. Match each type to what it means.</p><div class="activity-slot" data-slot="typesMatch"></div><p>Two more you need to know about. Tap each card to reveal what it means - you'll need to read both before moving on.</p><div class="activity-slot" data-slot="seriousReveal"></div><div class="callout danger">🚨 <strong>This is never "just banter" or a joke.</strong> Upskirting and sharing nude or semi-nude images of someone under 18 are serious criminal offences. If this happens to you or someone you know, tell your school's Designated Safeguarding Lead (DSL) straight away - you will not be in trouble for reporting it.</div>`,
    activities:[
    {slot:'typesMatch',subtype:'match',instructions:'Tap a type, then tap the definition that matches it.',
@@ -2454,6 +2527,20 @@ const modules = [
        {id:'u4',bin:'upstander',text:'Leaves the chat and tells a trusted adult'},
        {id:'u5',bin:'upstander',text:"Says nothing in the chat, but saves screenshots to show a teacher"}
      ]}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Reporting</div><h2>What actually happens when you report?</h2><p>Every major app has a "report" button, and UK law (the <strong>Online Safety Act 2023</strong>) now makes platforms legally responsible for acting on reports of bullying and harmful content.</p><p>True or false?</p><div class="activity-slot" data-slot="reportTF"></div><p>Reporting in the app and telling your school's DSL are not either/or - do <strong>both</strong>. The app can remove content and ban accounts; your DSL can support you, involve parents, and get the wider situation under control at school.</p><div class="callout blue">ℹ️ Most apps review reports within 24-48 hours for serious issues like bullying or threats. If nothing happens and it's serious, your DSL can escalate it directly with the platform.</div>`,
+   activities:[{slot:'reportTF',subtype:'truefalse',instructions:'Tap True or False.',
+     statement:"Reporting a bullying post in an app means the person who posted it will be told exactly who reported them.",
+     answer:false,
+     explanation:"False. Reports are anonymous to the account being reported - they won't be told who made the report. This is designed so you can report safely without fear of being targeted again."}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Supporting a Friend</div><h2>What to do if it's happening to a friend</h2><p>Watching a friend go through cyberbullying can feel just as hard as going through it yourself. Tap each card to find out what actually helps.</p><div class="activity-slot" data-slot="friendReveal"></div><div class="callout warning">⚠️ Don't promise to "keep it secret." If a friend tells you something serious, the kindest thing you can do is help them tell a trusted adult - even if they ask you not to.</div><div class="reflection-box"><div class="ref-label">✏️ Think about it</div><p>Has a friend ever come to you about something like this, or could you imagine it happening? What would you want them to do if it were you?</p><textarea placeholder="Write at least 15 words - there is no wrong answer!"></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`,
+   activities:[{slot:'friendReveal',subtype:'reveal',instructions:'Tap each card to reveal what it means.',
+     cards:[
+       {id:'listen',term:'Listen without judging',definition:"Let them explain in their own words without jumping in to tell them what they did wrong, or what they should have done differently."},
+       {id:'believe',term:'Believe them',definition:'Don’t question whether it’s "that bad" - if it’s upsetting them, it’s worth taking seriously.'},
+       {id:'help-tell',term:'Help them tell an adult',definition:'Offer to go with them to speak to the DSL or a teacher. Having support makes it much less scary.'},
+       {id:'keep-evidence',term:'Help them keep evidence',definition:'Encourage them to screenshot everything before blocking anyone, so there’s proof for the school to act on.'},
+       {id:'stay-friend',term:'Keep being a normal friend',definition:'Don’t only talk about the bullying - being treated normally and included helps more than you’d think.'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 1 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>What it is</strong>Being unkind on purpose, again and again, using phones or apps.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Types</strong>Nasty messages, fake accounts, sharing private info, leaving people out, sharing photos without asking.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>How it can hurt</strong>It can make you feel worried, sad, or unsafe. It is never "just words."</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>If it happens to you</strong>Screenshot &#8594; block &#8594; don't reply &#8594; tell your DSL or a teacher right away.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Be an upstander</strong>Staying silent lets bullying carry on. Small actions make a big difference.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Where to get help</strong>Your school's DSL or teacher, the app, or Childline (0800 1111).</div></div></div><div class="callout">🧠 <strong>Quiz time!</strong> 7 questions - get 5 or more right to pass.</div>`},
   {type:'quiz',questions:[
 {q:'Layla comes home and finds a group chat called "Layla is ugly". 47 people from her year have joined. She hasn\'t told anyone yet. What is the most important first step?',opts:['Take screenshots first, then tell a trusted teacher or her DSL','Leave the group chat straight away so she stops seeing the messages','Reply to defend herself so everyone knows the truth about her','Post about it on her own page to get support from others'],correct:0,explanation:'Screenshots keep proof safe before anyone can delete the messages. This is the most important first step. A teacher or DSL needs to see what happened so they can help.'},
@@ -2482,6 +2569,20 @@ const modules = [
      explanation:"False. This is called credential stuffing - hackers try a stolen password on your other accounts too. If you reuse passwords, one hack can affect everything you own. Using a different password for every account stops one leak from becoming many."}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 2 · Password Managers</div><h2>You don't have to remember them all</h2><p>Most people have over 100 accounts online. A <strong>password manager</strong> is a tool that makes and remembers strong passwords for you. You only need to remember one main password. Tap each one to find out more.</p><div class="reveal-grid"><button class="reveal-card" data-target="rcBitwarden" aria-expanded="false"><span class="reveal-card-title">Bitwarden</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcBitwarden" style="display:none;">A free password manager that makes long, random passwords, keeps them locked and safe, and fills them in for you automatically.</div><button class="reveal-card" data-target="rcKeePass" aria-expanded="false"><span class="reveal-card-title">KeePass</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcKeePass" style="display:none;">Another free password manager, popular because it stores everything on your own device rather than a company's servers.</div><button class="reveal-card" data-target="rcBrowser" aria-expanded="false"><span class="reveal-card-title">Browser saver</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcBrowser" style="display:none;">The password saver already built into Chrome, Safari, or Edge. Not as feature-packed as Bitwarden, but free and already there - and it can warn you if a saved password has appeared in a data breach.</div></div><div class="callout warning">⚠️ Your <strong>main password</strong> needs to be extra strong, and one you will never forget.</div>`},
   {type:'content',html:`<div class="slide-eyebrow">Module 2 · Two-Factor Authentication</div><h2>Two-step login (2FA)</h2><p>Even a strong password can be stolen. <strong>2FA</strong> adds a second check, so even if someone steals your password, they still can't get in.</p><p>Logging in needs two things:</p><ul><li>Something you <strong>know</strong> - your password</li><li>Something you <strong>have</strong> - a code sent to your phone, or a special key</li></ul><div class="callout">📱 <strong>Turn on 2FA now</strong> for your email and any account you care about. It only takes about 30 seconds.</div><p>Types of 2FA (from okay to best):</p><ul><li>A text message code - okay, but can be caught by hackers</li><li>An app that makes codes - much better</li><li>A special security key - the best option</li></ul>`},
+  {type:'content',html:`<div class="slide-eyebrow">Module 2 · Check What You've Learned</div><h2>Match the term to what it means</h2><p>You've just covered all four of these - match each one to its definition.</p><div class="activity-slot" data-slot="pwTermMatch"></div>`,
+   activities:[{slot:'pwTermMatch',subtype:'match',instructions:'Tap a term, then tap the definition that matches it - or drag a term onto its definition.',
+     pairs:[
+       {id:'manager',term:'Password manager'},
+       {id:'2fa',term:'Two-factor authentication (2FA)'},
+       {id:'passphrase',term:'Passphrase'},
+       {id:'stuffing',term:'Credential stuffing'}
+     ],
+     displayDefs:[
+       {id:'stuffing',text:'When hackers take a password stolen from one hacked site and try it on all your other accounts.'},
+       {id:'manager',text:'A tool like Bitwarden or KeePass that makes and remembers a strong, unique password for every account.'},
+       {id:'passphrase',text:'Several random, unrelated words joined together, like purple-fence-guitar-moon - long, and easy to remember.'},
+       {id:'2fa',text:'A second check after your password, like a code sent to your phone, so a stolen password alone isn\'t enough to get in.'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 2 · Phishing for Passwords</div><h2>How hackers steal passwords</h2><p>Hackers don't usually try to guess your password. It's easier to trick you into giving it to them. This trick is called <strong>phishing</strong>.</p><div class="scenario-box"><div class="scenario-label">📧 Example scam email</div><p>"Your Microsoft account has a problem. Click here in the next 24 hours or your account will be deleted." <em>[link: microsft-account-verify.net]</em></p></div><p>Spot the incorrect statement about this email.</p><div class="activity-slot" data-slot="scamSpot"></div><div class="callout warning">⚠️ <strong>Real companies never ask for your password</strong> by email, text, or phone. If they ask, it's a scam.</div><div class="reflection-box"><div class="ref-label">✏️ Think about it</div><p>Imagine you got the email above. What would you do? Walk through each step before deciding whether to click.</p><textarea placeholder="Write at least 15 words - describe what you would do, step by step..."></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`,
    activities:[{slot:'scamSpot',subtype:'spot',instructions:'Three of these are true. One is wrong. Tap the incorrect one.',
      statements:[
@@ -2500,6 +2601,21 @@ const modules = [
 {q:'Jake\'s friend knows his password and logs into his school account to check his grades "as a favour". Jake said it was okay. Why is this still a problem?',opts:['It isn\'t a problem, because Jake agreed','It\'s only a problem if the friend shares the grades with someone else','Jake is responsible for everything done on his account','The school will automatically stop this from happening'],correct:2,explanation:'You are responsible for everything that happens on your account. Sharing a password also means someone else now knows it - which is risky if you use that password anywhere else.'},
 {q:'You want to check if your email has been part of a data hack. Which tool does this safely and for free?',opts:['haveibeenpwned.com - a trusted, free safety checker','Searching your email in Google in quotes','Asking your school\'s IT department to run a check','Changing every single password, just in case something happened'],correct:0,explanation:'haveibeenpwned.com checks your email against known hacks. It is free and trusted worldwide. If your email shows up, change that password everywhere you used it.'},
 {q:'Someone calls saying they are from Microsoft. They say your computer has a virus and ask for your password to fix it. What should you do?',opts:['Give them an easy password for now, and change it later','Hang up straight away - it\'s a scam call','Ask them to call back later so you can check it\'s real','Let them connect to your computer, just don\'t give the password'],correct:1,explanation:'This is a scam call, called vishing. Real companies never ask for your password on the phone. Hang up. If you\'re worried about your computer, contact the company yourself using a number you find on their real website.'},
+],bank:[
+{q:'Priya uses the same password for her email, school account, and gaming account. A gaming website gets hacked and her password is stolen. What is likely to happen?',opts:['Only her gaming account is at risk, because that\'s where it happened','Nothing serious happens, because passwords are always kept safe','All three accounts are at risk - this is called credential stuffing','Her accounts are safe as long as she changes her gaming password soon'],correct:2,explanation:'When hackers steal a password from one site, they try it on lots of other sites too. This is called credential stuffing. Using the same password everywhere means one hack can affect everything.'},
+{q:'Which of these passwords would take the longest for a computer program to guess?',opts:['purple-fence-guitar-moon - four unrelated words','P@ssw0rd99 - it has capitals, symbols, and numbers','YourName2009! - your own details with a symbol','qwerty123456 - very quick and easy to type'],correct:0,explanation:'Four random words gives you a really long password. Length beats fancy symbols. Hackers already know common tricks like swapping letters for numbers.'},
+{q:'You get a text saying "Your Netflix account is suspended. Check your details at netflix-account-uk.com or lose access." What should you do?',opts:['Click the link fast so you don\'t lose your account','Don\'t click - type netflix.com in yourself','Reply to the text asking if it\'s real','Send it to your friends to warn them'],correct:1,explanation:'"netflix-account-uk.com" is not Netflix\'s real website. Real companies never ask you to click a link like this. Always type the real website yourself.'},
+{q:'Your teacher says to turn on two-factor authentication (2FA) for your email. Your friend says it\'s pointless because a school email isn\'t worth hacking. Who is right?',opts:['Your friend - school emails have nothing valuable in them','Neither - 2FA is only useful for banking apps','Your friend - 2FA is only needed if you save payment cards','Your teacher - email resets your other account passwords'],correct:3,explanation:'Your email is like a master key. Hackers target email so they can reset passwords on your other accounts. 2FA stops this, even if they have your password.'},
+{q:'Jake\'s friend knows his password and logs into his school account to check his grades "as a favour". Jake said it was okay. Why is this still a problem?',opts:['It isn\'t a problem, because Jake agreed','It\'s only a problem if the friend shares the grades with someone else','Jake is responsible for everything done on his account','The school will automatically stop this from happening'],correct:2,explanation:'You are responsible for everything that happens on your account. Sharing a password also means someone else now knows it - which is risky if you use that password anywhere else.'},
+{q:'You want to check if your email has been part of a data hack. Which tool does this safely and for free?',opts:['haveibeenpwned.com - a trusted, free safety checker','Searching your email in Google in quotes','Asking your school\'s IT department to run a check','Changing every single password, just in case something happened'],correct:0,explanation:'haveibeenpwned.com checks your email against known hacks. It is free and trusted worldwide. If your email shows up, change that password everywhere you used it.'},
+{q:'Someone calls saying they are from Microsoft. They say your computer has a virus and ask for your password to fix it. What should you do?',opts:['Give them an easy password for now, and change it later','Hang up straight away - it\'s a scam call','Ask them to call back later so you can check it\'s real','Let them connect to your computer, just don\'t give the password'],correct:1,explanation:'This is a scam call, called vishing. Real companies never ask for your password on the phone. Hang up. If you\'re worried about your computer, contact the company yourself using a number you find on their real website.'},
+{q:'Which of these is an example of 2FA working alongside your password?',opts:['Using the same password on two accounts','A code sent to your phone that you enter after your password','Writing your password on a sticky note by your desk','Picking a password based on your pet\'s name'],correct:1,explanation:'2FA means proving who you are in two different ways - something you know (your password) and something you have, like a code sent to your phone.'},
+{q:'According to the module, which type of 2FA is the strongest?',opts:['A text message code','An app that makes codes','A special security key','They are all exactly as strong as each other'],correct:2,explanation:'A security key is the strongest type of 2FA. Text codes are okay but can be intercepted; an authenticator app is better still; a physical security key is the best option.'},
+{q:'What does a password manager actually do for you?',opts:['Shares your password with friends automatically','Makes and remembers strong, unique passwords so you only need to remember one','Deletes old accounts you no longer use','Turns off 2FA so logging in is faster'],correct:1,explanation:'A password manager like Bitwarden generates long, random passwords for every account and remembers them for you - you only need to remember your one main password.'},
+{q:'What makes KeePass different from a password manager like Bitwarden?',opts:['KeePass stores everything on your own device rather than a company\'s servers','KeePass is the only one that works on a phone','Bitwarden cannot generate passwords for you','KeePass does not need a main password at all'],correct:0,explanation:'KeePass is popular specifically because it keeps your saved passwords on your own device, rather than a company\'s servers, unlike cloud-based managers.'},
+{q:'A website you use is hacked and passwords are leaked. What should you do?',opts:['Nothing - the website will sort it out','Change that password immediately, everywhere you reused it','Wait a few months before changing anything','Only change it if you get an email asking you to'],correct:1,explanation:'If a site you use is hacked, change that password straight away - and everywhere else you used the same one, since hackers try leaked passwords on other sites too.'},
+{q:'Is it ever okay to tell a close friend your password, even one you trust completely?',opts:['Yes - close friends can always be trusted with it','No - you\'re responsible for everything done on your account, even by someone else','Yes, as long as you change it afterwards','No, but only for school accounts specifically'],correct:1,explanation:'You stay responsible for everything that happens on your account, whoever is using it. Sharing a password also means it\'s no longer just yours - especially risky if you\'ve reused it elsewhere.'},
+{q:'What\'s the safest way to check whether a login link you\'ve been sent by text or email is genuine?',opts:['Click the link and see what happens','Type the company\'s real website address in yourself, rather than clicking the link','Ask the person who sent it whether it\'s safe','Forward it to a friend to check first'],correct:1,explanation:'Never trust a link in an unexpected message. Typing the real website address in yourself means you know for certain you\'re on the genuine site, not a lookalike.'},
 ]}
  ]
 },
@@ -2534,6 +2650,23 @@ const modules = [
        {text:'The ICO is the UK group you can report companies to if they misuse your data.',wrong:false}
      ],
      explanation:"UK law actually gives you the right to ask for your data to be deleted at any time - companies can't just refuse and keep it forever. If they do, you can report them to the ICO."}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 3 · Privacy Settings</div><h2>Locking down your accounts</h2><p>Most apps are set up to share as much as possible by default - because that's good for the company, not necessarily for you. Tap each one to see what it actually does.</p><div class="activity-slot" data-slot="settingsReveal"></div><div class="callout">💡 It takes about ten minutes to check these settings properly across your main apps. That ten minutes is worth it.</div>`,
+   activities:[{slot:'settingsReveal',subtype:'reveal',instructions:'Tap each card to reveal what it means.',
+     cards:[
+       {id:'private-acc',term:'Private account',definition:"Only people you approve can see your posts and follower list. Without this, anyone can see everything, including strangers."},
+       {id:'tagging',term:'Tag approval',definition:'A setting that means a photo someone else tags you in doesn’t appear on your profile until you approve it.'},
+       {id:'location-off',term:'Location sharing off',definition:'Stops apps attaching your exact location to posts, or showing others where you are in real time.'},
+       {id:'who-can-dm',term:'Who can message you',definition:'A setting that limits messages to people you follow, rather than anyone on the app being able to contact you directly.'}
+     ]}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 3 · Scenario</div><h2>What would you do?</h2><div class="scenario-box"><div class="scenario-label">📖 Story</div><p>Zara is filling in a form for a free online game. It asks for her full name, date of birth, home address, and a photo of herself "to create her avatar." The game looks fun and all her friends are playing it.</p></div><p>Spot the incorrect statement about this situation.</p><div class="activity-slot" data-slot="zaraSpot"></div><div class="reflection-box"><div class="ref-label">✏️ Your answer</div><p>What would you tell Zara to do differently, and why?</p><textarea placeholder="Write at least 15 words - be specific about what she should change..."></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`,
+   activities:[{slot:'zaraSpot',subtype:'spot',instructions:'Three of these are true. One is wrong. Tap the incorrect one.',
+     statements:[
+       {text:'A game does not need Zara\'s home address just to create an avatar.',wrong:false},
+       {text:'Because her friends are already playing it, the game must be asking for this safely.',wrong:true},
+       {text:'A photo and full date of birth together could be used to help identify or impersonate her.',wrong:false},
+       {text:'Zara could look for a setting to use an avatar without uploading a real photo, or ask a parent before filling it in.',wrong:false}
+     ],
+     explanation:'Lots of friends using something tells you nothing about whether it collects data safely - it just means it\'s popular. Always judge a form by what it actually asks for, not by who else is using it.'}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 3 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Digital footprint</strong>What you share, and what is collected without you noticing. Hard to remove once it's online.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Keep private</strong>Address, phone number, school name, holiday dates, money details, and your location in photos.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Data collection</strong>Cookies, app permissions, quizzes. Free apps often use your data as payment.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Age rules</strong>Age 13 to join most social media. Rules protect younger people from harm.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Your rights</strong>UK law lets you see, fix, delete, or object to your data. The ICO can help.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Privacy settings</strong>Make accounts private. Check app permissions. Check who follows you.</div></div></div><div class="callout">🧠 <strong>Quiz time!</strong> 7 questions - get 5 or more right to pass.</div>`},
   {type:'quiz',questions:[
 {q:'Ava posts a photo of herself in school uniform outside her house. Her account is private with 200 followers. What is the problem?',opts:['There is no real problem - private accounts are always safe','It shows her school and roughly where she lives','The only problem is the uniform, the house is fine','Private accounts with under 500 followers are always safe'],correct:1,explanation:'Even a private account shares things with everyone who follows you. Her school plus her home gives strangers enough to find her. Privacy settings can\'t control what followers do with what they see.'},
@@ -2594,6 +2727,23 @@ const modules = [
        {id:'hidden',text:"\"Nobody knows it's me\" - feeling hidden makes people say things online they would never say to a face."},
        {id:'harm',text:"Online, you don't see the other person's tears or upset feelings, so it's easier to ignore that you've hurt them."}
      ]}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 4 · Catfishing</div><h2>When someone isn't who they say they are</h2><p><strong>Catfishing</strong> means creating a fake online identity to trick someone, often for a fake relationship or friendship rather than money or information.</p><div class="scenario-box"><div class="scenario-label">📖 Story</div><p>Ollie has been messaging "Finley, 15" for two months. Finley always has an excuse not to video call - bad signal, broken camera, busy with family. Finley asks Ollie for money to help pay for a phone repair, promising to pay it back once they finally meet.</p></div><p>True or false?</p><div class="activity-slot" data-slot="catfishTF"></div><div class="callout warning">⚠️ Constantly avoiding video calls, and any request for money, are two of the strongest catfishing warning signs there are.</div>`,
+   activities:[{slot:'catfishTF',subtype:'truefalse',instructions:'Tap True or False.',
+     statement:"Someone repeatedly finding excuses to avoid a video call, combined with asking for money, is a classic warning sign of catfishing.",
+     answer:true,
+     explanation:"True. Real people in a genuine friendship generally don't avoid ever proving who they are, and have no reason to ask an online friend for money. Both together is a serious red flag - tell a trusted adult."}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 4 · Staying Safer</div><h2>Practical things that actually help</h2><p>You can't control who's out there, but these settings and habits make you a much harder target. Sort each one below.</p><div class="activity-slot" data-slot="safetySort"></div><div class="callout">💡 None of these stop you having fun online - they just mean strangers have to work a lot harder to reach you.</div>`,
+   activities:[{slot:'safetySort',subtype:'sort',instructions:'Drag each one into the correct column.',
+     bins:[{id:'helps',label:'Actually helps'},{id:'doesnt',label:"Doesn't really help"}],
+     items:[
+       {id:'s1',bin:'helps',text:'Keeping your account private'},
+       {id:'s2',bin:'helps',text:'Only accepting follow requests from people you know in real life'},
+       {id:'s3',bin:'helps',text:'Turning off exact location on posts'},
+       {id:'s4',bin:'helps',text:"Telling a trusted adult when something feels off, even if you're not sure"},
+       {id:'s5',bin:'doesnt',text:'Judging someone purely by how many followers they have'},
+       {id:'s6',bin:'doesnt',text:'Assuming a profile photo is real because it looks professional'},
+       {id:'s7',bin:'doesnt',text:'Trusting someone just because you have mutual followers'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 4 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Fake profiles</strong>Watch for new accounts, few posts, and stock photos. Use image search to check pictures.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Grooming</strong>Groomers build trust slowly using compliments, secrets, and cutting you off from others. Trust your feelings. Report to CEOP.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Online challenges</strong>Ask who made it and why. It's always okay to say no. Tell an adult about secretive or threatening challenges.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Online behaviour</strong>Feeling hidden makes people act differently online. The same rules of respect still apply.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Report grooming</strong>CEOP at ceop.police.uk, or your school's DSL or a trusted teacher. You will not be in trouble for reporting.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Live streaming</strong>People can record a stream without you knowing. Check what's around you before going live.</div></div></div><div class="callout">🧠 <strong>Quiz time!</strong> 7 questions - get 5 or more right to pass.</div>`},
   {type:'quiz',questions:[
 {q:'Someone called "Jamie, 16" follows you and messages "You seem really cool, what school do you go to?" Their account was made 2 weeks ago, has 11 professional-looking photos, and no friends in common with you. What do you do?',opts:['Don\'t reply - block and report, this has too many warning signs','Reply - they seem friendly and probably just want to make friends','Check if any of your friends follow them first','Reply, but don\'t say your school - other info is fine'],correct:0,explanation:'This has lots of warning signs together: new account, photos that look stolen, no friends in common, and asking about your school right away. Block and report without replying.'},
@@ -2640,6 +2790,23 @@ const modules = [
      statement:'Notifications are designed to grab your attention as often as possible, on purpose.',
      answer:true,
      explanation:"True. Every like or comment becomes a little alert designed to pull you back into the app - that's the whole point of them, not an accident."}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 5 · Fake Shops</div><h2>Scam websites selling things that don't exist</h2><p>Fake online shops often appear as adverts on social media, selling trainers, tech, or concert tickets at prices that seem too good to be true - because they are.</p><p>Spot the incorrect statement.</p><div class="activity-slot" data-slot="shopSpot"></div><div class="callout warning">⚠️ Paying by bank transfer gives you no protection if something goes wrong. A credit card or PayPal can let you get your money back - a direct bank transfer usually can't be reversed.</div>`,
+   activities:[{slot:'shopSpot',subtype:'spot',instructions:'Three of these are true. One is wrong. Tap the incorrect one.',
+     statements:[
+       {text:'A website only accepting bank transfer, with no card option, is a warning sign.',wrong:false},
+       {text:'If a website looks professional and has lots of product photos, it must be genuine.',wrong:true},
+       {text:'Prices far lower than anywhere else should make you stop and check carefully.',wrong:false},
+       {text:'Searching "[shop name] + scam" before buying can reveal other people\'s bad experiences.',wrong:false}
+     ],
+     explanation:'Scammers can copy a real shop\'s design and photos in minutes. Looking professional proves nothing about whether a site is genuine - the payment method and price are much stronger clues.'}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 5 · Already Clicked?</div><h2>What to do if you think you've been scammed</h2><p>If you've clicked a scam link, entered details, or sent money, acting fast matters more than feeling embarrassed. Put these steps in the right order.</p><div class="activity-slot" data-slot="scamStepsOrder"></div><div class="callout danger">🚨 You will not be in trouble for being tricked by a scam - these are designed by adults to fool anyone. Tell your school's DSL or a trusted adult straight away.</div>`,
+   activities:[{slot:'scamStepsOrder',subtype:'order',instructions:'Tap the steps in the order you should do them.',
+     steps:[
+       {id:'p1',text:'Tell a trusted adult or your school\'s DSL straight away'},
+       {id:'p2',text:'Change the password on any account you used'},
+       {id:'p3',text:'If money was involved, contact the bank or card provider immediately'},
+       {id:'p4',text:'Report it - forward scam texts to 7726, or report to Action Fraud'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 5 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Phishing types</strong>Email, text, and phone scams that try to steal your details or money.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Warning signs</strong>Rushing you, big prizes, strange senders, odd links, files you didn't expect.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Fake websites</strong>Check the web address carefully. Never click login links from emails - type the address yourself.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Money mules</strong>Being paid to move money through your account is illegal, even if you didn't know why.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Reporting scams</strong>Forward scam texts to 7726. Email report@phishing.gov.uk. Report fraud at actionfraud.police.uk.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>App tricks</strong>Endless scrolling, notifications, and streaks are made to keep you online longer.</div></div></div><div class="callout">🧠 <strong>Quiz time!</strong> 7 questions - get 5 or more right to pass.</div>`},
   {type:'quiz',questions:[
 {q:'You get an email from "support@paypa1.com" saying your account will close in 24 hours unless you check your details. You use PayPal. What should you notice, and do?',opts:['The 24-hour warning means you should click fast, before it\'s too late','Reply asking for more time to check','It uses the number 1 instead of the letter l - it\'s fake','Forward it to PayPal\'s customer service'],correct:2,explanation:'Swapping letters for similar-looking numbers is a common trick. The real website is paypal.com. Real companies never give 24-hour deadlines like this. Always type the real website yourself.'},
@@ -2698,6 +2865,23 @@ const modules = [
        {id:'slowly',term:'Slowly show more extreme content',definition:'Starting mild and gradually showing more extreme material, so each step feels like a small, normal jump rather than a big leap.'},
        {id:'special',term:'Make them feel part of a special group',definition:'Using group identity and belonging to make leaving feel like losing friends, not just leaving an idea behind.'}
      ]}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 6 · Deepfakes</div><h2>When video and audio can be faked too</h2><p>AI can now create fake videos and voice recordings - called <strong>deepfakes</strong> - that look and sound real, showing someone saying or doing things that never happened.</p><p>True or false?</p><div class="activity-slot" data-slot="deepfakeTF"></div><div class="callout warning">⚠️ Deepfakes are increasingly used to spread political misinformation and to create fake images of real people, including classmates - which can be a serious form of abuse. Both are taken very seriously by schools and the law.</div>`,
+   activities:[{slot:'deepfakeTF',subtype:'truefalse',instructions:'Tap True or False.',
+     statement:"A video of someone saying something cannot be faked - if you can see and hear them say it, it must be real.",
+     answer:false,
+     explanation:"False. AI tools can now generate realistic fake video and audio of real people. Seeing or hearing something is no longer enough proof on its own - use the SIFT method and check other trusted sources before believing or sharing it."}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 6 · Filter Bubbles</div><h2>Why everyone's feed looks different</h2><p>Social media apps show you more of what you already engage with. Over time, this can create a <strong>filter bubble</strong> - where you mostly see opinions similar to your own, making them seem more "normal" or widely-held than they really are.</p><p>Match each term to what it means.</p><div class="activity-slot" data-slot="bubbleMatch"></div><div class="callout">💡 Deliberately following a few accounts with different, reasonable viewpoints can help break your own filter bubble.</div>`,
+   activities:[{slot:'bubbleMatch',subtype:'match',instructions:'Tap a term, then tap the definition that matches it.',
+     pairs:[
+       {id:'bubble',term:'Filter bubble'},
+       {id:'echo',term:'Echo chamber'},
+       {id:'algorithm',term:'Algorithm'}
+     ],
+     displayDefs:[
+       {id:'algorithm',text:'The system an app uses to decide what to show you next, based on what you’ve engaged with before.'},
+       {id:'bubble',text:'Mostly seeing content and opinions similar to your own, without realising how much is being filtered out.'},
+       {id:'echo',text:'A group or space online where the same opinions get repeated and agreed with, rarely challenged.'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 6 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Three types</strong>False by mistake, false on purpose, and true things shared to hurt someone.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>SIFT method</strong>Stop, check the source, find other reports, trace it back. Use it before sharing anything.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Fact-checking tools</strong>Full Fact, Snopes, BBC Reality Check, reverse image search. Always check the date.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Radicalisation</strong>Extreme groups recruit online. Sharing terrorist content is a crime. Report at gov.uk/report-terrorism.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Fact vs opinion</strong>Facts can be checked; opinions can't. Online content often mixes the two up.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Popular ≠ true</strong>Content that spreads fastest is often the least accurate. Pause before sharing.</div></div></div><div class="callout">🧠 <strong>Quiz time!</strong> 7 questions - get 5 or more right to pass.</div>`},
   {type:'quiz',questions:[
 {q:'A video is shared 2 million times, showing a politician apparently saying something shocking. It makes you feel angry. What should you do before sharing it?',opts:['Share it fast, so more people know before it gets removed','Like it but not share it, so you\'re not responsible for spreading it','Only share it if people you trust have already shared it','Stop, check the source, and look for it on other trusted sites first'],correct:3,explanation:'Strong feelings like anger are often used on purpose to trick people. Fake videos can make people appear to say things they never said. Stop and check trusted sources first.'},
@@ -2744,6 +2928,26 @@ const modules = [
      ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 7 · Digital Reputation</div><h2>Your online reputation and your future</h2><p>What you post today can affect your chances years from now. Schools, colleges, and employers increasingly look at people's social media.</p><div class="scenario-box"><div class="scenario-label">📖 Real example</div><p>In 2018, Harvard University took back its offers to ten students after finding they had shared unkind content in a private group chat. The "private" chat was screenshotted and made public.</p></div><p><strong>Building a good online reputation:</strong></p><ul><li>Share work you're proud of - art, writing, achievements</li><li>Think before you comment, don't just react</li><li>Search your own name sometimes to see what comes up</li><li>Delete old posts you regret</li><li>Use the 24-hour rule: wait before posting anything written in strong feelings</li></ul><div class="callout">💡 You're in control of how you look online. Build something you'd be proud of - it can genuinely help your future.</div>`},
   {type:'content',html:`<div class="slide-eyebrow">Module 7 · Healthy Habits</div><h2>Building healthier digital habits</h2><p>Tap each habit to find out why it helps.</p><div class="reveal-grid"><button class="reveal-card" data-target="rcLimits" aria-expanded="false"><span class="reveal-card-title">Set time limits</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcLimits" style="display:none;">Use your phone's built-in screen time tool. This isn't weakness - these apps are built to keep you using them more than you meant to.</div><button class="reveal-card" data-target="rcNotifOff" aria-expanded="false"><span class="reveal-card-title">Turn off notifications</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcNotifOff" style="display:none;">You don't need to know the moment anyone likes your post. Check on your own schedule instead.</div><button class="reveal-card" data-target="rcBedroom" aria-expanded="false"><span class="reveal-card-title">Devices out of your bedroom</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcBedroom" style="display:none;">Screen light can make it harder to sleep at night, and bad sleep makes worry feel worse the next day.</div><button class="reveal-card" data-target="rc24hr" aria-expanded="false"><span class="reveal-card-title">The 24-hour rule</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rc24hr" style="display:none;">Before posting something written in anger or excitement, wait 24 hours. If you still want to post it, do it then.</div><button class="reveal-card" data-target="rcFeed" aria-expanded="false"><span class="reveal-card-title">Look after your feed</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcFeed" style="display:none;">Unfollow accounts that make you feel bad. Follow people whose posts actually add something good to your day.</div><button class="reveal-card" data-target="rcTalk" aria-expanded="false"><span class="reveal-card-title">Talk to someone</span><span class="reveal-card-hint">Tap to learn more</span></button><div class="reveal-panel" id="rcTalk" style="display:none;">If social media is making you feel lonely or anxious, speak to your school's DSL or a trusted teacher, or call Childline on 0800 1111.</div></div><div class="reflection-box"><div class="ref-label">✏️ Think about it</div><p>Which of these habits do you already do? Which is hardest for you, and why? What is one thing you will change this week?</p><textarea placeholder="Write at least 15 words - be clear about what you'll change..."></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`},
+  {type:'content',html:`<div class="slide-eyebrow">Module 7 · How Apps Keep You Scrolling</div><h2>It's not an accident</h2><p>Apps are deliberately designed to keep you using them for as long as possible - that's how they make money from adverts. Tap each card to find out how.</p><div class="activity-slot" data-slot="designReveal"></div><div class="callout">💡 Knowing these tricks exist doesn't mean you have to stop using apps - it just means you get to decide how much time you spend, instead of the app deciding for you.</div>`,
+   activities:[{slot:'designReveal',subtype:'reveal',instructions:'Tap each card to reveal what it means.',
+     cards:[
+       {id:'infinite',term:'Infinite scroll',definition:'No natural stopping point, like the end of a page - there\'s always one more post, so it\'s easy to lose track of time.'},
+       {id:'notifications',term:'Notifications',definition:'Designed to pull you back in throughout the day, often timed around when you\'re most likely to open the app.'},
+       {id:'streaks',term:'Streaks and rewards',definition:'Make you feel you\'ll "lose" something by not opening the app, even on days you don\'t really want to.'},
+       {id:'autoplay',term:'Autoplay',definition:'The next video starts before you’ve decided whether you actually want to watch it.'}
+     ]}]},
+  {type:'content',html:`<div class="slide-eyebrow">Module 7 · Building a Healthier Balance</div><h2>Small changes that actually work</h2><p>You don't need to quit everything - small, realistic changes make the biggest difference. Sort each idea below.</p><div class="activity-slot" data-slot="balanceSort"></div><div class="reflection-box"><div class="ref-label">✏️ Think about it</div><p>Pick one idea from "Worth trying" above. What would actually stop you from doing it, and how could you get around that?</p><textarea placeholder="Write at least 15 words - be honest about what would actually work for you..."></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`,
+   activities:[{slot:'balanceSort',subtype:'sort',instructions:'Drag each idea into the correct column.',
+     bins:[{id:'worth',label:'Worth trying'},{id:'unrealistic',label:'Probably unrealistic'}],
+     items:[
+       {id:'w1',bin:'worth',text:'Turning off non-essential notifications'},
+       {id:'w2',bin:'worth',text:'Keeping your phone outside the bedroom overnight'},
+       {id:'w3',bin:'worth',text:'Using the 24-hour rule before posting something you might regret'},
+       {id:'w4',bin:'worth',text:'Noticing how you feel after scrolling, and adjusting if it\'s not great'},
+       {id:'u1',bin:'unrealistic',text:'Deleting every social media app forever, starting today'},
+       {id:'u2',bin:'unrealistic',text:'Never looking at a screen again outside of school'},
+       {id:'u3',bin:'unrealistic',text:'Expecting to feel completely different after just one day'}
+     ]}]},
   {type:'content',html:`<div class="slide-eyebrow">Module 7 · Summary</div><h2>What you've learned</h2><div class="summary-grid"><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Comparison trap</strong>Social media shows the best bits of people's lives. Scrolling without joining in is linked to anxiety.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Filters and editing</strong>Most photos are edited. The people you compare yourself to don't really look like that.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Influencers</strong>Paid posts must be labelled #ad. "Easy money" lifestyles are often false.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Screen time quality</strong>Making things and talking to people is much better for you than scrolling. Notice how you feel afterwards.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Digital reputation</strong>What you post today can affect college and job chances years from now.</div></div><div class="summary-item"><div class="sum-icon">📌</div><div class="sum-text"><strong>Healthy habits</strong>Set limits, cut notifications, keep devices out of bedrooms, use the 24-hour rule.</div></div></div><div class="callout">🧠 [FINAL_QUIZ_CALLOUT]</div>`},
   {type:'quiz',questions:[
 {q:'Sofia scrolls Instagram for an hour before bed. Afterwards, she feels worse about herself than before. What is the most likely reason?',opts:['Sofia is just more sensitive than most people','Comparing your normal life to everyone else\'s best moments online','She followed the wrong accounts, so the problem is only what she watches','Social media is meant to feel stressful, and this is normal'],correct:1,explanation:'Scrolling without really joining in is linked to anxiety and feeling worse about yourself. You compare your ordinary moments to other people\'s most flattering posts. That comparison is never fair.'},
@@ -2874,6 +3078,7 @@ const moduleIntros={
 
 function showModuleIntro(modId,onComplete){
   const mod=modules.find(m=>m.id===modId);
+  document.documentElement.style.setProperty('--mod-color',mod.color); // tints this module's activity highlights to match its own colour
   const intro=moduleIntros[modId];
   if(!intro){onComplete();return;}
   const overlay=document.createElement('div');

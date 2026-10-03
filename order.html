@@ -124,6 +124,13 @@
           <input class="form-input" type="text" id="poNumber">
         </div>
 
+        <div class="form-row">
+          <p class="form-hint" style="margin-bottom:6px;">To claim your free seats, use the code <strong>FREE</strong></p>
+          <label class="form-label" for="discountCode">Discount code <span style="font-weight:400;color:var(--text-faint);">(optional)</span></label>
+          <input class="form-input" type="text" id="discountCode" style="text-transform:uppercase;" placeholder="e.g. FREE">
+          <p class="form-hint" id="discountStatus"></p>
+        </div>
+
         <p class="form-section-label">Safeguarding team (optional)</p>
         <p class="form-hint" style="margin-top:-2px;margin-bottom:14px;">
           Add your DSL and any deputies now and we'll build them straight into your school's course content,
@@ -138,6 +145,20 @@
       </form>
     </div>
   </section>
+
+  <!-- EMAIL CONFIRMATION — a typo here means someone silently never gets their invoice -->
+  <div id="emailConfirmOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.78);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;width:100%;box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);">
+      <p style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--brand);margin:0 0 10px;">Before we send this</p>
+      <h3 style="font-family:var(--font-display);font-size:22px;margin:0 0 14px;">Check these email addresses</h3>
+      <p style="color:var(--text-soft);font-size:14px;margin:0 0 18px;">We'll send the class code, invoice and login links to exactly what's below. A typo here means someone just never gets their email — no error, no warning.</p>
+      <div id="emailConfirmList" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:22px;font-size:14px;line-height:1.7;"></div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="btn btn-ghost" style="flex:1;" id="emailConfirmBack">&#8592; Go back and check</button>
+        <button type="button" class="btn btn-primary" style="flex:1;" id="emailConfirmGo">Looks right, send it &#8594;</button>
+      </div>
+    </div>
+  </div>
 
 
 <script>
@@ -216,6 +237,24 @@ function addDslRow(){
 }
 addDslRow();
 
+(function(){
+  var codeInput = document.getElementById('discountCode');
+  var statusEl = document.getElementById('discountStatus');
+  if(!codeInput || !statusEl) return;
+  codeInput.addEventListener('input', function(){
+    var val = codeInput.value.trim().toUpperCase();
+    if(val === 'FREE'){
+      statusEl.textContent = '✓ Code applied — this order will be free.';
+      statusEl.style.color = 'var(--brand, #00C9B1)';
+    } else if(val){
+      statusEl.textContent = 'Code not recognised yet — check it\'s typed correctly.';
+      statusEl.style.color = 'var(--text-faint)';
+    } else {
+      statusEl.textContent = '';
+    }
+  });
+})();
+
 document.getElementById('orderForm').addEventListener('submit', async function(e){
   e.preventDefault();
   var isMat = document.querySelector('input[name="orgType"]:checked').value === 'mat';
@@ -227,6 +266,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   var pricingOption = document.querySelector('input[name="pricingOption"]:checked').value;
   var seats = document.getElementById('seatsRequested').value.trim();
   var po = document.getElementById('poNumber').value.trim();
+  var discountCode = document.getElementById('discountCode').value.trim().toUpperCase();
   var status = document.getElementById('orderStatus');
   var submitBtn = document.querySelector('#orderForm button[type="submit"]');
 
@@ -242,6 +282,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   }
 
   var pricingLabel = pricingOption === 'whole-school' ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote needed)' : 'Per student (£1/seat)';
+  if(discountCode === 'FREE') pricingLabel += ' — FREE (code applied)';
 
   var matTeachers = [];
   if(isMat){
@@ -254,6 +295,36 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
       if(tName && tEmail) matTeachers.push({name: tName, email: tEmail, school: tSchool});
     });
   }
+
+  // Show every email address about to be used and make the sender explicitly
+  // confirm them before anything is sent - a single typo here means an
+  // invoice or login link silently never arrives, with no error shown.
+  var confirmed = await (function(){
+    return new Promise(function(resolve){
+      var listEl = document.getElementById('emailConfirmList');
+      var rowsHtml = '<div><strong>Your email:</strong> ' + teacherEmail + '</div>' +
+        '<div style="margin-top:6px;"><strong>Finance email:</strong> ' + financeEmail + '</div>';
+      matTeachers.forEach(function(t){
+        rowsHtml += '<div style="margin-top:6px;"><strong>' + t.name + ':</strong> ' + t.email + '</div>';
+      });
+      listEl.innerHTML = rowsHtml;
+      var overlay = document.getElementById('emailConfirmOverlay');
+      overlay.style.display = 'flex';
+      var backBtn = document.getElementById('emailConfirmBack');
+      var goBtn = document.getElementById('emailConfirmGo');
+      function cleanup(result){
+        overlay.style.display = 'none';
+        backBtn.removeEventListener('click', onBack);
+        goBtn.removeEventListener('click', onGo);
+        resolve(result);
+      }
+      function onBack(){ cleanup(false); }
+      function onGo(){ cleanup(true); }
+      backBtn.addEventListener('click', onBack);
+      goBtn.addEventListener('click', onGo);
+    });
+  })();
+  if(!confirmed) return;
 
   var dslTeam = [];
   var dslRowEls = document.querySelectorAll('#dslTeamRows > div');
@@ -286,7 +357,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     orgType: isMat ? 'mat' : 'school',
     teacherName: teacherName, teacherEmail: teacherEmail, schoolName: schoolName,
     matName: matName, financeEmail: financeEmail, pricingOption: pricingOption,
-    seats: seats, po: po, matTeachers: matTeachers,
+    seats: seats, po: po, discountCode: discountCode, matTeachers: matTeachers,
     dslTeam: dslTeam
   };
 

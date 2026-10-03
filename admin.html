@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders admin — Online Ready</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{background:var(--navy,#0A0F1E);min-height:100vh;}
+  .admin-wrap{max-width:1200px;margin:0 auto;padding:36px 20px 60px;}
+  .admin-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .admin-head h1{font-family:var(--font-display,'Bricolage Grotesque',sans-serif);font-size:26px;color:var(--warm-white,#fff);margin:0;}
+  .admin-head .sub{color:var(--text-soft,#9AA6B8);font-size:13px;}
+  #gate{max-width:360px;margin:80px auto;background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:14px;padding:30px;text-align:center;}
+  #gate h2{color:#fff;font-size:18px;margin:0 0 14px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);}
+  #gate input{width:100%;box-sizing:border-box;padding:11px 14px;border-radius:9px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:12px;}
+  #gate button{width:100%;padding:11px;border-radius:9px;border:none;background:var(--brand,#00C9B1);color:#06241f;font-weight:800;cursor:pointer;font-size:14px;}
+  #gate .err{color:#F87171;font-size:12.5px;margin-top:10px;min-height:16px;}
+  .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+  .summary-card{background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:12px;padding:16px 18px;}
+  .summary-card .num{font-family:var(--font-display,'Bricolage Grotesque',sans-serif);font-size:26px;font-weight:800;color:#fff;}
+  .summary-card .lbl{font-size:12px;color:var(--text-soft,#9AA6B8);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+  .controls input[type="text"]{flex:1;min-width:200px;padding:9px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--bg-2,#121a2e);color:#fff;font-size:13.5px;}
+  .controls select{padding:9px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--bg-2,#121a2e);color:#fff;font-size:13.5px;}
+  .controls button{padding:9px 16px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;}
+  table{width:100%;border-collapse:collapse;background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:12px;overflow:hidden;font-size:13px;}
+  thead th{text-align:left;padding:11px 12px;background:rgba(255,255,255,.03);color:var(--text-soft,#9AA6B8);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border,#232e47);white-space:nowrap;}
+  tbody td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.05);color:#E6EBF3;vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
+  .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .pill.paid{background:rgba(16,185,129,.15);color:#34D399;}
+  .pill.unpaid{background:rgba(245,158,11,.15);color:#FBBF24;}
+  .mono{font-family:var(--font-mono,monospace);font-size:12px;color:var(--text-soft,#9AA6B8);}
+  .school-cell strong{color:#fff;}
+  .school-cell div{font-size:11.5px;color:var(--text-soft,#9AA6B8);margin-top:2px;}
+  #loadErr{color:#F87171;font-size:13px;margin-bottom:14px;}
+  #empty{color:var(--text-soft,#9AA6B8);padding:30px;text-align:center;}
+  .refresh-note{font-size:11.5px;color:var(--text-soft,#9AA6B8);margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h2>🔒 Admin access</h2>
+  <input type="password" id="adminKeyInput" placeholder="Admin key" autocomplete="off">
+  <button onclick="unlock()">Unlock</button>
+  <div class="err" id="gateErr"></div>
+</div>
+
+<div id="dashboard" class="admin-wrap" style="display:none;">
+  <div class="admin-head">
+    <div>
+      <h1>Orders</h1>
+      <div class="sub">Live from Supabase — who's ordered, how many seats, and who's paid.</div>
+    </div>
+    <button onclick="loadOrders()" style="padding:9px 16px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">↻ Refresh</button>
+  </div>
+
+  <div id="loadErr"></div>
+
+  <div class="summary-row" id="summaryRow"></div>
+
+  <div class="controls">
+    <input type="text" id="searchBox" placeholder="Search school, teacher, email, PO, payment ref…" oninput="render()">
+    <select id="statusFilter" onchange="render()">
+      <option value="all">All orders</option>
+      <option value="paid">Paid only</option>
+      <option value="unpaid">Unpaid only</option>
+    </select>
+  </div>
+
+  <div id="tableWrap"></div>
+  <div class="refresh-note">Data refreshes whenever you click Refresh — it's a live read of Supabase, not cached.</div>
+</div>
+
+<script>
+const ADMIN_KEY_STORAGE = 'oready_admin_key';
+let allOrders = [];
+
+function unlock(){
+  const val = document.getElementById('adminKeyInput').value.trim();
+  if(!val) return;
+  sessionStorage.setItem(ADMIN_KEY_STORAGE, val);
+  tryLoad();
+}
+
+async function tryLoad(){
+  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  if(!key){ return; }
+  document.getElementById('gateErr').textContent = '';
+  try{
+    const res = await fetch('/api/admin-orders', { headers: { 'x-admin-key': key } });
+    if(res.status === 401){
+      sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+      document.getElementById('gateErr').textContent = 'Wrong key — try again.';
+      return;
+    }
+    if(!res.ok) throw new Error('Server error (' + res.status + ')');
+    const data = await res.json();
+    allOrders = data.orders || [];
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderSummary(data.summary);
+    render();
+  }catch(err){
+    document.getElementById('gateErr').textContent = 'Could not load: ' + err.message;
+  }
+}
+
+async function loadOrders(){ await tryLoad(); }
+
+function renderSummary(s){
+  if(!s) return;
+  document.getElementById('summaryRow').innerHTML =
+    '<div class="summary-card"><div class="num">' + s.totalOrders + '</div><div class="lbl">Total orders</div></div>' +
+    '<div class="summary-card"><div class="num" style="color:#34D399;">' + s.paidOrders + '</div><div class="lbl">Paid</div></div>' +
+    '<div class="summary-card"><div class="num" style="color:#FBBF24;">' + s.unpaidOrders + '</div><div class="lbl">Awaiting payment</div></div>' +
+    '<div class="summary-card"><div class="num">' + s.totalSeatsRequested + '</div><div class="lbl">Seats requested (all orders)</div></div>';
+}
+
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+}
+
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function render(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value;
+  let rows = allOrders.filter(o => {
+    if(statusFilter === 'paid' && !o.payment_received_at) return false;
+    if(statusFilter === 'unpaid' && o.payment_received_at) return false;
+    if(!q) return true;
+    const hay = [o.school_name, o.teacher_name, o.teacher_email, o.finance_email, o.po_number, o.payment_ref, o.license_code].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+
+  if(!rows.length){
+    document.getElementById('tableWrap').innerHTML = '<div id="empty">No orders match.</div>';
+    return;
+  }
+
+  let html = '<table><thead><tr>' +
+    '<th>Date</th><th>School / Trust</th><th>Pricing</th><th>Seats req.</th><th>Seats used</th><th>Payment</th><th>PO / Ref</th>' +
+    '</tr></thead><tbody>';
+
+  rows.forEach(o => {
+    const paid = !!o.payment_received_at;
+    html += '<tr>' +
+      '<td class="mono">' + fmtDate(o.created_at) + '</td>' +
+      '<td class="school-cell"><strong>' + escapeHtml(o.school_name) + '</strong><div>' + escapeHtml(o.teacher_name) + ' · ' + escapeHtml(o.teacher_email) + '</div></td>' +
+      '<td>' + (o.pricing_option === 'whole-school' ? 'Whole school/trust' : 'Per student (£1)') + '</td>' +
+      '<td>' + (o.seats_requested != null ? o.seats_requested : '—') + '</td>' +
+      '<td>' + (o.seats_used != null ? (o.seats_used + ' / ' + (o.seats_allowed != null ? o.seats_allowed : '?')) : '—') + '</td>' +
+      '<td>' + (paid
+          ? '<span class="pill paid">Paid ' + fmtDate(o.payment_received_at) + '</span>'
+          : '<span class="pill unpaid">Awaiting payment</span>') + '</td>' +
+      '<td class="mono">' + (o.payment_ref ? escapeHtml(o.payment_ref) : (o.po_number ? escapeHtml(o.po_number) : '—')) + '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('tableWrap').innerHTML = html;
+}
+
+// If a key is already remembered for this browser tab/session, skip the gate.
+if(sessionStorage.getItem(ADMIN_KEY_STORAGE)) tryLoad();
+document.getElementById('adminKeyInput').addEventListener('keydown', e => { if(e.key === 'Enter') unlock(); });
+</script>
+
+</body>
+</html>

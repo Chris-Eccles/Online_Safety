@@ -93,9 +93,40 @@ async function generateUniqueCode(schoolName) {
   return initials + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
+/** Short random bank-transfer reference, e.g. "ABITY-K3P9" - given to every
+ * order regardless of whether a PO number was supplied, so the Monzo webhook
+ * always has something exact and unique to match on instead of relying on
+ * PO numbers or school-name text matching (which can false-match similarly
+ * named schools). Excludes 0/O/1/I so it's easy to read and type back in. */
+const PAYMENT_REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+async function generateUniquePaymentRef() {
+  for (let attempt = 0; attempt < 8; attempt++) {
+    let suffix = '';
+    for (let i = 0; i < 4; i++) suffix += PAYMENT_REF_CHARS[Math.floor(Math.random() * PAYMENT_REF_CHARS.length)];
+    const candidate = 'ABITY-' + suffix;
+    const { data } = await supabase.from('orders').select('id').eq('payment_ref', candidate).maybeSingle();
+    if (!data) return candidate;
+  }
+  // Extremely unlikely fallback: time-based, still unique enough
+  return 'ABITY-' + Date.now().toString(36).toUpperCase().slice(-4);
+}
+
+/** Turns a school name into a URL-safe tag like "Online-Ready-Maidstone-Grammar-School",
+ * used on the plain (non-magic) link so traffic can be told apart by school in analytics -
+ * separate from the ready-made link, which carries the actual class code instead. */
+function schoolRefTag(schoolName) {
+  const slug = (schoolName || 'School')
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'School';
+  return 'Online-Ready-' + slug;
+}
+
 function teacherLoginEmailHtml({ teacherName, schoolName, code, dashboardToken, isMatMember, trustName }) {
   const dashboardUrl = SITE_URL.replace(/\/$/, '') + '/dashboard.html?token=' + encodeURIComponent(dashboardToken);
   const courseUrl = SITE_URL.replace(/\/$/, '') + '/course.html?code=' + encodeURIComponent(code);
+  const plainSiteUrl = SITE_URL.replace(/\/$/, '') + '/?ref=' + encodeURIComponent(schoolRefTag(schoolName));
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
       <h2 style="margin-bottom:4px;">Welcome to Online Ready${isMatMember ? ' — ' + trustName : ''}</h2>
@@ -106,6 +137,7 @@ function teacherLoginEmailHtml({ teacherName, schoolName, code, dashboardToken, 
         <tr><td style="padding:10px 0;border-bottom:1px solid #eee;"><strong>Share this with students</strong></td><td style="padding:10px 0;border-bottom:1px solid #eee;">Write it on the board, or send the direct link below</td></tr>
       </table>
       <p><a href="${courseUrl}" style="display:inline-block;background:#00C9B1;color:#0F1B2D;padding:12px 22px;border-radius:30px;text-decoration:none;font-weight:bold;">Open a ready-made student link →</a></p>
+      <p style="font-size:13px;color:#718096;margin-top:4px;">Prefer to share the plain site instead and have students type in the code themselves? Use this link: <a href="${plainSiteUrl}" style="color:#00C9B1;">${plainSiteUrl}</a></p>
       <p style="margin-top:28px;"><strong>Your teacher dashboard</strong> (see your students' progress, scores, and certificates):</p>
       <p><a href="${dashboardUrl}" style="color:#00C9B1;">${dashboardUrl}</a></p>
       <p style="font-size:13px;color:#718096;margin-top:24px;">Keep this email safe — your dashboard link is private to you. Don't share it with students; the class code above is the only thing they need.</p>
@@ -127,12 +159,15 @@ function matAdminEmailHtml({ teacherName, trustName, matDashboardToken }) {
   `;
 }
 
-function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate }) {
+function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied }) {
   const isPerStudent = pricingOption !== 'whole-school';
-  const unitPrice = 1; // £1 per seat, per year
+  const unitPrice = discountApplied ? 0 : 1; // £1 per seat, per year - free when the FREE discount code was used
   const seatCount = Number(seats) || 0;
   const total = isPerStudent ? (unitPrice * seatCount) : null;
-  const reference = po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName);
+  const reference = paymentRef || po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName);
+  const discountRow = discountApplied
+    ? `<p style="margin:0 0 12px;background:#EBFBF7;border:1px solid #BEE8DF;color:#00756A;border-radius:6px;padding:8px 12px;font-weight:bold;">Discount code FREE applied — no payment is due on this order.</p>`
+    : '';
 
   const companyNumberRow = INVOICE.companyNumber
     ? `<p style="margin:2px 0;">Company number: ${INVOICE.companyNumber}</p>` : '';
@@ -206,18 +241,21 @@ function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOptio
         </tfoot>
       </table>
 
-      <div style="background:#F7F9FC;border-radius:10px;padding:14px 18px;margin-bottom:20px;">
+      ${discountRow}
+      ${discountApplied ? '' : `<div style="background:#F7F9FC;border-radius:10px;padding:14px 18px;margin-bottom:20px;">
         <p style="margin:0 0 6px;font-weight:bold;">How to pay</p>
         <p style="margin:2px 0;">${INVOICE.bankDetails}</p>
-        <p style="margin:8px 0 0;">Please use <strong>${reference}</strong> as your payment reference so we can match it up automatically.</p>
-      </div>
+        <p style="margin:8px 0 2px;">Payment reference (please copy exactly):</p>
+        <p style="margin:2px 0;font-family:monospace;font-size:17px;font-weight:bold;letter-spacing:0.5px;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:8px 12px;display:inline-block;">${reference}</p>
+        <p style="margin:8px 0 0;color:#718096;font-size:13px;">This exact code lets us match your payment automatically - without it we may not spot it's come in.</p>
+      </div>`}
 
       <p style="font-size:13px;color:#718096;">This confirms the order only — it isn't a legal advice document. Any questions, just reply to this email.</p>
     </div>
   `;
 }
 
-function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber }) {
+function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber, paymentRef }) {
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
       <h2 style="margin-bottom:4px;">New order: ${schoolOrTrustName}</h2>
@@ -227,6 +265,7 @@ function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teach
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Finance contact</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${financeEmail}</td></tr>
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">PO number</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${po || 'n/a'}</td></tr>
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Invoice</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${invoiceNumber ? 'INV-' + invoiceNumber : 'not recorded'}</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Payment ref to watch for</td><td style="padding:6px 0;border-bottom:1px solid #eee;font-family:monospace;font-weight:bold;">${paymentRef || 'n/a'}</td></tr>
       </table>
       <p style="font-size:12.5px;color:#718096;">Automatic notification - not sent to the customer.</p>
     </div>
@@ -243,7 +282,7 @@ module.exports = async (req, res) => {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const {
       orgType, teacherName, teacherEmail, schoolName, matName,
-      financeEmail, pricingOption, seats, po, matTeachers,
+      financeEmail, pricingOption, seats, po, discountCode, matTeachers,
       dslTeam
     } = body || {};
 
@@ -257,9 +296,14 @@ module.exports = async (req, res) => {
       return;
     }
 
+    // The only live discount code right now is "FREE", given out by hand to
+    // waive the £1/seat fee for this school's order - simple to remove later
+    // by just taking this check back out.
+    const discountApplied = (discountCode || '').trim().toUpperCase() === 'FREE';
+
     const pricingLabel = pricingOption === 'whole-school'
       ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote to follow)'
-      : 'Per student (£1/seat)';
+      : (discountApplied ? 'Per student — FREE (code applied)' : 'Per student (£1/seat)');
 
     let trustId = null;
     let matDashboardToken = null;
@@ -341,9 +385,10 @@ module.exports = async (req, res) => {
 
     // Record the order first (before sending the invoice) so we have a real,
     // sequential invoice number to put on the finance email. The Monzo webhook
-    // (a Supabase Edge Function) later matches incoming bank transfers against
-    // unpaid rows here by PO number or school/trust name.
+    // (a Supabase Edge Function) later matches incoming bank transfers primarily
+    // against this payment_ref, falling back to PO number or school/trust name.
     let invoiceNumber = null;
+    const paymentRef = await generateUniquePaymentRef();
     try {
       const { data: orderRow, error: orderInsertErr } = await supabase.from('orders').insert({
         teacher_name: teacherName,
@@ -355,6 +400,7 @@ module.exports = async (req, res) => {
         po_number: po || null,
         dsl_name: dslName || null,
         dsl_photo_url: dslPhotoUrl,
+        payment_ref: paymentRef,
         license_code: provisioned[0] ? provisioned[0].code : null
       }).select('invoice_number').single();
       if (orderInsertErr) throw orderInsertErr;
@@ -394,10 +440,10 @@ module.exports = async (req, res) => {
     await resend.emails.send({
       from: SENDER,
       to: financeEmail,
-      subject: (invoiceNumber ? 'Invoice INV-' + invoiceNumber : 'Invoice') + ' — Online Ready for ' + (isMat ? matName : schoolName),
+      subject: (discountApplied ? 'Order confirmed (free)' : (invoiceNumber ? 'Invoice INV-' + invoiceNumber : 'Invoice')) + ' — Online Ready for ' + (isMat ? matName : schoolName),
       html: financeEmailHtml({
         schoolOrTrustName: isMat ? matName : schoolName, financeEmail, seats,
-        pricingOption, pricingLabel, po, invoiceNumber, invoiceDate
+        pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied
       })
     });
 
@@ -410,7 +456,7 @@ module.exports = async (req, res) => {
         subject: 'New order: ' + (isMat ? matName : schoolName) + ' (' + (Number(seats) || 0) + ' seats)',
         html: internalNotifyEmailHtml({
           schoolOrTrustName: isMat ? matName : schoolName, seats, pricingLabel,
-          teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber
+          teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber, paymentRef
         })
       });
     } catch (notifyErr) {
