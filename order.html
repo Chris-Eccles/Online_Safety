@@ -134,9 +134,8 @@
         </div>
 
         <div class="form-row">
-          <p class="form-hint" style="margin-bottom:6px;">To claim your free seats, use the code <strong>FREE</strong></p>
           <label class="form-label" for="discountCode">Discount code <span style="font-weight:400;color:var(--text-faint);">(optional)</span></label>
-          <input class="form-input" type="text" id="discountCode" style="text-transform:uppercase;" placeholder="e.g. FREE">
+          <input class="form-input" type="text" id="discountCode" style="text-transform:uppercase;" placeholder="If you've been given one">
           <p class="form-hint" id="discountStatus"></p>
         </div>
 
@@ -298,17 +297,14 @@ addDslRow();
   var codeInput = document.getElementById('discountCode');
   var statusEl = document.getElementById('discountStatus');
   if(!codeInput || !statusEl) return;
+  // Deliberately doesn't say whether a code is valid as you type - that would let
+  // someone script a guess-and-check against every possible code. We check it
+  // server-side when you actually submit, and the confirmation page will say
+  // whether it applied.
   codeInput.addEventListener('input', function(){
-    var val = codeInput.value.trim().toUpperCase();
-    if(val === 'FREE'){
-      statusEl.textContent = '✓ Code applied — this order will be free.';
-      statusEl.style.color = 'var(--brand, #00C9B1)';
-    } else if(val){
-      statusEl.textContent = 'Code not recognised yet — check it\'s typed correctly.';
-      statusEl.style.color = 'var(--text-faint)';
-    } else {
-      statusEl.textContent = '';
-    }
+    var val = codeInput.value.trim();
+    statusEl.textContent = val ? 'We\'ll check this when you submit.' : '';
+    statusEl.style.color = 'var(--text-faint)';
   });
 })();
 
@@ -339,7 +335,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   }
 
   var pricingLabel = pricingOption === 'whole-school' ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote needed)' : 'Per student (£1/seat)';
-  if(discountCode === 'FREE') pricingLabel += ' — FREE (code applied)';
+  if(discountCode) pricingLabel += ' — discount code applied if valid';
 
   var matTeachers = [];
   if(isMat){

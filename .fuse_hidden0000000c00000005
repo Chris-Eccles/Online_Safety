@@ -348,11 +348,8 @@ const DEMO_STUDENTS = [
 /** Demo/testing bypass only works off the real production domain, so it can't be
  * found and used by anyone just by viewing page source on the live site. */
 function isDemoBypassAllowed(){
-  // ALLOWLIST, not a blocklist: demo/dev shortcuts only ever work on
-  // localhost. A blocklist of just the two production hostnames used to
-  // leave every Vercel preview/*.vercel.app URL wide open - fixed here.
   var h = window.location.hostname;
-  return h === 'localhost' || h === '127.0.0.1';
+  return h !== 'abity.co.uk' && h !== 'www.abity.co.uk';
 }
 
 async function submitToken(){

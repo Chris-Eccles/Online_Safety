@@ -71,6 +71,15 @@ function randomToken() {
   return (require('crypto').randomUUID)();
 }
 
+// Escapes user-typed text before it goes into an HTML email (teacher/school/
+// trust names, finance emails, PO numbers) - these emails land in real inboxes
+// (yours, the school's finance contact, the purchaser) that render HTML, so an
+// unescaped name like "<img src=x onerror=...>" typed into the public order
+// form would otherwise execute in whatever reads it.
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 /** Turns a school name into a short, readable, unique-ish class code, e.g.
  * "Maidstone Grammar School" -> "MGS-4821". Retries on collision. */
 async function generateUniqueCode(schoolName) {
@@ -83,14 +92,21 @@ async function generateUniqueCode(schoolName) {
     .toUpperCase()
     .slice(0, 4) || 'SCH';
 
+  // 6 unambiguous chars from a 33-character alphabet = ~33^6 (~1.3bn) possible
+  // suffixes, drawn with crypto.randomInt (not Math.random, which isn't a
+  // secure source) - long enough that scripting a guess against every code
+  // for a known school's initials is no longer practical. Previously this was
+  // 4 digits (~9000 options), which was brute-forceable.
+  const { randomInt } = require('crypto');
   for (let attempt = 0; attempt < 8; attempt++) {
-    const suffix = Math.floor(1000 + Math.random() * 9000);
+    let suffix = '';
+    for (let i = 0; i < 6; i++) suffix += PAYMENT_REF_CHARS[randomInt(PAYMENT_REF_CHARS.length)];
     const candidate = initials + '-' + suffix;
     const { data } = await supabase.from('license_keys').select('code').eq('code', candidate).maybeSingle();
     if (!data) return candidate;
   }
   // Extremely unlikely fallback: fully random code
-  return initials + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+  return initials + '-' + require('crypto').randomBytes(6).toString('hex').toUpperCase();
 }
 
 /** Short random bank-transfer reference, e.g. "ABITY-K3P9" - given to every
@@ -133,9 +149,9 @@ function teacherLoginEmailHtml({ teacherName, schoolName, code, dashboardToken, 
   const plainSiteUrl = SITE_URL.replace(/\/$/, '') + '/course.html?ref=' + encodeURIComponent(schoolRefTag(schoolName));
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
-      <h2 style="margin-bottom:4px;">Welcome to Online Ready${isMatMember ? ' — ' + trustName : ''}</h2>
-      <p>Hi ${teacherName},</p>
-      <p>Your seats for <strong>${schoolName}</strong> are set up. Here's everything you need:</p>
+      <h2 style="margin-bottom:4px;">Welcome to Online Ready${isMatMember ? ' — ' + escapeHtml(trustName) : ''}</h2>
+      <p>Hi ${escapeHtml(teacherName)},</p>
+      <p>Your seats for <strong>${escapeHtml(schoolName)}</strong> are set up. Here's everything you need:</p>
       <table style="width:100%;border-collapse:collapse;margin:20px 0;">
         <tr><td style="padding:10px 0;border-bottom:1px solid #eee;"><strong>Your class code</strong></td><td style="padding:10px 0;border-bottom:1px solid #eee;font-family:monospace;font-size:16px;">${code}</td></tr>
         <tr><td style="padding:10px 0;border-bottom:1px solid #eee;"><strong>Share this with students</strong></td><td style="padding:10px 0;border-bottom:1px solid #eee;">Write it on the board, or send the direct link below</td></tr>
@@ -154,9 +170,9 @@ function matAdminEmailHtml({ teacherName, trustName, matDashboardToken }) {
   const matDashboardUrl = SITE_URL.replace(/\/$/, '') + '/mat-dashboard.html?token=' + encodeURIComponent(matDashboardToken);
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
-      <h2 style="margin-bottom:4px;">Your trust dashboard for ${trustName}</h2>
-      <p>Hi ${teacherName},</p>
-      <p>Because you set up <strong>${trustName}</strong> as a Multi-Academy Trust, you get one additional thing beyond your own teacher login (sent separately): a trust-wide dashboard that sees every teacher's classes.</p>
+      <h2 style="margin-bottom:4px;">Your trust dashboard for ${escapeHtml(trustName)}</h2>
+      <p>Hi ${escapeHtml(teacherName)},</p>
+      <p>Because you set up <strong>${escapeHtml(trustName)}</strong> as a Multi-Academy Trust, you get one additional thing beyond your own teacher login (sent separately): a trust-wide dashboard that sees every teacher's classes.</p>
       <p><a href="${matDashboardUrl}" style="display:inline-block;background:#00C9B1;color:#0F1B2D;padding:12px 22px;border-radius:30px;text-decoration:none;font-weight:bold;">Open your trust dashboard →</a></p>
       <p style="font-size:13px;color:#718096;margin-top:24px;">This link is only for whoever manages the trust account — please don't forward it to individual teachers. Each teacher gets their own separate login in their own email.</p>
     </div>
@@ -170,7 +186,7 @@ function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOptio
   const total = isPerStudent ? (unitPrice * seatCount) : null;
   const reference = paymentRef || po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName);
   const discountRow = discountApplied
-    ? `<p style="margin:0 0 12px;background:#EBFBF7;border:1px solid #BEE8DF;color:#00756A;border-radius:6px;padding:8px 12px;font-weight:bold;">Discount code FREE applied — no payment is due on this order.</p>`
+    ? `<p style="margin:0 0 12px;background:#EBFBF7;border:1px solid #BEE8DF;color:#00756A;border-radius:6px;padding:8px 12px;font-weight:bold;">Discount code applied — no payment is due on this order.</p>`
     : '';
 
   const companyNumberRow = INVOICE.companyNumber
@@ -222,8 +238,8 @@ function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOptio
           </td>
           <td style="vertical-align:top;width:50%;">
             <p style="margin:0 0 4px;font-weight:bold;">Bill to</p>
-            <p style="margin:2px 0;">${schoolOrTrustName}</p>
-            <p style="margin:2px 0;">${financeEmail}</p>
+            <p style="margin:2px 0;">${escapeHtml(schoolOrTrustName)}</p>
+            <p style="margin:2px 0;">${escapeHtml(financeEmail)}</p>
           </td>
         </tr>
       </table>
@@ -262,12 +278,12 @@ function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOptio
 function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber, paymentRef }) {
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
-      <h2 style="margin-bottom:4px;">New order: ${schoolOrTrustName}</h2>
+      <h2 style="margin-bottom:4px;">New order: ${escapeHtml(schoolOrTrustName)}</h2>
       <p>${seats || '0'} seats · ${pricingLabel}${isMat ? ' · MAT' : ''}</p>
       <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
-        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Teacher</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${teacherName} (${teacherEmail})</td></tr>
-        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Finance contact</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${financeEmail}</td></tr>
-        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">PO number</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${po || 'n/a'}</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Teacher</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${escapeHtml(teacherName)} (${escapeHtml(teacherEmail)})</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Finance contact</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${escapeHtml(financeEmail)}</td></tr>
+        <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">PO number</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${escapeHtml(po) || 'n/a'}</td></tr>
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Invoice</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${invoiceNumber ? 'INV-' + invoiceNumber : 'not recorded'}</td></tr>
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Payment ref to watch for</td><td style="padding:6px 0;border-bottom:1px solid #eee;font-family:monospace;font-weight:bold;">${paymentRef || 'n/a'}</td></tr>
       </table>
@@ -279,6 +295,17 @@ function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teach
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  // Rate limit by IP - without this, a script could place unlimited fake
+  // orders, each one firing several real emails and writing real DB rows.
+  // 8 orders per 30 minutes is far more than any real school needs in one
+  // sitting (schools place one order, maybe two if they made a mistake).
+  const { checkRateLimit, clientIp } = require('./_lib/rateLimit');
+  const rl = await checkRateLimit(supabase, { bucket: 'create-order:' + clientIp(req), limit: 8, windowSeconds: 1800 });
+  if (!rl.allowed) {
+    res.status(429).json({ error: 'Too many order attempts from this connection - please try again shortly, or email hello@abity.co.uk.' });
     return;
   }
 
@@ -311,10 +338,13 @@ module.exports = async (req, res) => {
       return;
     }
 
-    // The only live discount code right now is "FREE", given out by hand to
-    // waive the £1/seat fee for this school's order - simple to remove later
-    // by just taking this check back out.
-    const discountApplied = (discountCode || '').trim().toUpperCase() === 'FREE';
+    // The discount code's actual value lives only in DISCOUNT_CODE (an env
+    // var you set in Vercel), never in this file or on the public order page -
+    // it used to be hardcoded as "FREE" and printed right there on order.html,
+    // which meant anyone reading the page source could claim free seats.
+    // Unset DISCOUNT_CODE entirely to turn discounts off - no code will match.
+    const discountApplied = !!process.env.DISCOUNT_CODE &&
+      (discountCode || '').trim().toUpperCase() === process.env.DISCOUNT_CODE.trim().toUpperCase();
 
     const pricingLabel = pricingOption === 'whole-school'
       ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote to follow)'

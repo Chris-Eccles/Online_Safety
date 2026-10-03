@@ -30,6 +30,17 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // Rate limit by IP - each submission fires 2 real emails, so this stops a
+  // script from flooding your inbox and burning through Resend's quota.
+  const { createClient } = require('@supabase/supabase-js');
+  const { checkRateLimit, clientIp } = require('./_lib/rateLimit');
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const rl = await checkRateLimit(supabase, { bucket: 'contact:' + clientIp(req), limit: 5, windowSeconds: 1800 });
+  if (!rl.allowed) {
+    res.status(429).json({ error: 'Too many messages from this connection - please try again shortly.' });
+    return;
+  }
+
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const name = (body.name || '').trim();

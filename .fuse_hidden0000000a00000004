@@ -1448,11 +1448,8 @@ function clearAccessError(){
 /** Demo/testing bypass codes only work off the real production domain, so they can't
  * be found and used by an actual student just by viewing page source on the live site. */
 function isDemoBypassAllowed(){
-  // ALLOWLIST, not a blocklist: demo/dev shortcuts only ever work on
-  // localhost. A blocklist of just the two production hostnames used to
-  // leave every Vercel preview/*.vercel.app URL wide open - fixed here.
   var h = window.location.hostname;
-  return h === 'localhost' || h === '127.0.0.1';
+  return h !== 'abity.co.uk' && h !== 'www.abity.co.uk';
 }
 
 /** Looks up a code against Supabase, and consumes a seat the first time this device uses it.

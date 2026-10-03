@@ -18,14 +18,23 @@
  * ============================================================================
  */
 const { createClient } = require('@supabase/supabase-js');
-const { requireAdminAuth } = require('./_lib/adminAuth');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 module.exports = async (req, res) => {
-  // Two-password gate + rate limiting + constant-time comparison - all
-  // shared logic, see api/_lib/adminAuth.js.
-  if (!(await requireAdminAuth(req, res, supabase))) return;
+  // Two-password gate: admin.html combines both fields the admin types
+  // into one header as "password1::password2" - both halves must match
+  // their own env var for access.
+  const key = req.headers['x-admin-key'] || '';
+  const parts = key.split('::');
+  const ok = parts.length === 2 &&
+    process.env.ADMIN_SECRET && process.env.ADMIN_SECRET_2 &&
+    parts[0] === process.env.ADMIN_SECRET &&
+    parts[1] === process.env.ADMIN_SECRET_2;
+  if (!ok) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
 
   try {
     const { data: orders, error: ordersErr } = await supabase
