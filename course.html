@@ -4,13 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Online Ready</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* Apply any saved accessibility prefs immediately, before first paint, so
+ * there's no flash of the default theme/font/size for a returning student. */
+(function(){
+  try{
+    var p = JSON.parse(localStorage.getItem('cybersmart_a11y_prefs') || '{}');
+    var html = document.documentElement;
+    if(p.theme) html.setAttribute('data-a11y-theme', p.theme);
+    if(p.font) html.setAttribute('data-a11y-font', p.font);
+    if(p.size) html.setAttribute('data-a11y-size', p.size);
+    if(p.cb) html.setAttribute('data-a11y-cb', '1');
+  }catch(e){}
+})();
+</script>
 <style>
 
 
 :root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--blue:#3B82F6;--blue-glow:rgba(59,130,246,0.16);--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY — theme / font / text-size / colour-blind-safe overrides.
+   Everything in the app already reads its colours and fonts from the
+   :root custom properties above, so re-declaring those properties under
+   a data-a11y-* attribute on <html> re-themes the whole app for free,
+   with no per-component changes needed.
+   ══════════════════════════════════════════════════════════════════════ */
+html[data-a11y-theme="light"]{--navy:#F4F6FA;--navy-mid:#E7ECF3;--warm-white:#111827;--slate:#6B7280;--slate-light:#4B5563;--card-bg:#FFFFFF;--border:rgba(15,23,42,0.12);}
+html[data-a11y-theme="light"] body{color:#111827;}
+html[data-a11y-theme="high-contrast"]{--navy:#000000;--navy-mid:#000000;--warm-white:#FFFFFF;--slate:#FFFFFF;--slate-light:#F2F2F2;--card-bg:#000000;--border:#FFFFFF;--teal:#FFD400;--teal-dark:#E6BF00;--teal-glow:rgba(255,212,0,0.25);}
+html[data-a11y-theme="high-contrast"] body{color:#FFFFFF;}
+html[data-a11y-theme="high-contrast"] .btn-primary{color:#000000;}
+html[data-a11y-theme="cream"]{--navy:#FBF3E3;--navy-mid:#F3E7CF;--warm-white:#3B2F2A;--slate:#6B5B4F;--slate-light:#80705F;--card-bg:#FFF9EE;--border:rgba(59,47,42,0.15);}
+html[data-a11y-theme="cream"] body{color:#3B2F2A;}
+
+html[data-a11y-font="atkinson"]{--font-ui:'Atkinson Hyperlegible',sans-serif;--font-head:'Atkinson Hyperlegible',sans-serif;}
+html[data-a11y-font="lexend"]{--font-ui:'Lexend',sans-serif;--font-head:'Lexend',sans-serif;}
+
+html[data-a11y-size="small"] body{zoom:0.9;}
+html[data-a11y-size="large"] body{zoom:1.15;}
+html[data-a11y-size="xl"] body{zoom:1.32;}
+
+/* Colour-blind-safe mode: swaps the correct/incorrect pair for a
+   blue-green vs vermillion pair (Okabe-Ito palette), which stays
+   distinguishable for red-green colour blindness - the most common form. */
+html[data-a11y-cb="1"]{--green:#009E73;--red:#D55E00;}
+
+#a11y-toggle{position:fixed;bottom:16px;left:16px;z-index:9998;width:46px;height:46px;border-radius:50%;background:var(--card-bg);border:1.5px solid var(--border);color:var(--warm-white);font-family:var(--font-ui);font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);}
+#a11y-toggle:hover{border-color:var(--teal);}
+#a11y-panel{position:fixed;bottom:70px;left:16px;z-index:9998;width:280px;max-width:calc(100vw - 32px);background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.4);display:none;}
+#a11y-panel.show{display:block;}
+#a11y-panel h4{font-family:var(--font-head);font-size:14px;color:var(--warm-white);margin:0 0 4px;}
+#a11y-panel .a11y-group{margin-top:14px;}
+#a11y-panel .a11y-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-light);font-weight:700;margin-bottom:7px;display:block;}
+#a11y-panel .a11y-opts{display:flex;flex-wrap:wrap;gap:6px;}
+#a11y-panel .a11y-opt{flex:1;min-width:60px;padding:7px 8px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--warm-white);font-family:var(--font-ui);font-size:11.5px;font-weight:700;cursor:pointer;text-align:center;}
+#a11y-panel .a11y-opt.active{border-color:var(--teal);background:var(--teal-glow);color:var(--teal);}
+#a11y-panel .a11y-cb-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+#a11y-panel .a11y-reset{margin-top:16px;width:100%;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--slate-light);font-family:var(--font-ui);font-size:12px;cursor:pointer;}
+.a11y-switch{position:relative;width:38px;height:22px;flex-shrink:0;}
+.a11y-switch input{opacity:0;width:0;height:0;}
+.a11y-switch-track{position:absolute;inset:0;background:var(--border);border-radius:20px;cursor:pointer;transition:background .15s;}
+.a11y-switch-track::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--warm-white);transition:transform .15s;}
+.a11y-switch input:checked+.a11y-switch-track{background:var(--teal);}
+.a11y-switch input:checked+.a11y-switch-track::after{transform:translateX(16px);}
+@media(max-width:480px){#a11y-toggle{bottom:12px;left:12px;}#a11y-panel{bottom:64px;left:12px;}}
 *{box-sizing:border-box;margin:0;padding:0;}
 button,.module-card,.quiz-opt,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 button,.module-card[role="button"],.quiz-opt{min-height:44px;}
@@ -612,6 +673,52 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 </head>
 <body>
 <button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress" style="display:none;">&#x21BA; Reset</button>
+
+<!-- ACCESSIBILITY -->
+<button id="a11y-toggle" onclick="toggleA11yPanel()" aria-label="Accessibility options" title="Accessibility options">Aa</button>
+<div id="a11y-panel" role="dialog" aria-label="Accessibility options">
+  <h4>Accessibility</h4>
+  <p style="font-size:11.5px;color:var(--slate-light);margin:0;">Changes apply straight away and are remembered on this device.</p>
+
+  <div class="a11y-group">
+    <span class="a11y-label">Text size</span>
+    <div class="a11y-opts" data-a11y-group="size">
+      <button class="a11y-opt" data-value="small" onclick="setA11y('size','small')">Small</button>
+      <button class="a11y-opt" data-value="" onclick="setA11y('size','')">Default</button>
+      <button class="a11y-opt" data-value="large" onclick="setA11y('size','large')">Large</button>
+      <button class="a11y-opt" data-value="xl" onclick="setA11y('size','xl')">X-Large</button>
+    </div>
+  </div>
+
+  <div class="a11y-group">
+    <span class="a11y-label">Typeface</span>
+    <div class="a11y-opts" data-a11y-group="font">
+      <button class="a11y-opt" data-value="" onclick="setA11y('font','')">Default</button>
+      <button class="a11y-opt" data-value="atkinson" onclick="setA11y('font','atkinson')">Hyperlegible</button>
+      <button class="a11y-opt" data-value="lexend" onclick="setA11y('font','lexend')">Lexend</button>
+    </div>
+  </div>
+
+  <div class="a11y-group">
+    <span class="a11y-label">Background &amp; text colour</span>
+    <div class="a11y-opts" data-a11y-group="theme">
+      <button class="a11y-opt" data-value="" onclick="setA11y('theme','')">Dark</button>
+      <button class="a11y-opt" data-value="light" onclick="setA11y('theme','light')">Light</button>
+      <button class="a11y-opt" data-value="cream" onclick="setA11y('theme','cream')">Cream</button>
+      <button class="a11y-opt" data-value="high-contrast" onclick="setA11y('theme','high-contrast')">High contrast</button>
+    </div>
+  </div>
+
+  <div class="a11y-cb-row">
+    <span class="a11y-label" style="margin:0;">Colour-blind friendly mode</span>
+    <label class="a11y-switch">
+      <input type="checkbox" id="a11y-cb-check" onchange="setA11yCb(this.checked)">
+      <span class="a11y-switch-track"></span>
+    </label>
+  </div>
+
+  <button class="a11y-reset" onclick="resetA11y()">Reset to default</button>
+</div>
 <!-- WELCOME -->
 <div id="screen-code" class="screen">
   <div class="wlc-center" style="max-width:420px;">
@@ -1037,6 +1144,62 @@ function devReset(){
   localStorage.clear();
   location.reload();
 }
+
+/* ---------------- ACCESSIBILITY PANEL ---------------- */
+const A11Y_KEY='cybersmart_a11y_prefs';
+
+function loadA11yPrefs(){
+  try{return JSON.parse(localStorage.getItem(A11Y_KEY)||'{}');}catch(e){return {};}
+}
+function saveA11yPrefs(p){
+  try{localStorage.setItem(A11Y_KEY,JSON.stringify(p));}catch(e){}
+}
+function applyA11yAttrs(p){
+  const html=document.documentElement;
+  if(p.theme)html.setAttribute('data-a11y-theme',p.theme);else html.removeAttribute('data-a11y-theme');
+  if(p.font)html.setAttribute('data-a11y-font',p.font);else html.removeAttribute('data-a11y-font');
+  if(p.size)html.setAttribute('data-a11y-size',p.size);else html.removeAttribute('data-a11y-size');
+  if(p.cb)html.setAttribute('data-a11y-cb','1');else html.removeAttribute('data-a11y-cb');
+}
+function syncA11yPanelUI(p){
+  ['size','font','theme'].forEach(group=>{
+    document.querySelectorAll('[data-a11y-group="'+group+'"] .a11y-opt').forEach(btn=>{
+      btn.classList.toggle('active',(btn.getAttribute('data-value')||'')===(p[group]||''));
+    });
+  });
+  const cb=document.getElementById('a11y-cb-check');
+  if(cb)cb.checked=!!p.cb;
+}
+function setA11y(key,value){
+  const p=loadA11yPrefs();
+  if(value)p[key]=value;else delete p[key];
+  saveA11yPrefs(p);
+  applyA11yAttrs(p);
+  syncA11yPanelUI(p);
+}
+function setA11yCb(checked){
+  const p=loadA11yPrefs();
+  if(checked)p.cb=true;else delete p.cb;
+  saveA11yPrefs(p);
+  applyA11yAttrs(p);
+  syncA11yPanelUI(p);
+}
+function resetA11y(){
+  saveA11yPrefs({});
+  applyA11yAttrs({});
+  syncA11yPanelUI({});
+}
+function toggleA11yPanel(){
+  document.getElementById('a11y-panel').classList.toggle('show');
+}
+document.addEventListener('click',function(e){
+  const panel=document.getElementById('a11y-panel');
+  const toggle=document.getElementById('a11y-toggle');
+  if(!panel||!panel.classList.contains('show'))return;
+  if(panel.contains(e.target)||toggle.contains(e.target))return;
+  panel.classList.remove('show');
+});
+syncA11yPanelUI(loadA11yPrefs());
 
 
 // ══════════════════════════════════════════
