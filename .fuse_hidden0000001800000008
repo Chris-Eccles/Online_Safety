@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security — Online Ready</title>
+<title>Terms of service — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="How Online Ready protects student data: encryption, hosting, and access control, explained plainly.">
+<meta name="description" content="The terms covering seat licensing, payment, and use of Online Ready.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -39,29 +39,43 @@
 <main>
 
   <section class="page-hero wrap">
-    <p class="eyebrow">Security</p>
-    <h1 class="section-title">How student data is actually protected.</h1>
-    <p class="section-sub">Plainly, not just in a compliance checkbox.</p>
+    <p class="eyebrow">Terms of service</p>
+    <h1 class="section-title">Terms of service</h1>
   </section>
 
   <section class="wrap prose">
-    <h2>Where data lives</h2>
-    <p>Course progress is stored locally on the student's own device by default. If a student sets a personal PIN to continue on a different device, their progress and reflections sync to our database, hosted in the UK.</p>
+    <div class="draft-banner">
+      <span class="draft-banner-icon">⚠️</span>
+      <div><strong>Draft — pending legal review.</strong> This is a starting point reflecting the actual pricing and invoicing process, not a solicitor-reviewed contract. Please have it properly reviewed before relying on it commercially.</div>
+    </div>
+    <p class="meta-updated">Draft — not yet published</p>
 
-    <h2>Reflections are encrypted before they ever leave the device</h2>
-    <p>Written reflection answers are encrypted in the student's browser — using a key derived from their own PIN via PBKDF2, then AES-256-GCM — before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
+    <h2>The service</h2>
+    <p>Online Ready is an online safety course licensed to schools on a per-seat basis. A "seat" is one student access code, valid for one academic year from the date it's issued unless agreed otherwise.</p>
 
-    <h2>PINs aren't stored</h2>
-    <p>A student's PIN is never saved anywhere. Only a one-way hash of it is stored, purely to check a returning student is who they say they are. The PIN itself only ever exists, briefly, in the student's own browser.</p>
+    <h2>Pricing and payment</h2>
+    <p>Seats are priced at £1 per student per year unless a whole-school flat rate has been agreed separately. An invoice is issued on request and is due within <em>[30/40 days — confirm final payment term]</em> of the invoice date, payable by bank transfer (BACS).</p>
 
-    <h2>Access control</h2>
-    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes — never another school's data.</p>
+    <h2>Access during a payment dispute</h2>
+    <p>If an invoice becomes overdue, we won't cut off students mid-course. We'll get in touch with the school's finance contact to resolve it directly before any access is affected.</p>
 
-    <h2>No advertising, no tracking sold on</h2>
-    <p>We don't sell, rent, or share student data with advertisers. This site itself doesn't run advertising trackers.</p>
+    <h2>Acceptable use</h2>
+    <p>Access codes are for use by the licensing school's own students only, and shouldn't be shared outside that school or resold.</p>
 
-    <h2>Found a security issue?</h2>
-    <p>Please tell us directly at <a href="mailto:security@abity.co.uk">security@abity.co.uk</a> before disclosing it anywhere else, so we can fix it first. We won't take action against anyone reporting a genuine issue in good faith.</p>
+    <h2>Cancellations and refunds</h2>
+    <p><em>[To confirm: what happens if a school wants to cancel after codes have been issued but before students have started? This needs a clear answer before publishing.]</em></p>
+
+    <h2>Data protection</h2>
+    <p>See our <a href="/privacy">privacy policy</a> for how student and school data is handled. Nothing in these terms overrides your rights under UK data protection law.</p>
+
+    <h2>Liability</h2>
+    <p><em>[Standard liability limitation clause to be drafted with a solicitor — not included in this draft.]</em></p>
+
+    <h2>Governing law</h2>
+    <p>These terms are governed by the law of England and Wales.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about these terms: <a href="mailto:hello@abity.co.uk">hello@abity.co.uk</a>.</p>
   </section>
 
 </main>
@@ -100,7 +114,6 @@
       <h4>Legal</h4>
       <ul>
         <li><a href="/privacy">Privacy policy</a></li>
-        <li><a href="/gdpr">GDPR compliance</a></li>
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>

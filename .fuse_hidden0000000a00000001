@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security — Online Ready</title>
+<title>Cookie policy — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="How Online Ready protects student data: encryption, hosting, and access control, explained plainly.">
+<meta name="description" content="What cookies and local storage Online Ready actually uses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -39,29 +39,21 @@
 <main>
 
   <section class="page-hero wrap">
-    <p class="eyebrow">Security</p>
-    <h1 class="section-title">How student data is actually protected.</h1>
-    <p class="section-sub">Plainly, not just in a compliance checkbox.</p>
+    <p class="eyebrow">Cookie policy</p>
+    <h1 class="section-title">Cookie policy</h1>
   </section>
 
   <section class="wrap prose">
-    <h2>Where data lives</h2>
-    <p>Course progress is stored locally on the student's own device by default. If a student sets a personal PIN to continue on a different device, their progress and reflections sync to our database, hosted in the UK.</p>
+    <p class="meta-updated">Last updated — draft</p>
 
-    <h2>Reflections are encrypted before they ever leave the device</h2>
-    <p>Written reflection answers are encrypted in the student's browser — using a key derived from their own PIN via PBKDF2, then AES-256-GCM — before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
+    <h2>Short version</h2>
+    <p>This marketing site doesn't currently use tracking or advertising cookies. We load fonts from Google Fonts, which involves a request to Google's servers but doesn't set a tracking cookie on this site.</p>
 
-    <h2>PINs aren't stored</h2>
-    <p>A student's PIN is never saved anywhere. Only a one-way hash of it is stored, purely to check a returning student is who they say they are. The PIN itself only ever exists, briefly, in the student's own browser.</p>
+    <h2>The course app</h2>
+    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, and — only if you choose to set a PIN — a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
 
-    <h2>Access control</h2>
-    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes — never another school's data.</p>
-
-    <h2>No advertising, no tracking sold on</h2>
-    <p>We don't sell, rent, or share student data with advertisers. This site itself doesn't run advertising trackers.</p>
-
-    <h2>Found a security issue?</h2>
-    <p>Please tell us directly at <a href="mailto:security@abity.co.uk">security@abity.co.uk</a> before disclosing it anywhere else, so we can fix it first. We won't take action against anyone reporting a genuine issue in good faith.</p>
+    <h2>If this changes</h2>
+    <p>If we ever add analytics (e.g. to see which pages are useful) or advertising, this page will be updated first, and we'll ask for consent where the law requires it.</p>
   </section>
 
 </main>
@@ -100,7 +92,6 @@
       <h4>Legal</h4>
       <ul>
         <li><a href="/privacy">Privacy policy</a></li>
-        <li><a href="/gdpr">GDPR compliance</a></li>
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
