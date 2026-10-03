@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <style>.or-gate{visibility:hidden !important;}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify a certificate — Online Ready</title>
+<title>Cookie policy — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="Check whether an Online Ready certificate ID is genuine.">
+<meta name="description" content="What cookies and local storage Online Ready actually uses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -41,55 +41,27 @@
 
 <main>
 
-  <section class="page-hero wrap" style="text-align:center;">
-    <p class="eyebrow">Verify</p>
-    <h1 class="section-title" style="max-width:none;">Check a certificate.</h1>
-    <p class="section-sub" style="margin:0 auto;">Enter a certificate ID to confirm it's genuine. This only ever confirms pass/fail — it never shows a student's name or their written answers to whoever's checking.</p>
+  <section class="page-hero wrap">
+    <p class="eyebrow">Cookie policy</p>
+    <h1 class="section-title">Cookie policy</h1>
   </section>
 
-  <section class="wrap" style="display:flex; justify-content:center;">
-    <div class="verify-card">
-      <div class="verify-input-row">
-        <input type="text" id="certInput" class="form-input" placeholder="e.g. OR-4F9K21" maxlength="20" autocomplete="off">
-        <button class="btn btn-primary" id="verifyBtn" style="flex-shrink:0;">Check</button>
-      </div>
-      <p class="form-hint">Certificate IDs look like OR-XXXXXX and are printed on every student's certificate.</p>
-      <div class="verify-result pending" id="verifyResult"></div>
-    </div>
+  <section class="wrap prose">
+    <p class="meta-updated">Last updated — draft</p>
+
+    <h2>Short version</h2>
+    <p>This site doesn't use tracking or advertising cookies, and doesn't run any analytics. A few pages load resources from other companies' servers to work at all — fonts from Google Fonts, and (on some pages) library code from cdnjs.com and jsdelivr.net. None of these set a tracking cookie on this site, but loading them does mean your browser makes a direct request to those companies' servers, which reveals your IP address to them in the ordinary way any web request does.</p>
+
+    <h2>The course app</h2>
+    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and — only if you choose to set a PIN — a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
+
+    <h2>Contact box</h2>
+    <p>The "Contact us" box on every page sends your message to our server to email to us — it doesn't use cookies, and nothing is stored beyond what's needed to reply to you.</p>
+
+    <h2>If this changes</h2>
+    <p>If we ever add analytics (e.g. to see which pages are useful) or advertising, this page will be updated first, and we'll ask for consent where the law requires it.</p>
   </section>
 
-
-<script>
-document.getElementById('verifyBtn').addEventListener('click', function(){
-  var input = document.getElementById('certInput');
-  var result = document.getElementById('verifyResult');
-  var id = input.value.trim();
-  result.className = 'verify-result show pending';
-  if (!id) {
-    result.textContent = 'Enter a certificate ID first.';
-    return;
-  }
-  // Verification isn't wired up to a real database yet — this deliberately
-  // does not fake a pass/fail result. Replace this with a real Supabase
-  // lookup against student_records.cert_id once that's built.
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  var safeId = escapeHtml(id);
-  result.innerHTML = "Certificate lookup isn't live yet — we're not able to check " + safeId + " automatically just yet. In the meantime, " +
-    '<a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the certificate ID and we\'ll confirm it by hand.';
-  // A real event listener, not an inline onclick - passes the raw id straight
-  // through as a JS value instead of re-encoding it into an HTML attribute,
-  // which avoids a quoting/escaping mess (and the injection risk that comes with it).
-  var emailLink = document.getElementById('verifyEmailLink');
-  if (emailLink) {
-    emailLink.addEventListener('click', function(e){
-      if (window.oreadyOpenContact) {
-        e.preventDefault();
-        window.oreadyOpenContact('Certificate ID: ' + id + ' — ');
-      }
-    });
-  }
-});
-</script>
 </main>
 
 <footer class="site-footer">
@@ -136,7 +108,7 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · hello@abity.co.uk</p>
   </div>
 </footer>
 

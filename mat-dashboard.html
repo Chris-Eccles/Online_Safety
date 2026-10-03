@@ -99,7 +99,7 @@ tr.clickable{cursor:pointer;}
       <input type="text" id="tokenInput" class="gate-input" placeholder="Paste your trust dashboard token" autocomplete="off" spellcheck="false">
       <button class="btn-primary" id="gateBtn" onclick="submitToken()">View my trust →</button>
       <div id="gateError" class="gate-error" role="alert" aria-live="assertive"></div>
-      <p class="gate-hint">Lost your token? Email hello@abity.co.uk from the address you registered with.</p>
+      <p class="gate-hint">Lost your token? <a href="mailto:hello@abity.co.uk">Email us</a> from the address you registered with.</p>
     </div>
   </div>
 </div>
@@ -231,8 +231,11 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
 }
 function showGateError(msg){
+  // innerHTML, not textContent - every call site passes a static string we
+  // wrote ourselves (never user input), so this is safe, and lets the
+  // "email us" messages below actually be clickable links.
   const el = document.getElementById('gateError');
-  el.textContent = msg;
+  el.innerHTML = msg;
   el.classList.add('show');
 }
 function clearGateError(){ document.getElementById('gateError').classList.remove('show'); }
@@ -300,7 +303,7 @@ async function submitToken(){
       .maybeSingle();
 
     if(error || !data){
-      showGateError("That trust dashboard link doesn't match any trust we have on file. Double-check it, or email hello@abity.co.uk.");
+      showGateError('That trust dashboard link doesn\'t match any trust we have on file. Double-check it, or <a href="mailto:hello@abity.co.uk">email us</a>.');
       btn.textContent = origText; btn.disabled = false;
       return;
     }

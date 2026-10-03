@@ -511,6 +511,12 @@ a{ color:inherit; }
   border-radius:var(--radius);
   padding:38px 34px;
   backdrop-filter:blur(10px);
+  /* position:relative makes this the stacking/positioning context for the
+     confetti burst (see index.html's script), so confetti pieces can sit
+     above this card's own background but still below .price-figure's
+     z-index:2 - without this, the confetti (appended to body) was stacking
+     against .wrap's z-index:2 and losing, rendering fully behind the card. */
+  position:relative;
 }
 .price-was{
   display:block;

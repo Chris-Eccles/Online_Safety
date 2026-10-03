@@ -246,6 +246,10 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .fill-word.armed{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);box-shadow:0 0 0 3px rgba(0,201,177,.3);}
 .fill-word.wrong{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.12);box-shadow:0 0 10px rgba(239,68,68,.3);}
 .fill-word.used{opacity:.25;pointer-events:none;box-shadow:none;}
+.fill-word[draggable="true"]{cursor:grab;}
+.fill-word[draggable="true"]:active{cursor:grabbing;}
+.fill-word.dragging{opacity:.3;box-shadow:none;}
+.fill-blank.drag-over{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);box-shadow:0 0 16px rgba(0,201,177,.3);}
 .fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
 .fill-submit-btn:not(:disabled):hover{background:var(--teal-dark);}
 .fill-submit-btn:disabled{background:var(--navy-mid);color:var(--slate-light);cursor:not-allowed;opacity:.65;}
@@ -2186,7 +2190,7 @@ function buildFillHtml(slide){
   slide.blanks.forEach(b=>{
     sentence=sentence.replace('{{'+b.id+'}}','<span class="fill-blank" data-blank="'+b.id+'" data-answer="'+b.answer+'">?</span>');
   });
-  const bankHtml=slide.wordbank.map(w=>'<div class="fill-word" data-word="'+w+'">'+w+'</div>').join('');
+  const bankHtml=slide.wordbank.map(w=>'<div class="fill-word" draggable="true" data-word="'+w+'">'+w+'</div>').join('');
   return '<div class="fill-sentence">'+sentence+'</div><div class="fill-wordbank">'+bankHtml+'</div><button type="button" class="fill-submit-btn" disabled>Check my answers</button>';
 }
 
@@ -2259,6 +2263,35 @@ function initFillActivity(slide,container,complete){
       } else if(blank.classList.contains('filled')||blank.classList.contains('wrong-position')){
         clearBlank(blank);
       }
+    });
+  });
+
+  // Drag-and-drop: drag a word chip and drop it onto a gap - same
+  // placeWordInBlank() logic as tap-to-arm-then-tap-to-place, just a
+  // different way in (mirrors the matching activity's drag handling).
+  words.forEach(word=>{
+    word.addEventListener('dragstart',(e)=>{
+      if(word.classList.contains('used')){e.preventDefault();return;}
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',word.dataset.word);
+      setTimeout(()=>word.classList.add('dragging'),0);
+    });
+    word.addEventListener('dragend',()=>word.classList.remove('dragging'));
+  });
+  blanks.forEach(blank=>{
+    blank.addEventListener('dragover',(e)=>{
+      if(blank.classList.contains('correct'))return;
+      e.preventDefault();e.dataTransfer.dropEffect='move';
+      blank.classList.add('drag-over');
+    });
+    blank.addEventListener('dragleave',()=>blank.classList.remove('drag-over'));
+    blank.addEventListener('drop',(e)=>{
+      e.preventDefault();blank.classList.remove('drag-over');
+      if(blank.classList.contains('correct'))return;
+      const draggedText=e.dataTransfer.getData('text/plain');
+      const draggedWord=words.find(w=>w.dataset.word===draggedText&&!w.classList.contains('used'));
+      if(!draggedWord)return;
+      placeWordInBlank(draggedWord,blank);
     });
   });
 
@@ -2767,7 +2800,7 @@ const modules = [
  slides:[
   {type:'content',html:`<div class="slide-eyebrow">Module 2 · Introduction</div><h2>Why passwords matter</h2><p>Your password keeps your accounts safe - your email, games, social media, and photos.</p><div class="stat-row"><div class="stat-card"><div class="num">&lt;1s</div><div class="label">to crack "password123" using a computer program</div></div><div class="stat-card"><div class="num">81%</div><div class="label">of hacks happen because of weak or stolen passwords</div></div><div class="stat-card"><div class="num">3bn</div><div class="label">passwords tried every day by computer programs</div></div></div><div class="callout danger">🚨 Hackers use programs that try billions of passwords very fast. A weak password can let a stranger into everything.</div><div class="dfe-tag"><strong>What this module covers</strong>How to make a safe password, how hackers try to trick you, and how to protect your accounts.</div>`},
   {type:'content',html:`<div class="slide-eyebrow">Module 2 · Strong Passwords</div><h2>What makes a password strong?</h2><p>A strong password comes down to three things. Fill in the gaps below.</p><div class="activity-slot" data-slot="passwordFill"></div><div class="callout">💡 <strong>Easy trick:</strong> Pick 4 random words that don't go together, like <em>purple-fence-guitar-moon</em>. It's easy to remember and very hard to guess.</div><div class="reflection-box"><div class="ref-label">✏️ Think about it</div><p>Without telling us your passwords - do yours tick all three boxes? What would you change?</p><textarea placeholder="Write at least 15 words - there is no wrong answer!"></textarea><div class="ref-word-count" aria-live="polite">0 words (15 minimum required)</div></div>`,
-   activities:[{slot:'passwordFill',subtype:'fill',instructions:'Tap a word from the bank below to fill each gap. Tap a filled gap to undo it.',
+   activities:[{slot:'passwordFill',subtype:'fill',instructions:'Drag a word from the bank below into each gap, or tap a word then tap a gap. Tap a filled gap to undo it.',
      sentence:"Use at least {{b1}} letters or symbols, {{b2}} capitals, numbers and symbols instead of just swapping letters for numbers, and use a {{b3}} password for every account so a hack on one site can't unlock the rest.",
      blanks:[{id:'b1',answer:'12'},{id:'b2',answer:'mix'},{id:'b3',answer:'different'}],
      wordbank:['12','mix','different','6','avoid','the same']}]},

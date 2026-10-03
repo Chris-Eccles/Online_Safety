@@ -310,7 +310,7 @@
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · hello@abity.co.uk</p>
   </div>
 </footer>
 
@@ -322,24 +322,12 @@
 (function(){
   var fig = document.getElementById('priceFigure');
   if(!fig) return;
-  // Confetti pieces are appended inside .price-card (not document.body) and
-  // positioned relative to IT, not the viewport. That's the fix for the
-  // z-axis bug: .price-card is now position:relative (see styles.css), so
-  // it's the nearest positioned ancestor for both the confetti pieces
-  // (z-index:1) and #priceFigure (z-index:2) - same local stacking context,
-  // so the simple z-index comparison works: behind the £1 text, in front of
-  // the card's own background. Previously, confetti was a child of body with
-  // position:fixed, comparing against .wrap's z-index:2 at the page's root
-  // stacking context and losing outright - it rendered behind the whole card.
-  var card = fig.closest('.price-card');
-  if(!card) return;
   var fired = false;
   function burstConfetti(el){
     var colours = ['#00C9B1','#0066CC','#F59E0B','#EC4899','#A78BFA'];
-    var figRect = el.getBoundingClientRect();
-    var cardRect = card.getBoundingClientRect();
-    var cx = (figRect.left - cardRect.left) + figRect.width/2;
-    var cy = (figRect.top - cardRect.top) + figRect.height/2;
+    var rect = el.getBoundingClientRect();
+    var cx = rect.left + rect.width/2;
+    var cy = rect.top + rect.height/2;
     var count = 26;
     for(var i=0;i<count;i++){
       var piece = document.createElement('div');
@@ -349,12 +337,12 @@
       var dy = Math.sin(angle)*dist - 40; // bias upward a touch
       var size = 6 + Math.random()*5;
       var colour = colours[i % colours.length];
-      piece.style.cssText = 'position:absolute;left:'+cx+'px;top:'+cy+'px;'+
+      piece.style.cssText = 'position:fixed;left:'+cx+'px;top:'+cy+'px;'+
         'width:'+size+'px;height:'+(size*0.4)+'px;background:'+colour+';'+
         'border-radius:2px;pointer-events:none;z-index:1;opacity:1;'+
         'transform:translate(-50%,-50%) rotate('+(Math.random()*360)+'deg);'+
         'transition:transform 900ms cubic-bezier(.2,.7,.3,1),opacity 900ms ease;';
-      card.appendChild(piece);
+      document.body.appendChild(piece);
       requestAnimationFrame(function(p,ddx,ddy){
         return function(){
           requestAnimationFrame(function(){

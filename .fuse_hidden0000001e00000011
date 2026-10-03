@@ -72,22 +72,7 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
   // Verification isn't wired up to a real database yet — this deliberately
   // does not fake a pass/fail result. Replace this with a real Supabase
   // lookup against student_records.cert_id once that's built.
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  var safeId = escapeHtml(id);
-  result.innerHTML = "Certificate lookup isn't live yet — we're not able to check " + safeId + " automatically just yet. In the meantime, " +
-    '<a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the certificate ID and we\'ll confirm it by hand.';
-  // A real event listener, not an inline onclick - passes the raw id straight
-  // through as a JS value instead of re-encoding it into an HTML attribute,
-  // which avoids a quoting/escaping mess (and the injection risk that comes with it).
-  var emailLink = document.getElementById('verifyEmailLink');
-  if (emailLink) {
-    emailLink.addEventListener('click', function(e){
-      if (window.oreadyOpenContact) {
-        e.preventDefault();
-        window.oreadyOpenContact('Certificate ID: ' + id + ' — ');
-      }
-    });
-  }
+  result.textContent = "Certificate lookup isn't live yet — we're not able to check " + id + " automatically just yet. In the meantime, contact hello@abity.co.uk with the certificate ID and we'll confirm it by hand.";
 });
 </script>
 </main>
@@ -136,7 +121,7 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · hello@abity.co.uk</p>
   </div>
 </footer>
 

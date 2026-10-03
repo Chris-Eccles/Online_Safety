@@ -169,10 +169,12 @@
   var successWrap = document.getElementById('oready-contact-success');
   var errEl = document.getElementById('oready-contact-err');
 
-  function openContact(){
+  function openContact(prefill){
     formWrap.style.display='';
     successWrap.classList.remove('show');
     errEl.textContent='';
+    var msgEl = document.getElementById('oready-contact-message');
+    if(prefill && !msgEl.value) msgEl.value = prefill;
     overlay.classList.add('show');
   }
   function closeContact(){
@@ -201,7 +203,7 @@
       formWrap.style.display='none';
       successWrap.classList.add('show');
     }catch(err){
-      errEl.textContent = err.message || "Couldn't send that — please try again, or email hello@abity.co.uk directly.";
+      errEl.textContent = err.message || "Couldn't send that — please try again shortly.";
     }finally{
       btn.disabled=false; btn.textContent='Send message';
     }

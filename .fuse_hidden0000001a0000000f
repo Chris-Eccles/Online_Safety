@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <style>.or-gate{visibility:hidden !important;}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify a certificate — Online Ready</title>
+<title>Security — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="Check whether an Online Ready certificate ID is genuine.">
+<meta name="description" content="How Online Ready protects student data: encryption, hosting, and access control, explained plainly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -41,55 +41,32 @@
 
 <main>
 
-  <section class="page-hero wrap" style="text-align:center;">
-    <p class="eyebrow">Verify</p>
-    <h1 class="section-title" style="max-width:none;">Check a certificate.</h1>
-    <p class="section-sub" style="margin:0 auto;">Enter a certificate ID to confirm it's genuine. This only ever confirms pass/fail — it never shows a student's name or their written answers to whoever's checking.</p>
+  <section class="page-hero wrap">
+    <p class="eyebrow">Security</p>
+    <h1 class="section-title">How student data is actually protected.</h1>
+    <p class="section-sub">Plainly, not just in a compliance checkbox.</p>
   </section>
 
-  <section class="wrap" style="display:flex; justify-content:center;">
-    <div class="verify-card">
-      <div class="verify-input-row">
-        <input type="text" id="certInput" class="form-input" placeholder="e.g. OR-4F9K21" maxlength="20" autocomplete="off">
-        <button class="btn btn-primary" id="verifyBtn" style="flex-shrink:0;">Check</button>
-      </div>
-      <p class="form-hint">Certificate IDs look like OR-XXXXXX and are printed on every student's certificate.</p>
-      <div class="verify-result pending" id="verifyResult"></div>
-    </div>
+  <section class="wrap prose">
+    <h2>Where data lives</h2>
+    <p>Course progress is stored locally on the student's own device by default. If a student sets a personal PIN to continue on a different device, their progress and reflections sync to our database, hosted in the UK.</p>
+
+    <h2>Reflections are encrypted before they ever leave the device</h2>
+    <p>Written reflection answers are encrypted in the student's browser — using a key derived from their own PIN via PBKDF2, then AES-256-GCM — before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
+
+    <h2>PINs aren't stored</h2>
+    <p>A student's PIN is never saved anywhere. Only a one-way hash of it is stored, purely to check a returning student is who they say they are. The PIN itself only ever exists, briefly, in the student's own browser.</p>
+
+    <h2>Access control</h2>
+    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes — never another school's data.</p>
+
+    <h2>No advertising, no tracking sold on</h2>
+    <p>We don't sell, rent, or share student data with advertisers. This site itself doesn't run advertising trackers.</p>
+
+    <h2>Found a security issue?</h2>
+    <p>Please tell us directly at <a href="mailto:security@abity.co.uk">security@abity.co.uk</a> before disclosing it anywhere else, so we can fix it first. We won't take action against anyone reporting a genuine issue in good faith.</p>
   </section>
 
-
-<script>
-document.getElementById('verifyBtn').addEventListener('click', function(){
-  var input = document.getElementById('certInput');
-  var result = document.getElementById('verifyResult');
-  var id = input.value.trim();
-  result.className = 'verify-result show pending';
-  if (!id) {
-    result.textContent = 'Enter a certificate ID first.';
-    return;
-  }
-  // Verification isn't wired up to a real database yet — this deliberately
-  // does not fake a pass/fail result. Replace this with a real Supabase
-  // lookup against student_records.cert_id once that's built.
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  var safeId = escapeHtml(id);
-  result.innerHTML = "Certificate lookup isn't live yet — we're not able to check " + safeId + " automatically just yet. In the meantime, " +
-    '<a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the certificate ID and we\'ll confirm it by hand.';
-  // A real event listener, not an inline onclick - passes the raw id straight
-  // through as a JS value instead of re-encoding it into an HTML attribute,
-  // which avoids a quoting/escaping mess (and the injection risk that comes with it).
-  var emailLink = document.getElementById('verifyEmailLink');
-  if (emailLink) {
-    emailLink.addEventListener('click', function(e){
-      if (window.oreadyOpenContact) {
-        e.preventDefault();
-        window.oreadyOpenContact('Certificate ID: ' + id + ' — ');
-      }
-    });
-  }
-});
-</script>
 </main>
 
 <footer class="site-footer">
@@ -136,7 +113,7 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · hello@abity.co.uk</p>
   </div>
 </footer>
 
