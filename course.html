@@ -735,8 +735,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
     <div class="gate-icon">&#10024;</div>
     <h2 class="gate-title">Thank you for trying the module!</h2>
     <div class="gate-actions" style="width:100%;">
-      <a href="/" target="_blank" rel="noopener" class="btn-primary gate-email-btn" style="text-decoration:none;justify-content:center;display:flex;">Get Online Ready for my school &#8594;</a>
-      <button class="gate-copy-btn" onclick="startTrialPreview()">&#8635; Restart</button>
+      <button class="btn-primary gate-email-btn" style="justify-content:center;display:flex;" onclick="startTrialPreview()">&#8635; Restart</button>
     </div>
   </div>
 </div>
@@ -1198,6 +1197,8 @@ function startTrialPreview(){
   completedModules={};moduleProgress={};reflectionData={};activityData={};
   const backBtn=document.querySelector('#screen-module .btn-back');
   if(backBtn)backBtn.textContent='✕ Exit preview';
+  const devReset=document.getElementById('dev-reset');
+  if(devReset)devReset.style.display='none'; // this is a public marketing-page embed - no dev tooling visible here
   showScreen('screen-module');
   showModuleIntro(TRIAL_MODULE_ID,()=>{renderCurrentSlide();});
 }

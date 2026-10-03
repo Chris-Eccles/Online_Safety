@@ -466,6 +466,16 @@ a{ color:inherit; }
   padding:38px 34px;
   backdrop-filter:blur(10px);
 }
+.price-was{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:20px;
+  font-weight:700;
+  color:var(--text-faint);
+  text-decoration:line-through;
+  text-decoration-thickness:2px;
+  margin-bottom:2px;
+}
 .price-figure{
   display:block;
   font-family:var(--font-display);
