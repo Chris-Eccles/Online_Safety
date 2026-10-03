@@ -244,7 +244,7 @@ module.exports = async (req, res) => {
     const {
       orgType, teacherName, teacherEmail, schoolName, matName,
       financeEmail, pricingOption, seats, po, matTeachers,
-      dslName, dslPhotoDataUrl, dslPhotoFilename, dslPhotoContentType
+      dslTeam
     } = body || {};
 
     if (!teacherName || !teacherEmail || !schoolName || !financeEmail) {
@@ -264,30 +264,41 @@ module.exports = async (req, res) => {
     let trustId = null;
     let matDashboardToken = null;
 
-    // Optional DSL photo, uploaded here server-side (service role) rather than
+    // Safeguarding team, uploaded here server-side (service role) rather than
     // client-side, so order.html never needs its own Supabase credentials.
-    let dslPhotoUrl = null;
-    if (dslPhotoDataUrl) {
+    // Each entry becomes one card in the carousel shown on the course welcome
+    // screen and in Module 1 - in the order the school added them in.
+    async function uploadDslPhoto(dataUrl, filename, contentType) {
+      if (!dataUrl) return null;
       try {
-        const match = /^data:([^;]+);base64,(.+)$/.exec(dslPhotoDataUrl);
-        const contentType = (match && match[1]) || dslPhotoContentType || 'image/jpeg';
-        const base64 = match ? match[2] : dslPhotoDataUrl;
+        const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
+        const resolvedType = (match && match[1]) || contentType || 'image/jpeg';
+        const base64 = match ? match[2] : dataUrl;
         const buffer = Buffer.from(base64, 'base64');
-        const ext = ((dslPhotoFilename || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+        const ext = ((filename || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
         const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
         const { error: uploadErr } = await supabase.storage.from('dsl-photos').upload(path, buffer, {
-          contentType, upsert: false
+          contentType: resolvedType, upsert: false
         });
-        if (!uploadErr) {
-          const { data: pub } = supabase.storage.from('dsl-photos').getPublicUrl(path);
-          dslPhotoUrl = pub ? pub.publicUrl : null;
-        } else {
-          console.error('DSL photo upload failed:', uploadErr.message);
-        }
+        if (uploadErr) { console.error('DSL photo upload failed:', uploadErr.message); return null; }
+        const { data: pub } = supabase.storage.from('dsl-photos').getPublicUrl(path);
+        return pub ? pub.publicUrl : null;
       } catch (photoErr) {
         console.error('DSL photo processing failed:', photoErr.message);
+        return null;
       }
     }
+
+    const dslTeamList = Array.isArray(dslTeam) ? dslTeam.filter(d => d && (d.name || d.room || d.photoDataUrl)) : [];
+    const resolvedDslTeam = [];
+    for (const d of dslTeamList) {
+      const photoUrl = await uploadDslPhoto(d.photoDataUrl, d.photoFilename, d.photoContentType);
+      resolvedDslTeam.push({ name: d.name || null, room: d.room || null, photoUrl });
+    }
+    // Legacy single-value columns stay populated from the first team member,
+    // purely so anything still reading dsl_name/dsl_photo_url directly keeps working.
+    const dslName = resolvedDslTeam[0] ? resolvedDslTeam[0].name : null;
+    const dslPhotoUrl = resolvedDslTeam[0] ? resolvedDslTeam[0].photoUrl : null;
 
     if (isMat) {
       matDashboardToken = randomToken();
@@ -321,7 +332,8 @@ module.exports = async (req, res) => {
         // DSL info is collected once per order (for the purchaser's own school);
         // other MAT member schools can have theirs added later by replying to their email.
         dsl_name: t.isPurchaser ? (dslName || null) : null,
-        dsl_photo_url: t.isPurchaser ? dslPhotoUrl : null
+        dsl_photo_url: t.isPurchaser ? dslPhotoUrl : null,
+        dsl_team: t.isPurchaser ? resolvedDslTeam : []
       });
       if (insertErr) throw new Error('Could not create class code for ' + t.name + ': ' + insertErr.message);
       provisioned.push({ ...t, code, dashboardToken });

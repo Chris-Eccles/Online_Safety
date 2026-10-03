@@ -151,7 +151,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .sort-bin-label{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:var(--warm-white);margin-bottom:8px;text-align:center;}
 .sort-bin-drop{display:flex;flex-direction:column;gap:6px;min-height:24px;}
 .sort-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.sort-chip{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
+.sort-chip{background:var(--navy-mid);border:1.5px solid var(--border);border-left:3px solid var(--teal);border-radius:10px;padding:9px 13px 9px 11px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
 .sort-chip:active{cursor:grabbing;}
 .sort-chip.placed-correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
 .sort-chip.placed-correct::before{content:'✓ ';color:var(--green);font-weight:800;}
@@ -606,7 +606,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
     <h1 class="wlc-h1" style="font-size:30px;">Enter your class code</h1>
     <p class="wlc-sub">Your teacher will give you a short code to join &#8212; type it in below.</p>
     <div class="wlc-name-wrap">
-      <input type="text" id="code-entry-input" class="code-entry-input" placeholder="e.g. MGS2026" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus aria-label="Class code" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter'){event.preventDefault();submitAccessCode();}">
+      <input type="text" id="code-entry-input" class="code-entry-input" placeholder="e.g. TACL-2518" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus aria-label="Class code" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter'){event.preventDefault();submitAccessCode();}">
       <button class="wlc-btn" style="width:100%;justify-content:center;margin-top:14px;" onclick="submitAccessCode()" aria-label="Join course with this code">
         Join course &#8594;
       </button>
@@ -665,12 +665,12 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
       <span class="wlc-pill">&#128269; Misinformation</span>
       <span class="wlc-pill">&#129504; Wellbeing</span>
     </div>
-    <div class="dsl-id-card" style="margin-top:22px;max-width:560px;margin-left:auto;margin-right:auto;background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.3);border-radius:14px;padding:16px 20px;text-align:left;display:flex;gap:14px;align-items:flex-start;">
-      <img id="wlc-dsl-photo" src="" alt="" style="display:none;width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,201,177,0.45);flex-shrink:0;">
-      <div>
+    <div class="dsl-id-card" id="dslCarouselWelcome" style="margin-top:22px;max-width:560px;margin-left:auto;margin-right:auto;background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.3);border-radius:14px;padding:16px 20px;text-align:left;display:flex;gap:14px;align-items:flex-start;">
+      <img class="dsl-carousel-photo" src="" alt="" style="display:none;width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,201,177,0.45);flex-shrink:0;">
+      <div style="flex:1;min-width:0;">
         <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#00C9B1;font-weight:800;margin-bottom:8px;">&#128737; Before you start — know who to go to</div>
-        <p style="font-size:14px;margin:0 0 6px 0;">If anything online worries you, tell <strong id="wlc-dsl-name">[DSL_NAME]</strong>, your school's Designated Safeguarding Lead. Find them at: <strong id="wlc-dsl-room">[DSL_ROOM]</strong>.</p>
-        <p style="font-size:14px;margin:0;">Deputy: <strong id="wlc-deputy-name">[DEPUTY_NAME]</strong> — <strong id="wlc-deputy-room">[DEPUTY_ROOM]</strong>.</p>
+        <p class="dsl-carousel-text" style="font-size:14px;margin:0;"></p>
+        <div class="dsl-carousel-dots" style="display:flex;gap:5px;margin-top:9px;"></div>
       </div>
     </div>
   </div>
@@ -725,6 +725,19 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
       <div id="next-btn-hint" style="display:none;font-size:12px;color:var(--amber);font-weight:600;" role="status" aria-live="polite">Please write a proper answer above to continue.</div>
       <button class="btn-nav-next" id="btn-next" onclick="nextSlide()">Next &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRY-IT PREVIEW END SCREEN — only ever reached when loaded as course.html?trial=1 -->
+<div id="screen-trial-end" class="screen">
+  <div class="gate-wrap">
+    <div class="gate-icon">&#10024;</div>
+    <h2 class="gate-title">That's a taste of Module 1</h2>
+    <p class="gate-sub">Online Ready has 7 modules like this one &#8212; cyberbullying, grooming, radicalisation, sexting, phishing, passwords and online wellbeing &#8212; each with auto-marked quizzes, a live link to your school's safeguarding team, and a certificate at the end. No apps to install &#8212; students just join with a class code.</p>
+    <div class="gate-actions" style="width:100%;">
+      <a href="/order.html" class="btn-primary gate-email-btn" style="text-decoration:none;justify-content:center;display:flex;">Get Online Ready for my school &#8594;</a>
+      <button class="gate-copy-btn" onclick="startTrialPreview()">&#8635; Watch the preview again</button>
     </div>
   </div>
 </div>
@@ -1142,17 +1155,18 @@ let studentName='', completedModules={}, currentModuleId=null, currentSlide=0,
 const SCHOOL_SAFEGUARDING = {
   dslName: '[Add your DSL\'s name here]',
   dslRoom: '[Add your DSL\'s room / where to find them]',
-  deputyName: '[Add a Deputy DSL\'s name here]',
-  deputyRoom: '[Add the Deputy DSL\'s room / where to find them]',
-  photoUrl: '' // optional: URL to a photo of your DSL team, shown on the welcome screen if set
+  photoUrl: '' // optional: URL to a photo of your DSL, shown on the welcome screen if set
 };
 
-/** Dynamic branding & DSL — populated from Supabase on authenticated entry, falls back to SCHOOL_SAFEGUARDING above */
+/** Dynamic branding & DSL — populated from Supabase on authenticated entry, falls back to SCHOOL_SAFEGUARDING above.
+ * Deputies aren't a separate concept any more - add them as extra entries in
+ * the safeguarding team (liveDslTeam) and they show up in the same carousel. */
 let liveDslName = SCHOOL_SAFEGUARDING.dslName;
 let liveDslRoom = SCHOOL_SAFEGUARDING.dslRoom;
-let liveDeputyName = SCHOOL_SAFEGUARDING.deputyName;
-let liveDeputyRoom = SCHOOL_SAFEGUARDING.deputyRoom;
 let liveDslPhoto = SCHOOL_SAFEGUARDING.photoUrl;
+/** Full safeguarding team (name/room/photoUrl each), newer schools only - see
+ * currentDslTeamOrFallback() for how older single-DSL schools still work. */
+let liveDslTeam = [];
 let schoolLogoUrl = '';
 let schoolName = '';
 
@@ -1171,12 +1185,32 @@ let schoolName = '';
 const ACCESS_MODE = 'code'; // change to 'open' to remove the code-entry step entirely
 let codeAlreadyValidated = false;
 
-/** Fills in DSL/Deputy tokens in slide HTML and quiz explanations */
+/** TRIAL_MODE — the public, no-login taster embedded on the marketing site
+ * (course.html?trial=1, shown inside a static browser-frame pane on index.html).
+ * Skips the code screen, the name/PIN screen, and the dashboard entirely -
+ * drops straight into Module 1 and never talks to Supabase or saves progress,
+ * so it's safe for anyone to open as many times as they like. */
+const TRIAL_MODE = new URLSearchParams(window.location.search).get('trial')==='1';
+const TRIAL_MODULE_ID = 'cyberbullying';
+
+function startTrialPreview(){
+  studentName='Preview';
+  currentModuleId=TRIAL_MODULE_ID;currentSlide=0;quizState={};
+  completedModules={};moduleProgress={};reflectionData={};activityData={};
+  const backBtn=document.querySelector('#screen-module .btn-back');
+  if(backBtn)backBtn.textContent='✕ Exit preview';
+  showScreen('screen-module');
+  showModuleIntro(TRIAL_MODULE_ID,()=>{renderCurrentSlide();});
+}
+
+/** Fills in DSL tokens in slide HTML and quiz explanations. Nothing in the
+ * course content uses [DSL_NAME]/[DSL_ROOM] directly any more - Module 1's
+ * DSL callout is now the live carousel (see mountDslCarousel) - but this
+ * stays in place in case any slide content is added later that wants a
+ * plain-text mention instead. */
 function fillSafeguardingTokens(html){
   return html.replaceAll('[DSL_NAME]',liveDslName)
              .replaceAll('[DSL_ROOM]',liveDslRoom)
-             .replaceAll('[DEPUTY_NAME]',liveDeputyName)
-             .replaceAll('[DEPUTY_ROOM]',liveDeputyRoom)
              .replaceAll('[FINAL_QUIZ_CALLOUT]',buildFinalQuizCallout());
 }
 
@@ -1216,7 +1250,7 @@ function isDemoBypassAllowed(){
 /** Looks up a code against Supabase, and consumes a seat the first time this device uses it.
  * Returns {ok:true, data} on success, or {ok:false, message} on failure. */
 async function checkAndConsumeSeat(code){
-  if(!code||(isDemoBypassAllowed()&&(code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026'))) return {ok:true,data:null};
+  if(!code||(isDemoBypassAllowed()&&code==='MGS')) return {ok:true,data:null};
   try{
     const{data,error}=await getSupabase()
       .rpc('get_license_public',{p_code:code})
@@ -1230,6 +1264,7 @@ async function checkAndConsumeSeat(code){
     }
     if(data.dsl_name)liveDslName=data.dsl_name;
     if(data.dsl_photo_url)liveDslPhoto=data.dsl_photo_url;
+    if(data.dsl_team&&Array.isArray(data.dsl_team)&&data.dsl_team.length)liveDslTeam=data.dsl_team;
     if(data.logo_url)schoolLogoUrl=data.logo_url;
     if(data.school_name)schoolName=data.school_name;
     renderWelcomeDslCard();
@@ -1259,7 +1294,9 @@ async function submitAccessCode(){
   }
   document.getElementById('school-code').value=code;
   codeAlreadyValidated=true;
-  try{localStorage.setItem('cybersmart_last_code',code);}catch(e){}
+  // The MGS trial code is never remembered, so it never auto-resumes or
+  // skips the code screen on a later visit - it's always a fresh first look.
+  if(code!=='MGS'){try{localStorage.setItem('cybersmart_last_code',code);}catch(e){}}
   showScreen('screen-welcome');
   document.getElementById('student-name').focus();
 }
@@ -1431,7 +1468,7 @@ async function startCourse(){
   const origText=btn.innerHTML;
 
   // Already validated on the code screen this session, or no code needed at all
-  const needsCodeCheck=!(codeAlreadyValidated||!code||(isDemoBypassAllowed()&&(code==='CS'||code==='TEACHER-REVIEW'||code==='MGS2026')));
+  const needsCodeCheck=!(codeAlreadyValidated||!code||(isDemoBypassAllowed()&&code==='MGS'));
   if(needsCodeCheck){
     btn.innerHTML='Checking...';btn.disabled=true;
     const result=await checkAndConsumeSeat(code);
@@ -1472,6 +1509,7 @@ function proceedToDashboard(n,restored){
 }
 
 function goToDashboard(){
+  if(TRIAL_MODE){ showScreen('screen-trial-end'); return; }
   if(currentModuleId){
     if(!moduleProgress[currentModuleId]||currentSlide>moduleProgress[currentModuleId])
       moduleProgress[currentModuleId]=currentSlide;
@@ -1597,6 +1635,7 @@ function renderCurrentSlide(){
     mountEmbeddedActivities(slide,area);
     initRevealCards(area);
     checkReflectionGate();
+    mountDslCarousel('dslCarouselModule1',currentDslTeamOrFallback());
   } else if(slide.type==='quiz'){
     if(quizState.showResults)renderQuizResults();else renderQuizQuestion();
   } else if(slide.type==='activity'){
@@ -2367,7 +2406,7 @@ const modules = [
 {id:'cyberbullying',icon:'🛡️',title:'Cyberbullying & Child-on-Child Abuse',time:'~30 min',color:'#8B5CF6',
  desc:'Find out what cyberbullying is, why it hurts, and what to do if it happens to you or a friend.',
  slides:[
-  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Introduction</div><h2>What is cyberbullying?</h2><p>Cyberbullying is bullying that happens on phones, tablets, computers, or apps.</p><p>It is not just one angry message. It means someone keeps being <strong>unkind on purpose</strong>, again and again, to scare, upset, or hurt another person.</p><div class="stat-row"><div class="stat-card"><div class="num">1 in 5</div><div class="label">young people in the UK have been cyberbullied</div></div><div class="stat-card"><div class="num">24/7</div><div class="label">it can happen any time, even at home</div></div><div class="stat-card"><div class="num">40%</div><div class="label">of victims never tell an adult</div></div></div><div class="callout warning">⚠️ Normal bullying can stop when you get home. Cyberbullying can follow you everywhere, so it can hurt even more.</div><div class="dfe-tag"><strong>What this module covers</strong>What online bullying is, the different types, and why it hurts.</div><div class="callout purple">📋 <strong>Important:</strong> Schools must treat cyberbullying between pupils just as seriously as any other bullying. If it happens to you or a friend, tell your school's <strong>Designated Safeguarding Lead (DSL)</strong> - a trusted adult in school - right away.</div><div class="dfe-tag"><strong>Who is my school's DSL?</strong>[DSL_NAME] - find them at [DSL_ROOM]. Deputy: [DEPUTY_NAME] - [DEPUTY_ROOM]. Remember these names. You can go to them about anything, any time.</div>`},
+  {type:'content',html:`<div class="slide-eyebrow">Module 1 · Introduction</div><h2>What is cyberbullying?</h2><p>Cyberbullying is bullying that happens on phones, tablets, computers, or apps.</p><p>It is not just one angry message. It means someone keeps being <strong>unkind on purpose</strong>, again and again, to scare, upset, or hurt another person.</p><div class="stat-row"><div class="stat-card"><div class="num">1 in 5</div><div class="label">young people in the UK have been cyberbullied</div></div><div class="stat-card"><div class="num">24/7</div><div class="label">it can happen any time, even at home</div></div><div class="stat-card"><div class="num">40%</div><div class="label">of victims never tell an adult</div></div></div><div class="callout warning">⚠️ Normal bullying can stop when you get home. Cyberbullying can follow you everywhere, so it can hurt even more.</div><div class="dfe-tag"><strong>What this module covers</strong>What online bullying is, the different types, and why it hurts.</div><div class="callout purple">📋 <strong>Important:</strong> Schools must treat cyberbullying between pupils just as seriously as any other bullying. If it happens to you or a friend, tell your school's <strong>Designated Safeguarding Lead (DSL)</strong> - a trusted adult in school - right away.</div><div class="dfe-tag" id="dslCarouselModule1" style="display:flex;gap:10px;align-items:flex-start;"><img class="dsl-carousel-photo" src="" alt="" style="display:none;width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,201,177,0.45);flex-shrink:0;"><div style="flex:1;min-width:0;"><strong style="display:block;margin-bottom:2px;">Who is my school's DSL?</strong><span class="dsl-carousel-text"></span><div class="dsl-carousel-dots" style="display:flex;gap:5px;margin-top:6px;"></div></div></div>`},
   {type:'content',html:`<div class="slide-eyebrow">Module 1 · Types</div><h2>Different kinds of cyberbullying</h2><p>Cyberbullying can look different ways. All of them can hurt. Match each type to what it means.</p><div class="activity-slot" data-slot="typesMatch"></div><p>Two more you need to know about. Tap each card to reveal what it means - you'll need to read both before moving on.</p><div class="activity-slot" data-slot="seriousReveal"></div><div class="callout danger">🚨 <strong>This is never "just banter" or a joke.</strong> Upskirting and sharing nude or semi-nude images of someone under 18 are serious criminal offences. If this happens to you or someone you know, tell your school's Designated Safeguarding Lead (DSL) straight away - you will not be in trouble for reporting it.</div>`,
    activities:[
    {slot:'typesMatch',subtype:'match',instructions:'Tap a type, then tap the definition that matches it.',
@@ -2730,7 +2769,7 @@ const SAVE_KEY='cybersmart_progress_v1';
  * =========================================================================
  * Saves and restores student progress, reflections, and module state.
  */
-function saveProgress(){const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,savedAt:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));showToast();}catch(e){}}
+function saveProgress(){if(TRIAL_MODE)return;const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,savedAt:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));showToast();}catch(e){}}
 function loadProgress(){try{const r=localStorage.getItem(SAVE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
 function showToast(){/* save popup disabled per teacher preference */}
 function resumeProgress(){
@@ -2861,23 +2900,89 @@ function showModuleIntro(modId,onComplete){
 }
 
 
-// On load  -  if returning student, skip welcome screen
-function renderWelcomeDslCard(){
-  const map={'wlc-dsl-name':liveDslName,'wlc-dsl-room':liveDslRoom,'wlc-deputy-name':liveDeputyName,'wlc-deputy-room':liveDeputyRoom};
-  Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=map[id];});
-  const photoEl=document.getElementById('wlc-dsl-photo');
-  if(photoEl){
-    if(liveDslPhoto){
-      photoEl.src=liveDslPhoto;
-      photoEl.alt=liveDslName;
-      photoEl.style.display='block';
-    }else{
-      photoEl.style.display='none';
+/** Newer schools set a full safeguarding team (liveDslTeam, from dsl_team in
+ * the database). Older schools only ever had the single dsl_name/dsl_photo_url
+ * pair - if that's all we've got, treat it as a one-person team so the
+ * carousel code below has exactly one place to live, not two. Returns []
+ * (triggering the generic fallback line) if the school hasn't set up anyone
+ * at all yet - never the raw "[Add your DSL's name here]" placeholder text. */
+function currentDslTeamOrFallback(){
+  if(liveDslTeam&&liveDslTeam.length)return liveDslTeam;
+  if(liveDslName&&liveDslName!==SCHOOL_SAFEGUARDING.dslName){
+    return [{
+      name: liveDslName,
+      room: (liveDslRoom&&liveDslRoom!==SCHOOL_SAFEGUARDING.dslRoom)?liveDslRoom:null,
+      photoUrl: liveDslPhoto||null
+    }];
+  }
+  return [];
+}
+
+/** Auto-advancing safeguarding-team carousel. Mounted independently into the
+ * welcome screen card and Module 1's "who is my DSL" callout via containerId
+ * - call this any time either container might be on screen; it's a safe
+ * no-op if containerId isn't present in the current DOM. With 0 entries it
+ * shows one generic fallback line; with exactly 1 entry it's fully static
+ * (no timer, no fade - nothing to rotate through); 2+ entries rotate on a
+ * timer with a short crossfade and small position dots. Self-clears its own
+ * timer the moment its container disappears (e.g. the student moved to a
+ * different slide), so nothing keeps ticking in the background forever. */
+const dslCarouselIntervals={};
+function mountDslCarousel(containerId,dslTeam){
+  if(dslCarouselIntervals[containerId]){clearInterval(dslCarouselIntervals[containerId]);delete dslCarouselIntervals[containerId];}
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  const team=(Array.isArray(dslTeam)?dslTeam:[]).filter(d=>d&&(d.name||d.room||d.photoUrl));
+  let i=0;
+  function apply(){
+    const live=document.getElementById(containerId);
+    if(!live)return;
+    const photoEl=live.querySelector('.dsl-carousel-photo');
+    const textEl=live.querySelector('.dsl-carousel-text');
+    const dotsEl=live.querySelector('.dsl-carousel-dots');
+    if(team.length===0){
+      if(photoEl)photoEl.style.display='none';
+      if(textEl)textEl.innerHTML='If anything online worries you, tell your school\'s Designated Safeguarding Lead - ask any member of staff who this is.';
+      if(dotsEl)dotsEl.innerHTML='';
+      return;
+    }
+    const d=team[i];
+    if(photoEl){
+      if(d.photoUrl){photoEl.src=d.photoUrl;photoEl.alt=d.name||'';photoEl.style.display='block';}
+      else{photoEl.style.display='none';}
+    }
+    if(textEl){
+      const name=d.name||'your Designated Safeguarding Lead';
+      const roomPart=d.room?(' Find them at: <strong>'+d.room+'</strong>.'):'';
+      textEl.innerHTML='If anything online worries you, tell <strong>'+name+'</strong>, your school\'s Designated Safeguarding Lead.'+roomPart;
+    }
+    if(dotsEl){
+      dotsEl.innerHTML=team.length>1?team.map((_,idx)=>'<span style="width:6px;height:6px;border-radius:50%;background:'+(idx===i?'#00C9B1':'rgba(0,201,177,0.3)')+';display:inline-block;transition:background .3s;"></span>').join(''):'';
     }
   }
+  function tick(){
+    const live=document.getElementById(containerId);
+    if(!live){clearInterval(dslCarouselIntervals[containerId]);delete dslCarouselIntervals[containerId];return;}
+    const photoEl=live.querySelector('.dsl-carousel-photo');
+    const textEl=live.querySelector('.dsl-carousel-text');
+    i=(i+1)%team.length;
+    if(textEl)textEl.style.transition='opacity .25s';
+    if(photoEl)photoEl.style.transition='opacity .25s';
+    if(textEl)textEl.style.opacity='0';
+    if(photoEl&&photoEl.style.display!=='none')photoEl.style.opacity='0';
+    setTimeout(()=>{apply();if(textEl)textEl.style.opacity='1';if(photoEl)photoEl.style.opacity='1';},260);
+  }
+  apply();
+  if(team.length>1)dslCarouselIntervals[containerId]=setInterval(tick,4000);
+}
+
+// On load  -  if returning student, skip welcome screen
+function renderWelcomeDslCard(){
+  mountDslCarousel('dslCarouselWelcome',currentDslTeamOrFallback());
 }
 
 window.addEventListener('DOMContentLoaded', function(){
+  if(TRIAL_MODE){ startTrialPreview(); return; }
   renderWelcomeDslCard();
   // Auto-extract ?code= from URL — this always skips the code-entry screen (magic link)
   let urlCode=null;
@@ -2889,6 +2994,12 @@ window.addEventListener('DOMContentLoaded', function(){
       if(codeEl){ codeEl.value=urlCode.toUpperCase().trim(); }
     }
   } catch(e){}
+
+  // The MGS trial code never resumes - every visit is a fresh first look,
+  // never a "welcome back" dashboard from someone's earlier demo run.
+  if(urlCode&&urlCode.toUpperCase().trim()==='MGS'&&isDemoBypassAllowed()){
+    try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('cybersmart_last_code');}catch(e){}
+  }
 
   const saved = loadProgress();
   if(saved && saved.studentName){
@@ -2910,6 +3021,10 @@ window.addEventListener('DOMContentLoaded', function(){
   } else if(ACCESS_MODE==='code'){
     let remembered=null;
     try{remembered=localStorage.getItem('cybersmart_last_code');}catch(e){}
+    if(remembered==='MGS'){ // stale, from before trial codes stopped being remembered
+      try{localStorage.removeItem('cybersmart_last_code');}catch(e){}
+      remembered=null;
+    }
     if(remembered){
       document.getElementById('school-code').value=remembered;
       showScreen('screen-welcome'); // this device already joined this class before

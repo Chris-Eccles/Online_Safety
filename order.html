@@ -124,26 +124,14 @@
           <input class="form-input" type="text" id="poNumber">
         </div>
 
-        <p class="form-section-label">Safeguarding lead (optional)</p>
+        <p class="form-section-label">Safeguarding team (optional)</p>
         <p class="form-hint" style="margin-top:-2px;margin-bottom:14px;">
-          Add these now and we'll build them straight into your school's course content -
-          or skip this and add it later by replying to your welcome email.
+          Add your DSL and any deputies now and we'll build them straight into your school's course content,
+          shown as a rotating carousel so students see all of them - or skip this and add it later by replying to your welcome email.
         </p>
 
-        <div class="form-row">
-          <label class="form-label" for="dslName">DSL name</label>
-          <input class="form-input" type="text" id="dslName" placeholder="e.g. Mrs J. Ahmed">
-        </div>
-
-        <div class="form-row">
-          <label class="form-label" for="dslPhoto">DSL photo <span style="font-weight:400;color:var(--text-faint);">(optional)</span></label>
-          <input class="form-file" type="file" id="dslPhoto" accept="image/*">
-          <p class="form-hint">Helps students recognise their DSL by sight - shown alongside their name in the course.</p>
-          <div class="dsl-photo-preview" id="dslPhotoPreview">
-            <img id="dslPhotoPreviewImg" alt="">
-            <span id="dslPhotoPreviewName"></span>
-          </div>
-        </div>
+        <div id="dslTeamRows"></div>
+        <button type="button" class="btn-secondary" onclick="addDslRow()" style="margin-bottom:18px;">+ Add a safeguarding lead</button>
 
         <button type="submit" class="btn btn-primary btn-block">Send request</button>
         <div class="form-status" id="orderStatus"></div>
@@ -184,18 +172,49 @@ function addTeacherRow(){
   document.getElementById('matTeacherRows').appendChild(row);
 }
 
-document.getElementById('dslPhoto').addEventListener('change', function(e){
-  var file = e.target.files[0];
-  var preview = document.getElementById('dslPhotoPreview');
-  if(!file){ preview.classList.remove('show'); return; }
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    document.getElementById('dslPhotoPreviewImg').src = ev.target.result;
-    document.getElementById('dslPhotoPreviewName').textContent = file.name;
-    preview.classList.add('show');
-  };
-  reader.readAsDataURL(file);
-});
+let dslTeamCount = 0;
+
+/** Each safeguarding-team row is independent - its own name/room/optional photo.
+ * Rows render in whatever order they're added; that's also carousel playback order. */
+function addDslRow(){
+  dslTeamCount++;
+  const id = dslTeamCount;
+  const row = document.createElement('div');
+  row.className = 'dsl-team-row';
+  row.id = 'dslTeamRow' + id;
+  row.style.cssText = 'border:1px solid var(--border,rgba(0,0,0,.08));border-radius:10px;padding:14px;margin-bottom:12px;';
+  row.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<span class="form-label" style="margin:0;">Safeguarding lead ' + id + '</span>' +
+      '<button type="button" class="btn-secondary" onclick="document.getElementById(\'dslTeamRow' + id + '\').remove()" style="padding:6px 10px;" aria-label="Remove this safeguarding lead">✕</button>' +
+    '</div>' +
+    '<div class="form-row-split" style="margin-bottom:10px;">' +
+      '<div><label class="form-label" style="font-size:12px;" for="dslName' + id + '">Name</label><input class="form-input" type="text" id="dslName' + id + '" placeholder="e.g. Mrs J. Ahmed"></div>' +
+      '<div><label class="form-label" style="font-size:12px;" for="dslRoom' + id + '">Where to find them</label><input class="form-input" type="text" id="dslRoom' + id + '" placeholder="e.g. Student Services, Room 12"></div>' +
+    '</div>' +
+    '<div class="form-row" style="margin-bottom:0;">' +
+      '<label class="form-label" style="font-size:12px;" for="dslPhoto' + id + '">Photo <span style="font-weight:400;color:var(--text-faint);">(optional)</span></label>' +
+      '<input class="form-file" type="file" id="dslPhoto' + id + '" accept="image/*">' +
+      '<div class="dsl-photo-preview" id="dslPhotoPreview' + id + '">' +
+        '<img id="dslPhotoPreviewImg' + id + '" alt="">' +
+        '<span id="dslPhotoPreviewName' + id + '"></span>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('dslTeamRows').appendChild(row);
+  document.getElementById('dslPhoto' + id).addEventListener('change', function(e){
+    var file = e.target.files[0];
+    var preview = document.getElementById('dslPhotoPreview' + id);
+    if(!file){ preview.classList.remove('show'); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      document.getElementById('dslPhotoPreviewImg' + id).src = ev.target.result;
+      document.getElementById('dslPhotoPreviewName' + id).textContent = file.name;
+      preview.classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+addDslRow();
 
 document.getElementById('orderForm').addEventListener('submit', async function(e){
   e.preventDefault();
@@ -208,8 +227,6 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   var pricingOption = document.querySelector('input[name="pricingOption"]:checked').value;
   var seats = document.getElementById('seatsRequested').value.trim();
   var po = document.getElementById('poNumber').value.trim();
-  var dslName = document.getElementById('dslName').value.trim();
-  var dslPhotoFile = document.getElementById('dslPhoto').files[0] || null;
   var status = document.getElementById('orderStatus');
   var submitBtn = document.querySelector('#orderForm button[type="submit"]');
 
@@ -238,13 +255,30 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     });
   }
 
-  var dslPhotoBase64 = null;
-  if(dslPhotoFile){
-    dslPhotoBase64 = await new Promise(function(resolve){
-      var reader = new FileReader();
-      reader.onload = function(ev){ resolve(ev.target.result); };
-      reader.onerror = function(){ resolve(null); };
-      reader.readAsDataURL(dslPhotoFile);
+  var dslTeam = [];
+  var dslRowEls = document.querySelectorAll('#dslTeamRows > div');
+  for (var di = 0; di < dslRowEls.length; di++) {
+    var dRow = dslRowEls[di];
+    var dIdSuffix = dRow.id.replace('dslTeamRow', '');
+    var dName = document.getElementById('dslName' + dIdSuffix).value.trim();
+    var dRoom = document.getElementById('dslRoom' + dIdSuffix).value.trim();
+    var dPhotoFile = document.getElementById('dslPhoto' + dIdSuffix).files[0] || null;
+    if (!dName && !dRoom && !dPhotoFile) continue; // skip a row left completely empty
+    var dPhotoBase64 = null;
+    if (dPhotoFile) {
+      dPhotoBase64 = await new Promise(function(resolve){
+        var reader = new FileReader();
+        reader.onload = function(ev){ resolve(ev.target.result); };
+        reader.onerror = function(){ resolve(null); };
+        reader.readAsDataURL(dPhotoFile);
+      });
+    }
+    dslTeam.push({
+      name: dName || null,
+      room: dRoom || null,
+      photoDataUrl: dPhotoBase64,
+      photoFilename: dPhotoFile ? dPhotoFile.name : null,
+      photoContentType: dPhotoFile ? dPhotoFile.type : null
     });
   }
 
@@ -253,10 +287,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     teacherName: teacherName, teacherEmail: teacherEmail, schoolName: schoolName,
     matName: matName, financeEmail: financeEmail, pricingOption: pricingOption,
     seats: seats, po: po, matTeachers: matTeachers,
-    dslName: dslName || null,
-    dslPhotoDataUrl: dslPhotoBase64,
-    dslPhotoFilename: dslPhotoFile ? dslPhotoFile.name : null,
-    dslPhotoContentType: dslPhotoFile ? dslPhotoFile.type : null
+    dslTeam: dslTeam
   };
 
   function fallbackToMailto(reason){
