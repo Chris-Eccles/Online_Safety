@@ -42,16 +42,8 @@ async function emptyBucket(bucket) {
 }
 
 module.exports = async (req, res) => {
-  // Two-password gate: admin.html combines both fields the admin types
-  // into one header as "password1::password2" - both halves must match
-  // their own env var for access.
-  const key = req.headers['x-admin-key'] || '';
-  const parts = key.split('::');
-  const ok = parts.length === 2 &&
-    process.env.ADMIN_SECRET && process.env.ADMIN_SECRET_2 &&
-    parts[0] === process.env.ADMIN_SECRET &&
-    parts[1] === process.env.ADMIN_SECRET_2;
-  if (!ok) {
+  const key = req.headers['x-admin-key'];
+  if (!process.env.ADMIN_SECRET || key !== process.env.ADMIN_SECRET) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }

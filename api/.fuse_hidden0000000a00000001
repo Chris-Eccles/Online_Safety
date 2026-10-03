@@ -5,14 +5,14 @@
  * order, who's paid and who hasn't, and overall seat usage, without opening
  * the Supabase dashboard by hand.
  *
- * Protected by TWO shared secrets - admin.html asks for both passwords and
- * sends them joined as "password1::password2" in the "x-admin-key" header.
+ * Protected by a single shared secret, sent as the "x-admin-key" header.
  * This is deliberately simple (no login system) since it's just you using it -
- * but both keys must still be set as real env vars, not left blank.
+ * but the key must still be set as a real env var, not left blank.
  *
  * ENVIRONMENT VARIABLES THIS NEEDS (Vercel -> Settings -> Environment Variables):
- *   ADMIN_SECRET                - the first password.
- *   ADMIN_SECRET_2               - the second password. Both are required.
+ *   ADMIN_SECRET               - any long random string you make up. This is
+ *                                 what admin.html asks you to type in once and
+ *                                 then remembers in that browser.
  *   (Also reuses SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY - already set for
  *   /api/create-order.)
  * ============================================================================
@@ -22,16 +22,8 @@ const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 module.exports = async (req, res) => {
-  // Two-password gate: admin.html combines both fields the admin types
-  // into one header as "password1::password2" - both halves must match
-  // their own env var for access.
-  const key = req.headers['x-admin-key'] || '';
-  const parts = key.split('::');
-  const ok = parts.length === 2 &&
-    process.env.ADMIN_SECRET && process.env.ADMIN_SECRET_2 &&
-    parts[0] === process.env.ADMIN_SECRET &&
-    parts[1] === process.env.ADMIN_SECRET_2;
-  if (!ok) {
+  const key = req.headers['x-admin-key'];
+  if (!process.env.ADMIN_SECRET || key !== process.env.ADMIN_SECRET) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }

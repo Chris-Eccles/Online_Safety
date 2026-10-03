@@ -283,6 +283,17 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Server-side enforcement of the orders-paused toggle (admin.html), so
+    // orders can't go through even if someone bypasses the order page's own
+    // UI check - this is the real gate, the UI check is just for a nice
+    // message.
+    const { data: settings } = await supabase
+      .from('site_settings').select('orders_paused, paused_message').eq('id', true).maybeSingle();
+    if (!settings || settings.orders_paused) {
+      res.status(503).json({ error: (settings && settings.paused_message) || "We're not taking orders yet - please check back shortly." });
+      return;
+    }
+
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const {
       orgType, teacherName, teacherEmail, schoolName, matName,

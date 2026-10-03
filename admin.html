@@ -49,7 +49,8 @@
 
 <div id="gate">
   <h2>🔒 Admin access</h2>
-  <input type="password" id="adminKeyInput" placeholder="Admin key" autocomplete="off">
+  <input type="password" id="adminKeyInput" placeholder="Password 1" autocomplete="off">
+  <input type="password" id="adminKeyInput2" placeholder="Password 2" autocomplete="off">
   <button onclick="unlock()">Unlock</button>
   <div class="err" id="gateErr"></div>
 </div>
@@ -61,6 +62,22 @@
       <div class="sub">Live from Supabase — who's ordered, how many seats, and who's paid.</div>
     </div>
     <button onclick="loadOrders()" style="padding:9px 16px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">↻ Refresh</button>
+  </div>
+
+  <div id="ordersToggleCard" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px;padding:16px 18px;border-radius:12px;border:1px solid var(--border,#232e47);background:var(--bg-2,#121a2e);">
+    <div>
+      <div style="font-weight:800;color:#fff;font-size:14px;" id="ordersToggleLabel">Checking order status…</div>
+      <div style="font-size:12px;color:var(--text-soft,#9AA6B8);margin-top:2px;">Controls whether anyone can submit the order form right now. Takes effect immediately, site-wide.</div>
+    </div>
+    <button onclick="toggleOrders()" id="ordersToggleBtn" style="padding:10px 20px;border-radius:50px;border:none;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;">…</button>
+  </div>
+
+  <div id="siteToggleCard" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px;padding:16px 18px;border-radius:12px;border:1px solid var(--border,#232e47);background:var(--bg-2,#121a2e);">
+    <div>
+      <div style="font-weight:800;color:#fff;font-size:14px;" id="siteToggleLabel">Checking site status…</div>
+      <div style="font-size:12px;color:var(--text-soft,#9AA6B8);margin-top:2px;">Takes the whole public marketing site offline (home, order, curriculum, GDPR, etc. all show a 404 page). The course app, dashboards and this admin page are never affected.</div>
+    </div>
+    <button onclick="toggleSite()" id="siteToggleBtn" style="padding:10px 20px;border-radius:50px;border:none;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;">…</button>
   </div>
 
   <div id="loadErr"></div>
@@ -119,9 +136,17 @@ const ADMIN_KEY_STORAGE = 'oready_admin_key';
 let allOrders = [];
 
 function unlock(){
-  const val = document.getElementById('adminKeyInput').value.trim();
-  if(!val) return;
-  sessionStorage.setItem(ADMIN_KEY_STORAGE, val);
+  const val1 = document.getElementById('adminKeyInput').value.trim();
+  const val2 = document.getElementById('adminKeyInput2').value.trim();
+  const errEl = document.getElementById('gateErr');
+  if(!val1 || !val2){
+    errEl.textContent = 'Enter both passwords.';
+    return;
+  }
+  errEl.textContent = '';
+  // Both passwords are combined into one key sent as the x-admin-key header;
+  // the server checks each half against its own secret (ADMIN_SECRET / ADMIN_SECRET_2).
+  sessionStorage.setItem(ADMIN_KEY_STORAGE, val1 + '::' + val2);
   tryLoad();
 }
 
@@ -143,6 +168,8 @@ async function tryLoad(){
     document.getElementById('dashboard').style.display = 'block';
     renderSummary(data.summary);
     render();
+    loadOrdersToggleState();
+    loadSiteToggleState();
   }catch(err){
     document.getElementById('gateErr').textContent = 'Could not load: ' + err.message;
   }
@@ -185,6 +212,130 @@ async function confirmWipe(){
     errEl.textContent = 'Failed: ' + err.message;
   }finally{
     btn.disabled = false; btn.textContent = 'Delete everything';
+  }
+}
+
+let ordersPausedState = null;
+
+function renderOrdersToggle(){
+  var label = document.getElementById('ordersToggleLabel');
+  var btn = document.getElementById('ordersToggleBtn');
+  if(ordersPausedState === null){
+    label.textContent = 'Could not check order status.';
+    btn.textContent = 'Retry';
+    btn.style.background = 'transparent';
+    btn.style.border = '1px solid var(--border,#232e47)';
+    btn.style.color = 'var(--text-soft,#9AA6B8)';
+    return;
+  }
+  if(ordersPausedState){
+    label.innerHTML = '🔴 Orders are <strong style="color:#F87171;">paused</strong> — the order page shows a "not open yet" message.';
+    btn.textContent = 'Open for orders';
+    btn.style.background = '#10B981';
+    btn.style.border = 'none';
+    btn.style.color = '#06241f';
+  } else {
+    label.innerHTML = '🟢 Orders are <strong style="color:#34D399;">open</strong> — anyone can submit the order form right now.';
+    btn.textContent = 'Pause orders';
+    btn.style.background = '#EF4444';
+    btn.style.border = 'none';
+    btn.style.color = '#fff';
+  }
+}
+
+async function loadOrdersToggleState(){
+  try{
+    const res = await fetch('/api/site-status');
+    const data = await res.json();
+    ordersPausedState = !!data.ordersPaused;
+  }catch(e){
+    ordersPausedState = null;
+  }
+  renderOrdersToggle();
+}
+
+async function toggleOrders(){
+  if(ordersPausedState === null) { loadOrdersToggleState(); return; }
+  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  const btn = document.getElementById('ordersToggleBtn');
+  const nextPaused = !ordersPausedState;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try{
+    const res = await fetch('/api/admin-toggle-orders', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'x-admin-key': key},
+      body: JSON.stringify({ paused: nextPaused })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || ('Server error (' + res.status + ')'));
+    ordersPausedState = nextPaused;
+  }catch(err){
+    alert('Could not change order status: ' + err.message);
+  }finally{
+    btn.disabled = false;
+    renderOrdersToggle();
+  }
+}
+
+let siteOfflineState = null;
+
+function renderSiteToggle(){
+  var label = document.getElementById('siteToggleLabel');
+  var btn = document.getElementById('siteToggleBtn');
+  if(siteOfflineState === null){
+    label.textContent = 'Could not check site status.';
+    btn.textContent = 'Retry';
+    btn.style.background = 'transparent';
+    btn.style.border = '1px solid var(--border,#232e47)';
+    btn.style.color = 'var(--text-soft,#9AA6B8)';
+    return;
+  }
+  if(siteOfflineState){
+    label.innerHTML = '🔴 Public site is <strong style="color:#F87171;">offline</strong> — visitors see the 404 page.';
+    btn.textContent = 'Bring site online';
+    btn.style.background = '#10B981';
+    btn.style.border = 'none';
+    btn.style.color = '#06241f';
+  } else {
+    label.innerHTML = '🟢 Public site is <strong style="color:#34D399;">live</strong> — visitors see the real pages.';
+    btn.textContent = 'Take site offline';
+    btn.style.background = '#EF4444';
+    btn.style.border = 'none';
+    btn.style.color = '#fff';
+  }
+}
+
+async function loadSiteToggleState(){
+  try{
+    const res = await fetch('/api/site-status');
+    const data = await res.json();
+    siteOfflineState = !!data.siteOffline;
+  }catch(e){
+    siteOfflineState = null;
+  }
+  renderSiteToggle();
+}
+
+async function toggleSite(){
+  if(siteOfflineState === null) { loadSiteToggleState(); return; }
+  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  const btn = document.getElementById('siteToggleBtn');
+  const nextOffline = !siteOfflineState;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try{
+    const res = await fetch('/api/admin-toggle-site', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'x-admin-key': key},
+      body: JSON.stringify({ offline: nextOffline })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || ('Server error (' + res.status + ')'));
+    siteOfflineState = nextOffline;
+  }catch(err){
+    alert('Could not change site status: ' + err.message);
+  }finally{
+    btn.disabled = false;
+    renderSiteToggle();
   }
 }
 
