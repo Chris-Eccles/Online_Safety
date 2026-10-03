@@ -83,7 +83,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .module-header-title{font-family:var(--font-head);font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .module-header-sub{font-size:11px;color:var(--slate-light);margin-top:1px;}
 .slide-prog-bar{height:3px;background:rgba(255,255,255,.07);flex-shrink:0;width:90px;border-radius:3px;overflow:hidden;}
-.slide-prog-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .3s ease;}
+.slide-prog-fill{height:100%;background:var(--mod-color,var(--teal));border-radius:3px;transition:width .3s ease;}
 .slide-area{flex:1;padding:26px 18px 14px;max-width:760px;margin:0 auto;width:100%;}
 .slide{display:none;animation:slideIn .3s ease;}.slide.active{display:block;}
 @keyframes slideIn{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
@@ -104,7 +104,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   .callout,.scenario-box p,.key-term .term,.match-item,.reveal-card-title,.tf-statement,.reveal-panel,.tf-explanation{font-size:15px;}
   .tf-statement{font-size:16.5px;}
 }
-.callout{border-left:4px solid var(--teal);background:var(--teal-glow);border-radius:0 11px 11px 0;padding:12px 16px;margin:14px 0;font-size:14px;line-height:1.65;}
+.callout{border-left:4px solid var(--mod-color,var(--teal));background:var(--teal-glow);border-radius:0 11px 11px 0;padding:12px 16px;margin:14px 0;font-size:14px;line-height:1.65;}
 .callout.warning{border-color:var(--amber);background:rgba(245,158,11,.1);}
 .callout.danger{border-color:var(--red);background:rgba(239,68,68,.09);}
 .callout.purple{border-color:#8B5CF6;background:rgba(139,92,246,.1);}
@@ -113,11 +113,11 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .scenario-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:800;margin-bottom:6px;}
 .scenario-box p{font-size:14px;margin-bottom:0;}
 .key-term{background:var(--card-bg);border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin:8px 0;}
-.key-term .term{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--teal);margin-bottom:3px;}
+.key-term .term{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--mod-color,var(--teal));margin-bottom:3px;}
 .key-term .def{font-size:13px;line-height:1.6;color:var(--slate-light);}
 .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:14px 0;}
 .stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:13px;padding:14px;text-align:center;}
-.stat-card .num{font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--teal);line-height:1;margin-bottom:3px;}
+.stat-card .num{font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--mod-color,var(--teal));line-height:1;margin-bottom:3px;}
 .stat-card .label{font-size:11px;color:var(--slate-light);line-height:1.4;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:12px 0;}
 .col-card{background:var(--card-bg);border-radius:11px;padding:13px;}
@@ -126,19 +126,19 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .checklist{list-style:none;padding:0;margin:11px 0;}
 .checklist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5;color:rgba(247,249,252,.85);}
 .checklist li:last-child{border-bottom:none;}
-.check-icon{color:var(--teal);font-size:14px;margin-top:1px;flex-shrink:0;}
+.check-icon{color:var(--mod-color,var(--teal));font-size:14px;margin-top:1px;flex-shrink:0;}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px;margin:14px 0;}
 .summary-item{background:var(--card-bg);border-radius:11px;padding:13px;display:flex;gap:9px;align-items:flex-start;}
 .sum-icon{font-size:17px;flex-shrink:0;}
 .sum-text{font-size:12px;line-height:1.5;color:var(--slate-light);}
 .sum-text strong{display:block;font-size:12px;color:var(--warm-white);margin-bottom:1px;}
-.dfe-tag{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:8px;padding:9px 13px;margin:12px 0;font-size:12px;color:var(--teal);line-height:1.5;}
+.dfe-tag{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:8px;padding:9px 13px;margin:12px 0;font-size:12px;color:var(--mod-color,var(--teal));line-height:1.5;}
 .dfe-tag strong{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;color:#60A5FA;}
 .reflection-box{border:2px dashed rgba(0,201,177,.3);border-radius:13px;padding:16px;margin:16px 0;}
-.ref-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.ref-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mod-color,var(--teal));font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
 .reflection-box>p{font-size:13px;color:var(--slate-light);margin-bottom:9px;}
 .reflection-box textarea{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:9px;color:var(--warm-white);font-family:var(--font-ui);font-size:15px;padding:10px 12px;resize:vertical;min-height:84px;outline:none;transition:border-color .2s;line-height:1.6;}
-.reflection-box textarea:focus{border-color:var(--teal);}
+.reflection-box textarea:focus{border-color:var(--mod-color,var(--teal));}
 .reflection-box textarea::placeholder{color:var(--slate);}
 .ref-word-count{font-size:12px;margin-top:5px;color:var(--slate);transition:color .2s;}
 .ref-word-count.ok{color:var(--green);font-weight:700;}
@@ -158,11 +158,11 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .sort-bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 @media (max-width:480px){.sort-bins{grid-template-columns:1fr;}}
 .sort-bin{border:2px dashed var(--border);border-radius:11px;padding:10px;min-height:64px;transition:border-color .2s,background .2s,box-shadow .2s;box-shadow:0 0 10px rgba(0,201,177,.1);}
-.sort-bin.drag-over{border-color:var(--teal);background:var(--teal-glow);box-shadow:0 0 16px rgba(0,201,177,.3);}
+.sort-bin.drag-over{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);box-shadow:0 0 16px rgba(0,201,177,.3);}
 .sort-bin-label{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:var(--warm-white);margin-bottom:8px;text-align:center;}
 .sort-bin-drop{display:flex;flex-direction:column;gap:6px;min-height:24px;}
 .sort-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.sort-chip{background:var(--navy-mid);border:1.5px solid var(--border);border-left:3px solid var(--teal);border-radius:10px;padding:9px 13px 9px 11px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
+.sort-chip{background:var(--navy-mid);border:1.5px solid var(--border);border-left:3px solid var(--mod-color,var(--teal));border-radius:10px;padding:9px 13px 9px 11px;font-size:13.5px;line-height:1.4;cursor:grab;touch-action:none;user-select:none;transition:opacity .15s,border-color .15s,transform .1s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
 .sort-chip:active{cursor:grabbing;}
 .sort-chip.placed-correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
 .sort-chip.placed-correct::before{content:'✓ ';color:var(--green);font-weight:800;}
@@ -173,7 +173,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 
 /* ---- fill-in-the-blank activity ---- */
 .fill-sentence{font-family:var(--font-head);font-size:15.5px;line-height:2.1;color:var(--warm-white);margin-bottom:18px;}
-.fill-blank{display:inline-flex;align-items:center;justify-content:center;min-width:74px;height:30px;padding:0 10px;margin:0 3px;border-radius:8px;border:2px dashed var(--teal);background:var(--navy-mid);font-family:var(--font-ui);font-weight:700;font-size:13.5px;color:var(--slate-light);cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.14);}
+.fill-blank{display:inline-flex;align-items:center;justify-content:center;min-width:74px;height:30px;padding:0 10px;margin:0 3px;border-radius:8px;border:2px dashed var(--mod-color,var(--teal));background:var(--navy-mid);font-family:var(--font-ui);font-weight:700;font-size:13.5px;color:var(--slate-light);cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.14);}
 .fill-blank.filled{border-style:solid;border-color:var(--blue);background:rgba(59,130,246,.14);color:var(--warm-white);box-shadow:0 0 10px var(--blue-glow);}
 .fill-blank.wrong-position{border-style:solid;border-color:var(--amber);background:rgba(245,158,11,.16);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.35);cursor:pointer;animation:amberPulse 1.6s ease-in-out infinite;}
 .fill-blank.correct{border-color:var(--green);background:rgba(16,185,129,.14);color:var(--green);cursor:default;box-shadow:none;}
@@ -181,25 +181,25 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 @keyframes amberPulse{0%,100%{box-shadow:0 0 10px rgba(245,158,11,.3);}50%{box-shadow:0 0 16px rgba(245,158,11,.55);}}
 .fill-wordbank{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
 .fill-word{background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;padding:8px 14px;font-size:13.5px;font-weight:700;cursor:pointer;transition:opacity .15s,border-color .15s,box-shadow .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
-.fill-word:hover{border-color:var(--teal);}
-.fill-word.armed{border-color:var(--teal);background:var(--teal-glow);box-shadow:0 0 0 3px rgba(0,201,177,.3);}
+.fill-word:hover{border-color:var(--mod-color,var(--teal));}
+.fill-word.armed{border-color:var(--mod-color,var(--teal));background:var(--teal-glow);box-shadow:0 0 0 3px rgba(0,201,177,.3);}
 .fill-word.wrong{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.12);box-shadow:0 0 10px rgba(239,68,68,.3);}
 .fill-word.used{opacity:.25;pointer-events:none;box-shadow:none;}
-.fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
+.fill-submit-btn{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:opacity .15s,background .15s;}
 .fill-submit-btn:not(:disabled):hover{background:var(--teal-dark);}
 .fill-submit-btn:disabled{background:var(--navy-mid);color:var(--slate-light);cursor:not-allowed;opacity:.65;}
 
 /* ---- spot-the-mistake activity ---- */
 .spot-list{display:flex;flex-direction:column;gap:9px;}
 .spot-card{display:flex;align-items:flex-start;gap:10px;text-align:left;background:var(--navy-mid);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:var(--warm-white);cursor:pointer;width:100%;font-family:var(--font-ui);transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:0 0 8px rgba(0,201,177,.12);}
-.spot-card:hover{border-color:var(--teal);}
+.spot-card:hover{border-color:var(--mod-color,var(--teal));}
 .spot-card:disabled{cursor:default;}
 .spot-card.wrong-pick{border-color:var(--red);background:rgba(239,68,68,.1);opacity:.6;box-shadow:none;}
 .spot-card.correct-pick{border-color:var(--green);background:rgba(16,185,129,.14);box-shadow:none;}
 .spot-marker{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:2px solid var(--slate);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px;}
 .spot-card.wrong-pick .spot-marker{border-color:var(--red);color:var(--red);}
 .spot-card.correct-pick .spot-marker{border-color:var(--green);color:var(--green);background:var(--green);color:var(--navy);}
-.spot-explanation{margin-top:14px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
+.spot-explanation{margin-top:14px;padding:12px 14px;background:var(--teal-glow);border-left:4px solid var(--mod-color,var(--teal));border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6;}
 
 /* ---- match-to-pair activity ---- */
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -227,14 +227,14 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .order-sequence{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;transition:transform .1s;}
 .order-sequence.shake{animation:sortShake .4s;}
 .order-slot{display:flex;align-items:center;gap:10px;min-height:44px;border:2px dashed var(--border);border-radius:10px;padding:9px 13px;font-size:13.5px;color:#A8B6C8;box-shadow:0 0 8px rgba(0,201,177,.1);transition:box-shadow .15s,border-color .15s,background .15s;}
-.order-slot.filled{border-style:solid;border-color:var(--teal);background:var(--navy-mid);color:var(--warm-white);cursor:pointer;box-shadow:0 0 10px rgba(0,201,177,.2);}
+.order-slot.filled{border-style:solid;border-color:var(--mod-color,var(--teal));background:var(--navy-mid);color:var(--warm-white);cursor:pointer;box-shadow:0 0 10px rgba(0,201,177,.2);}
 .order-slot.filled.correct{border-color:var(--green);background:rgba(16,185,129,.12);cursor:default;box-shadow:none;}
-.order-slot-num{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,201,177,.18);color:var(--teal);font-family:var(--font-head);font-weight:800;font-size:11.5px;}
+.order-slot-num{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,201,177,.18);color:var(--mod-color,var(--teal));font-family:var(--font-head);font-weight:800;font-size:11.5px;}
 .order-slot.filled.correct .order-slot-num{background:var(--green);color:var(--navy);}
 .order-slot-empty{font-style:italic;opacity:.9;}
 .order-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--navy-mid);border-radius:10px;min-height:44px;}
-.order-chip{background:var(--teal);color:var(--navy);font-weight:700;border:1.5px solid var(--teal);border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s,box-shadow .15s,background .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
-.order-chip:hover{border-color:var(--teal-dark);background:var(--teal-dark);}
+.order-chip{background:var(--mod-color,var(--teal));color:var(--navy);font-weight:700;border:1.5px solid var(--mod-color,var(--teal));border-radius:9px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,border-color .15s,box-shadow .15s,background .15s;box-shadow:0 0 10px rgba(0,201,177,.16);}
+.order-chip:hover{opacity:.85;}
 .order-chip.used{opacity:.25;pointer-events:none;box-shadow:none;}
 
 /* ---- true/false activity ---- */
@@ -257,8 +257,8 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .flip-card-front{background:var(--navy-mid);border:1.5px solid var(--border);align-items:center;text-align:center;gap:6px;}
 .flip-card-front::before{content:'🔎';font-size:20px;margin-bottom:2px;}
 .flip-card-term{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--warm-white);}
-.flip-card-hint{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:.02em;}
-.flip-card-back{background:var(--teal-glow);border:1.5px solid var(--teal);transform:rotateY(180deg);font-size:13px;line-height:1.5;color:var(--warm-white);}
+.flip-card-hint{font-size:11px;color:var(--mod-color,var(--teal));font-weight:700;letter-spacing:.02em;}
+.flip-card-back{background:var(--teal-glow);border:1.5px solid var(--mod-color,var(--teal));transform:rotateY(180deg);font-size:13px;line-height:1.5;color:var(--warm-white);}
 .flip-card.flipped .flip-card-front{visibility:hidden;}
 
 /* ---- click-to-reveal info cards (not a graded activity - pure reading aid) ---- */
@@ -276,11 +276,11 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:9px;}
 .quiz-title{font-family:var(--font-head);font-size:19px;font-weight:700;}
 .quiz-prog-chip{font-size:12px;font-weight:700;color:var(--slate-light);background:var(--card-bg);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
-.quiz-q-num{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:6px;}
+.quiz-q-num{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mod-color,var(--teal));font-weight:700;margin-bottom:6px;}
 .quiz-q-text{font-family:var(--font-head);font-size:17px;font-weight:600;line-height:1.4;margin-bottom:14px;color:var(--warm-white);}
 .quiz-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
 .quiz-opt{background:var(--navy-mid);border:2px solid var(--border);border-radius:11px;padding:11px 14px;cursor:pointer;font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--warm-white);text-align:left;transition:border-color .15s,background .15s;display:flex;align-items:flex-start;gap:10px;line-height:1.45;}
-.quiz-opt:hover:not(.locked){border-color:var(--teal);background:var(--teal-glow);}
+.quiz-opt:hover:not(.locked){border-color:var(--mod-color,var(--teal));background:var(--teal-glow);}
 .quiz-opt.correct{border-color:var(--green);background:rgba(16,185,129,.12);}
 .quiz-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.09);}
 .quiz-opt.locked{cursor:default;}
@@ -289,7 +289,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .quiz-feedback.show{display:block;}
 .quiz-feedback.correct{background:rgba(16,185,129,.12);color:#6EE7B7;}
 .quiz-feedback.wrong{background:rgba(239,68,68,.09);color:#FCA5A5;}
-.btn-next-q{background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;border:none;cursor:pointer;display:none;transition:background .15s;}
+.btn-next-q{background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:13px;padding:10px 24px;border-radius:50px;border:none;cursor:pointer;display:none;transition:background .15s;}
 .btn-next-q:hover{background:var(--teal-dark);}
 .btn-next-q.show{display:inline-flex;align-items:center;gap:6px;}
 .quiz-result{text-align:center;padding:14px 0;}
@@ -310,7 +310,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 .module-nav{padding:11px 18px;display:flex;gap:9px;max-width:760px;margin:0 auto;width:100%;border-top:1px solid var(--border);}
 .btn-secondary{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--warm-white);font-family:var(--font-ui);font-weight:700;font-size:13px;padding:10px 18px;border-radius:50px;cursor:pointer;transition:background .15s;white-space:nowrap;}
 .btn-secondary:hover{background:rgba(255,255,255,.1);}
-.btn-nav-next{flex:1;background:var(--teal);color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;transition:background .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-nav-next{flex:1;background:var(--mod-color,var(--teal));color:var(--navy);font-family:var(--font-ui);font-weight:800;font-size:14px;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;transition:background .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .btn-nav-next:hover{background:var(--teal-dark);box-shadow:0 5px 18px rgba(0,201,177,.24);}
 .btn-nav-next:disabled{background:rgba(255,255,255,.08);color:var(--slate);cursor:not-allowed;box-shadow:none;}
 #screen-certificate{align-items:center;justify-content:center;padding:32px 18px;background:radial-gradient(ellipse at 50% 0%,rgba(0,201,177,.15) 0%,transparent 60%),var(--navy);text-align:center;}
@@ -720,7 +720,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
     </div>
     <div id="cert-banner" style="display:none" class="cert-unlock-banner">
       <p>&#127942; You finished everything! <span>Your certificate is ready.</span></p>
-      <button class="btn-primary" style="width:auto" onclick="showEmailGate()">Get my certificate &#8594;</button>
+      <button class="btn-primary" style="width:auto" onclick="finishAndShowCertificate()">Get my certificate &#8594;</button>
     </div>
     <div id="resume-banner" style="display:none" class="resume-banner">
       <p>&#128205; Carry on from where you stopped &#8212; <span id="resume-mod-name"></span><small id="resume-detail"></small></p>
@@ -816,7 +816,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
       <div class="cert-dfe">&#10003; Covering all the big online safety topics</div>
       <div class="cert-modules-row" id="cert-mods"></div>
       <div class="cert-foot">
-        <div class="cert-sig"><div class="sig-line"></div><div class="sig-name">Abity Academy</div><div class="sig-role">Course Director</div></div>
+        <div class="cert-sig"><img src="/images/signature-ceccles.png" alt="Signature" style="height:34px;width:auto;display:block;margin-bottom:2px;object-fit:contain;object-position:left bottom;"><div class="sig-line"></div><div class="sig-name">C Eccles</div><div class="sig-role">Abity Academy &#183; Course Director</div></div>
         <svg class="cert-seal" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" fill="#FBF8F0" stroke="#C9A227" stroke-width="2"/><circle cx="40" cy="40" r="29" fill="none" stroke="#C9A227" stroke-width="1"/><path d="M40 20L46 33L60 35L50 45L52 59L40 52L28 59L30 45L20 35L34 33Z" fill="#00A896" opacity=".88"/><text x="40" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#0F1B2D">PASS</text></svg>
         <div class="cert-date-block"><div class="lbl">Date of Award</div><div class="val" id="cert-date"></div></div>
       </div>
@@ -844,6 +844,18 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
  */
 function showEmailGate(){
   showScreen('screen-email-gate');
+}
+
+/** Replaces the old "email/copy a report to your teacher" step - the teacher now reads
+ * reflections straight from their own dashboard (reflections_teacher_ct etc., set up via
+ * wrapReflectionsForTeacher), so there's nothing left for the student to manually send.
+ * Still does the real work buildReport() was doing underneath: generates/keeps the
+ * certificate ID, pushes the final record (now including the teacher-readable copy), and
+ * generates the reflections PDF - just skips straight to the certificate afterwards. */
+function finishAndShowCertificate(){
+  const {certId}=buildReport();
+  AppState.certId=certId;
+  showCertificate();
 }
 
 function unlockCertAfterReport(){
@@ -1192,6 +1204,11 @@ let liveDslPhoto = SCHOOL_SAFEGUARDING.photoUrl;
 let liveDslTeam = [];
 let schoolLogoUrl = '';
 let schoolName = '';
+/** The school's public RSA key (base64 SPKI), if their teacher has set one up - lets this
+ * student's browser give the teacher a readable copy of reflections without ever sharing
+ * the student's own PIN. Null if the teacher hasn't set this up yet; reflections then only
+ * save under the student's own PIN-protected copy, same as before. */
+let teacherReflectionsPubKey = null;
 
 /** ═══════════════════════════════════════════════════════════════════════
  * ACCESS_MODE — how students get into the course
@@ -1292,6 +1309,7 @@ async function checkAndConsumeSeat(code){
     if(data.dsl_team&&Array.isArray(data.dsl_team)&&data.dsl_team.length)liveDslTeam=data.dsl_team;
     if(data.logo_url)schoolLogoUrl=data.logo_url;
     if(data.school_name)schoolName=data.school_name;
+    if(data.reflections_pubkey)teacherReflectionsPubKey=data.reflections_pubkey;
     renderWelcomeDslCard();
     return {ok:true,data};
   }catch(e){
@@ -1371,6 +1389,28 @@ async function decryptWithPinKey(ct,iv){
     const buf=await crypto.subtle.decrypt({name:'AES-GCM',iv:fromB64(iv)},sessionPinCryptoKey,fromB64(ct));
     return JSON.parse(new TextDecoder().decode(buf));
   }catch(e){ return null; } // wrong key or corrupted data - fail closed, don't crash the report
+}
+
+/** Encrypts an object with a fresh one-off AES key, then RSA-OAEP-wraps that key with the
+ * school's public key (set up by the teacher on their dashboard) - so the teacher's browser
+ * can later unwrap and read it with their own passphrase, entirely independently of the
+ * student's PIN. Returns {ct, iv, wrappedKey} as base64 strings, or null if this school's
+ * teacher hasn't set up reflections access yet (in which case nothing teacher-readable is
+ * sent - only the student's own PIN-protected copy exists, same as before). */
+async function wrapReflectionsForTeacher(obj){
+  if(!teacherReflectionsPubKey)return null;
+  try{
+    const toB64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const fromB64=b64=>Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    const pubKey=await crypto.subtle.importKey('spki',fromB64(teacherReflectionsPubKey),{name:'RSA-OAEP',hash:'SHA-256'},false,['encrypt']);
+    const contentKey=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt']);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const data=new TextEncoder().encode(JSON.stringify(obj));
+    const ctBuf=await crypto.subtle.encrypt({name:'AES-GCM',iv},contentKey,data);
+    const rawKey=await crypto.subtle.exportKey('raw',contentKey);
+    const wrappedKeyBuf=await crypto.subtle.encrypt({name:'RSA-OAEP'},pubKey,rawKey);
+    return {ct:toB64(ctBuf),iv:toB64(iv),wrappedKey:toB64(wrappedKeyBuf)};
+  }catch(e){ return null; } // best-effort only - the student's own PIN-protected copy still saves regardless
 }
 
 /** Merges two completedModules maps, keeping whichever record per module is more recent (or the only one that exists). */
@@ -1463,6 +1503,8 @@ async function pushStudentRecord(certId){
     };
     const enc=await encryptWithPinKey(reflectionData);
     if(enc){update.reflections_ct=enc.ct;update.reflections_iv=enc.iv;}
+    const teacherEnc=await wrapReflectionsForTeacher(reflectionData);
+    if(teacherEnc){update.reflections_teacher_ct=teacherEnc.ct;update.reflections_teacher_iv=teacherEnc.iv;update.reflections_teacher_key_wrapped=teacherEnc.wrappedKey;}
     if(certId){update.cert_id=certId;}
     // push_student_record re-checks the PIN hash server-side before writing anything -
     // a write attempt with a wrong/missing PIN hash is silently rejected, not just hidden by the UI.
@@ -1616,6 +1658,7 @@ function renderDashboard(){applySchoolBranding();
 function openModule(id){
   currentModuleId=id;quizState={};
   const mod=modules.find(m=>m.id===id);
+  document.documentElement.style.setProperty('--mod-color',mod.color); // always set this, not just on first-ever visit - showModuleIntro is skipped for a module you've already started
   document.getElementById('mod-header-title').textContent=mod.title;
   showScreen('screen-module');
   const saved=loadProgress();
@@ -2967,14 +3010,43 @@ const modules = [
 // LOCALSTORAGE PROGRESS SAVE/RESTORE
 // ══════════════════════════════════════════
 const SAVE_KEY='cybersmart_progress_v1';
+const LAST_SESSION_KEY='cybersmart_last_session';
 /**
  * =========================================================================
  * 7. LOCALSTORAGE PERSISTENCE
  * =========================================================================
  * Saves and restores student progress, reflections, and module state.
+ *
+ * IMPORTANT: this used to be stored under one single global key, shared by
+ * every student and every school on a given browser - so on a shared/school
+ * computer, logging in as a second school (or a second student) would pull
+ * in whichever progress was saved last, regardless of who it actually
+ * belonged to. Every save/load is now scoped to the logged-in student's own
+ * class code + name, so different identities on the same browser never see
+ * each other's progress.
  */
-function saveProgress(){if(TRIAL_MODE)return;const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,savedAt:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));showToast();}catch(e){}}
-function loadProgress(){try{const r=localStorage.getItem(SAVE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
+function progressKeyFor(licenseCode,nameKey){
+  return SAVE_KEY+'::'+(licenseCode||'OPEN')+'::'+(nameKey||'');
+}
+function saveProgress(){
+  if(TRIAL_MODE)return;
+  if(!studentRecordKey)return; // not logged in as anyone yet - nothing safe to save
+  const key=progressKeyFor(studentRecordKey.licenseCode,studentRecordKey.nameKey);
+  const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,savedAt:Date.now()};
+  try{
+    localStorage.setItem(key,JSON.stringify(data));
+    // A small, non-sensitive pointer so a returning visit on this same device
+    // can offer to resume - but only ever as a "welcome back, is this you?"
+    // check, never by silently loading someone else's work.
+    localStorage.setItem(LAST_SESSION_KEY,JSON.stringify({licenseCode:studentRecordKey.licenseCode,nameKey:studentRecordKey.nameKey,studentName}));
+    showToast();
+  }catch(e){}
+}
+function loadProgress(){
+  if(!studentRecordKey)return null;
+  const key=progressKeyFor(studentRecordKey.licenseCode,studentRecordKey.nameKey);
+  try{const r=localStorage.getItem(key);return r?JSON.parse(r):null;}catch(e){return null;}
+}
 function showToast(){/* save popup disabled per teacher preference */}
 function resumeProgress(){
   // Try window var first, fall back to computing from saved progress
@@ -2999,6 +3071,7 @@ function resumeProgress(){
   currentModuleId=tid;currentSlide=slide;quizState={};
   const mod=modules.find(m=>m.id===tid);
   if(!mod){goToDashboard();return;}
+  document.documentElement.style.setProperty('--mod-color',mod.color);
   document.getElementById('mod-header-title').textContent=mod.title;
   showScreen('screen-module');
   renderCurrentSlide();
@@ -3203,22 +3276,19 @@ window.addEventListener('DOMContentLoaded', function(){
   // The MGS trial code never resumes - every visit is a fresh first look,
   // never a "welcome back" dashboard from someone's earlier demo run.
   if(urlCode&&urlCode.toUpperCase().trim()==='MGS'&&isDemoBypassAllowed()){
-    try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('cybersmart_last_code');}catch(e){}
+    try{localStorage.removeItem(LAST_SESSION_KEY);localStorage.removeItem('cybersmart_last_code');}catch(e){}
   }
 
-  const saved = loadProgress();
-  if(saved && saved.studentName){
-    studentName = saved.studentName;
-    completedModules = saved.completedModules || {};
-    reflectionData = saved.reflectionData || {};
-    moduleProgress = saved.moduleProgress || {};
-    activityData = saved.activityData || {};
-    document.getElementById('dash-name').textContent = saved.studentName.split(' ')[0];
-    renderDashboard();
-    checkResumeBanner();
-    showScreen('screen-dashboard');
-    return;
-  }
+  // IMPORTANT: we never silently drop straight into a dashboard on page load
+  // any more - progress is only ever loaded once someone has actually logged
+  // in (name + code + PIN), via syncStudentRecord. This matters on shared
+  // school computers: without this, whichever student saved progress last on
+  // this browser would have their work shown to the next student who opens
+  // the page, with no login at all. The most we do here is pre-fill the name
+  // and code fields as a convenience, from a small non-sensitive "last
+  // session" pointer - the PIN is always required to actually see anything.
+  let lastSession=null;
+  try{const r=localStorage.getItem(LAST_SESSION_KEY);lastSession=r?JSON.parse(r):null;}catch(e){}
 
   // No local progress yet — decide whether to show the code screen first
   if(urlCode){
@@ -3238,6 +3308,18 @@ window.addEventListener('DOMContentLoaded', function(){
     }
   } else {
     showScreen('screen-welcome'); // ACCESS_MODE is 'open' - no code needed at all
+  }
+
+  // Convenience only: if this browser has a remembered name from last time
+  // and it matches the class code now showing, pre-fill the name box - they
+  // still have to type their PIN, so this never shows anyone else's work.
+  if(lastSession&&lastSession.studentName){
+    const codeEl=document.getElementById('school-code');
+    const currentCode=((codeEl&&codeEl.value)||'').trim().toUpperCase()||'OPEN';
+    if(currentCode===(lastSession.licenseCode||'OPEN')){
+      const nameEl=document.getElementById('student-name');
+      if(nameEl&&!nameEl.value)nameEl.value=lastSession.studentName;
+    }
   }
 });
 

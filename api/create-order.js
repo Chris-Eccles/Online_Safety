@@ -126,7 +126,11 @@ function schoolRefTag(schoolName) {
 function teacherLoginEmailHtml({ teacherName, schoolName, code, dashboardToken, isMatMember, trustName }) {
   const dashboardUrl = SITE_URL.replace(/\/$/, '') + '/dashboard.html?token=' + encodeURIComponent(dashboardToken);
   const courseUrl = SITE_URL.replace(/\/$/, '') + '/course.html?code=' + encodeURIComponent(code);
-  const plainSiteUrl = SITE_URL.replace(/\/$/, '') + '/?ref=' + encodeURIComponent(schoolRefTag(schoolName));
+  // course.html, not the marketing homepage - this needs to land students on the
+  // actual code-entry/login screen, just without the code pre-filled in like the
+  // ready-made link above (they type it in themselves). The ?ref= tag still rides
+  // along for analytics even though there's no ?code= this time.
+  const plainSiteUrl = SITE_URL.replace(/\/$/, '') + '/course.html?ref=' + encodeURIComponent(schoolRefTag(schoolName));
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
       <h2 style="margin-bottom:4px;">Welcome to Online Ready${isMatMember ? ' — ' + trustName : ''}</h2>
@@ -348,7 +352,7 @@ module.exports = async (req, res) => {
       matDashboardToken = randomToken();
       const { data: trust, error: trustErr } = await supabase
         .from('trusts')
-        .insert({ trust_name: matName, mat_dashboard_token: matDashboardToken, seats_allocated: Number(seats) || 0 })
+        .insert({ trust_name: matName, mat_dashboard_token: matDashboardToken, seats_allocated: Number(seats) || 0, seat_type: discountApplied ? 'free' : 'paid' })
         .select('id')
         .single();
       if (trustErr) throw new Error('Could not create trust: ' + trustErr.message);
@@ -373,6 +377,10 @@ module.exports = async (req, res) => {
         display_name: t.name, school_name: t.school,
         seats_allowed: isMat ? 0 : (Number(seats) || 0), // per-teacher seat split for a MAT is set later by hand
         seats_used: 0,
+        // Tags whether this licence was paid for or created with a discount code (e.g. FREE),
+        // so the annual purge knows which seats roll over and which get taken back - see
+        // api/annual-purge.js.
+        seat_type: discountApplied ? 'free' : 'paid',
         // DSL info is collected once per order (for the purchaser's own school);
         // other MAT member schools can have theirs added later by replying to their email.
         dsl_name: t.isPurchaser ? (dslName || null) : null,

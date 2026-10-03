@@ -160,6 +160,16 @@
     </div>
   </div>
 
+  <!-- SENDING OVERLAY — shown from the moment the request actually goes to the server until it's done -->
+  <div id="sendingOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.88);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;text-align:center;">
+    <div>
+      <div style="width:46px;height:46px;border-radius:50%;border:3.5px solid rgba(255,255,255,0.15);border-top-color:var(--brand);margin:0 auto 20px;animation:sendingSpin 0.8s linear infinite;"></div>
+      <h3 style="font-family:var(--font-display);font-size:19px;color:var(--warm-white,#fff);margin:0 0 8px;">Setting everything up…</h3>
+      <p style="color:var(--text-soft);font-size:14px;max-width:320px;margin:0 auto;">Creating your class code and sending the emails. This usually takes a few seconds — occasionally up to a minute.</p>
+    </div>
+  </div>
+  <style>@keyframes sendingSpin{to{transform:rotate(360deg);}}</style>
+
 
 <script>
 let matTeacherCount = 0;
@@ -387,6 +397,8 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   submitBtn.textContent = 'Setting up your account...';
   status.className = 'form-status';
   status.textContent = '';
+  var sendingOverlay = document.getElementById('sendingOverlay');
+  sendingOverlay.style.display = 'flex';
 
   try{
     var response = await fetch('/api/create-order', {
@@ -400,6 +412,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
       throw new Error(result.error || 'Server error');
     }
 
+    sendingOverlay.style.display = 'none';
     status.className = 'form-status show ok';
     status.textContent = "You're all set! Login details are on their way by email to " +
       (isMat ? 'you and every teacher you added' : 'you') +
@@ -407,11 +420,16 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     document.getElementById('orderForm').reset();
     document.getElementById('matNameRow').style.display = 'none';
     document.getElementById('matTeachersSection').style.display = 'none';
+    // Leave the button disabled for good - this request has already gone
+    // through, so there's nothing a second click should do except risk a
+    // duplicate order.
+    submitBtn.textContent = '✓ Request sent';
   }catch(err){
+    sendingOverlay.style.display = 'none';
     status.className = 'form-status show error';
     status.textContent = "We couldn't set this up automatically just now, so we're opening an email instead - we'll get it sorted by hand.";
     fallbackToMailto(err.message);
-  }finally{
+    // Unlike success, this didn't actually go through - let them try again.
     submitBtn.disabled = false;
     submitBtn.textContent = origBtnText;
   }

@@ -221,7 +221,7 @@
       </div>
 
       <div class="price-card">
-        <span class="price-figure" id="priceFigure">£1</span>
+        <span class="price-figure" id="priceFigure" style="position:relative;z-index:2;">£1</span>
         <span class="price-unit">per student, per year</span>
         <ul class="price-includes">
           <li>All 7 modules</li>
@@ -308,7 +308,7 @@
       var colour = colours[i % colours.length];
       piece.style.cssText = 'position:fixed;left:'+cx+'px;top:'+cy+'px;'+
         'width:'+size+'px;height:'+(size*0.4)+'px;background:'+colour+';'+
-        'border-radius:2px;pointer-events:none;z-index:9999;opacity:1;'+
+        'border-radius:2px;pointer-events:none;z-index:1;opacity:1;'+
         'transform:translate(-50%,-50%) rotate('+(Math.random()*360)+'deg);'+
         'transition:transform 900ms cubic-bezier(.2,.7,.3,1),opacity 900ms ease;';
       document.body.appendChild(piece);
