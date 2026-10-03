@@ -457,7 +457,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 
 
 /* ── EMAIL GATE ── */
-#screen-email-gate{align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(0,201,177,0.12) 0%,transparent 60%),var(--navy);}
+#screen-email-gate,#screen-trial-end{align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(0,201,177,0.12) 0%,transparent 60%),var(--navy);}
 .gate-wrap{max-width:520px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;}
 .gate-icon{font-size:52px;margin-bottom:18px;}
 .gate-title{font-family:var(--font-head);font-size:28px;font-weight:700;margin-bottom:10px;}
@@ -733,11 +733,10 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 <div id="screen-trial-end" class="screen">
   <div class="gate-wrap">
     <div class="gate-icon">&#10024;</div>
-    <h2 class="gate-title">That's a taste of Module 1</h2>
-    <p class="gate-sub">Online Ready has 7 modules like this one &#8212; cyberbullying, grooming, radicalisation, sexting, phishing, passwords and online wellbeing &#8212; each with auto-marked quizzes, a live link to your school's safeguarding team, and a certificate at the end. No apps to install &#8212; students just join with a class code.</p>
+    <h2 class="gate-title">Thank you for trying the module!</h2>
     <div class="gate-actions" style="width:100%;">
-      <a href="/order.html" class="btn-primary gate-email-btn" style="text-decoration:none;justify-content:center;display:flex;">Get Online Ready for my school &#8594;</a>
-      <button class="gate-copy-btn" onclick="startTrialPreview()">&#8635; Watch the preview again</button>
+      <a href="/" target="_blank" rel="noopener" class="btn-primary gate-email-btn" style="text-decoration:none;justify-content:center;display:flex;">Get Online Ready for my school &#8594;</a>
+      <button class="gate-copy-btn" onclick="startTrialPreview()">&#8635; Restart</button>
     </div>
   </div>
 </div>
