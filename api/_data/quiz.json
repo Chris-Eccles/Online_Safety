@@ -1,0 +1,688 @@
+{
+ "cyberbullying": [
+  {
+   "id": "cyberbullying-1",
+   "q": "Layla comes home and finds a group chat called \"Layla is ugly\". 47 people from her year have joined. She hasn't told anyone yet. What is the most important first step?",
+   "opts": [
+    "Take screenshots first, then tell a trusted teacher or her DSL",
+    "Leave the group chat straight away so she stops seeing the messages",
+    "Reply to defend herself so everyone knows the truth about her",
+    "Post about it on her own page to get support from others"
+   ],
+   "correct": 0,
+   "explanation": "Screenshots keep proof safe before anyone can delete the messages. This is the most important first step. A teacher or DSL needs to see what happened so they can help."
+  },
+  {
+   "id": "cyberbullying-2",
+   "q": "Your friend shows you a private page made using photos of someone in your class. It posts horrible things as if that person wrote them. What is this called?",
+   "opts": [
+    "Trolling - posting mean comments to get a reaction",
+    "Impersonation - a fake account made to hurt someone",
+    "Sharing someone's home address online",
+    "Watching someone's public posts without ever interacting"
+   ],
+   "correct": 1,
+   "explanation": "Making an account to pretend to be someone else, to hurt them, is called impersonation. This can be a crime in the UK."
+  },
+  {
+   "id": "cyberbullying-3",
+   "q": "Theo has had nasty messages for three weeks from someone at school. He's scared that reporting it will make things worse. What should you tell him?",
+   "opts": [
+    "He's right - it's safer to just block them and say nothing",
+    "He should reply calmly and try to sort it out himself without telling anyone",
+    "Saving the evidence and telling his school's DSL is the right move",
+    "He should only tell someone if it becomes physical"
+   ],
+   "correct": 2,
+   "explanation": "Worrying that reporting will make things worse is very common. But the DSL is trained to handle this carefully and keep you safe. Staying quiet lets the bullying carry on."
+  },
+  {
+   "id": "cyberbullying-4",
+   "q": "You're in a group chat where people share edited photos making fun of a classmate. You feel bad but haven't said anything. What word describes you right now?",
+   "opts": [
+    "Victim - because you feel pressured to stay in the chat",
+    "Upstander - because you haven't joined in",
+    "Leader - because you could remove people from the chat",
+    "Bystander - watching unkindness and doing nothing"
+   ],
+   "correct": 3,
+   "explanation": "Watching but staying quiet makes you a bystander. Even quietly checking on the person being bullied, or telling a teacher, would make you an upstander instead."
+  },
+  {
+   "id": "cyberbullying-5",
+   "q": "Someone shares a photo of a classmate taken in a private changing room, without asking them. How serious is this?",
+   "opts": [
+    "Very serious - this can be a crime in the UK",
+    "Not very serious if it was an accident",
+    "Only serious if it's shared outside the school",
+    "Only serious if the person in the photo finds out"
+   ],
+   "correct": 0,
+   "explanation": "Sharing private photos without permission can be a crime, no matter your age. Tell your school's DSL straight away."
+  },
+  {
+   "id": "cyberbullying-6",
+   "q": "Marcus has been cyberbullied. He wants to call Childline. His friend says he should tell the school DSL first. Who is right?",
+   "opts": [
+    "Marcus - Childline should always be first",
+    "His friend - the DSL can help and involve police if needed",
+    "Both - he should do them at the same time",
+    "Neither - he should call the police straight away"
+   ],
+   "correct": 1,
+   "explanation": "At school, the DSL is your first point of contact. They are trained to keep you safe and can involve the police if needed. Childline is excellent support at other times."
+  },
+  {
+   "id": "cyberbullying-7",
+   "q": "What best explains why cyberbullying can feel harder to deal with than bullying face to face?",
+   "opts": [
+    "It doesn't - face-to-face bullying is always more scary",
+    "Because it happens where everyone can see it",
+    "Because more people are usually involved",
+    "Because it can follow you everywhere, even at home"
+   ],
+   "correct": 3,
+   "explanation": "Face-to-face bullying usually stops when you get home. Cyberbullying can reach you at any time, on any device, even in your bedroom. That constant reach is what makes it so hard."
+  }
+ ],
+ "passwords": [
+  {
+   "id": "passwords-1",
+   "q": "Priya uses the same password for her email, school account, and gaming account. A gaming website gets hacked and her password is stolen. What is likely to happen?",
+   "opts": [
+    "Only her gaming account is at risk, because that's where it happened",
+    "Nothing serious happens, because passwords are always kept safe",
+    "All three accounts are at risk - this is called credential stuffing",
+    "Her accounts are safe as long as she changes her gaming password soon"
+   ],
+   "correct": 2,
+   "explanation": "When hackers steal a password from one site, they try it on lots of other sites too. This is called credential stuffing. Using the same password everywhere means one hack can affect everything."
+  },
+  {
+   "id": "passwords-2",
+   "q": "Which of these passwords would take the longest for a computer program to guess?",
+   "opts": [
+    "purple-fence-guitar-moon - four unrelated words",
+    "P@ssw0rd99 - it has capitals, symbols, and numbers",
+    "YourName2009! - your own details with a symbol",
+    "qwerty123456 - very quick and easy to type"
+   ],
+   "correct": 0,
+   "explanation": "Four random words gives you a really long password. Length beats fancy symbols. Hackers already know common tricks like swapping letters for numbers."
+  },
+  {
+   "id": "passwords-3",
+   "q": "You get a text saying \"Your Netflix account is suspended. Check your details at netflix-account-uk.com or lose access.\" What should you do?",
+   "opts": [
+    "Click the link fast so you don't lose your account",
+    "Don't click - type netflix.com in yourself",
+    "Reply to the text asking if it's real",
+    "Send it to your friends to warn them"
+   ],
+   "correct": 1,
+   "explanation": "\"netflix-account-uk.com\" is not Netflix's real website. Real companies never ask you to click a link like this. Always type the real website yourself."
+  },
+  {
+   "id": "passwords-4",
+   "q": "Your teacher says to turn on two-factor authentication (2FA) for your email. Your friend says it's pointless because a school email isn't worth hacking. Who is right?",
+   "opts": [
+    "Your friend - school emails have nothing valuable in them",
+    "Neither - 2FA is only useful for banking apps",
+    "Your friend - 2FA is only needed if you save payment cards",
+    "Your teacher - email resets your other account passwords"
+   ],
+   "correct": 3,
+   "explanation": "Your email is like a master key. Hackers target email so they can reset passwords on your other accounts. 2FA stops this, even if they have your password."
+  },
+  {
+   "id": "passwords-5",
+   "q": "Jake's friend knows his password and logs into his school account to check his grades \"as a favour\". Jake said it was okay. Why is this still a problem?",
+   "opts": [
+    "It isn't a problem, because Jake agreed",
+    "It's only a problem if the friend shares the grades with someone else",
+    "Jake is responsible for everything done on his account",
+    "The school will automatically stop this from happening"
+   ],
+   "correct": 2,
+   "explanation": "You are responsible for everything that happens on your account. Sharing a password also means someone else now knows it - which is risky if you use that password anywhere else."
+  },
+  {
+   "id": "passwords-6",
+   "q": "You want to check if your email has been part of a data hack. Which tool does this safely and for free?",
+   "opts": [
+    "haveibeenpwned.com - a trusted, free safety checker",
+    "Searching your email in Google in quotes",
+    "Asking your school's IT department to run a check",
+    "Changing every single password, just in case something happened"
+   ],
+   "correct": 0,
+   "explanation": "haveibeenpwned.com checks your email against known hacks. It is free and trusted worldwide. If your email shows up, change that password everywhere you used it."
+  },
+  {
+   "id": "passwords-7",
+   "q": "Someone calls saying they are from Microsoft. They say your computer has a virus and ask for your password to fix it. What should you do?",
+   "opts": [
+    "Give them an easy password for now, and change it later",
+    "Hang up straight away - it's a scam call",
+    "Ask them to call back later so you can check it's real",
+    "Let them connect to your computer, just don't give the password"
+   ],
+   "correct": 1,
+   "explanation": "This is a scam call, called vishing. Real companies never ask for your password on the phone. Hang up. If you're worried about your computer, contact the company yourself using a number you find on their real website."
+  },
+  {
+   "id": "passwords-8",
+   "q": "Which of these is an example of 2FA working alongside your password?",
+   "opts": [
+    "Using the same password on two accounts",
+    "A code sent to your phone that you enter after your password",
+    "Writing your password on a sticky note by your desk",
+    "Picking a password based on your pet's name"
+   ],
+   "correct": 1,
+   "explanation": "2FA means proving who you are in two different ways - something you know (your password) and something you have, like a code sent to your phone."
+  },
+  {
+   "id": "passwords-9",
+   "q": "According to the module, which type of 2FA is the strongest?",
+   "opts": [
+    "A text message code",
+    "An app that makes codes",
+    "A special security key",
+    "They are all exactly as strong as each other"
+   ],
+   "correct": 2,
+   "explanation": "A security key is the strongest type of 2FA. Text codes are okay but can be intercepted; an authenticator app is better still; a physical security key is the best option."
+  },
+  {
+   "id": "passwords-10",
+   "q": "What does a password manager actually do for you?",
+   "opts": [
+    "Shares your password with friends automatically",
+    "Makes and remembers strong, unique passwords so you only need to remember one",
+    "Deletes old accounts you no longer use",
+    "Turns off 2FA so logging in is faster"
+   ],
+   "correct": 1,
+   "explanation": "A password manager like Bitwarden generates long, random passwords for every account and remembers them for you - you only need to remember your one main password."
+  },
+  {
+   "id": "passwords-11",
+   "q": "What makes KeePass different from a password manager like Bitwarden?",
+   "opts": [
+    "KeePass stores everything on your own device rather than a company's servers",
+    "KeePass is the only one that works on a phone",
+    "Bitwarden cannot generate passwords for you",
+    "KeePass does not need a main password at all"
+   ],
+   "correct": 0,
+   "explanation": "KeePass is popular specifically because it keeps your saved passwords on your own device, rather than a company's servers, unlike cloud-based managers."
+  },
+  {
+   "id": "passwords-12",
+   "q": "A website you use is hacked and passwords are leaked. What should you do?",
+   "opts": [
+    "Nothing - the website will sort it out",
+    "Change that password immediately, everywhere you reused it",
+    "Wait a few months before changing anything",
+    "Only change it if you get an email asking you to"
+   ],
+   "correct": 1,
+   "explanation": "If a site you use is hacked, change that password straight away - and everywhere else you used the same one, since hackers try leaked passwords on other sites too."
+  },
+  {
+   "id": "passwords-13",
+   "q": "Is it ever okay to tell a close friend your password, even one you trust completely?",
+   "opts": [
+    "Yes - close friends can always be trusted with it",
+    "No - you're responsible for everything done on your account, even by someone else",
+    "Yes, as long as you change it afterwards",
+    "No, but only for school accounts specifically"
+   ],
+   "correct": 1,
+   "explanation": "You stay responsible for everything that happens on your account, whoever is using it. Sharing a password also means it's no longer just yours - especially risky if you've reused it elsewhere."
+  },
+  {
+   "id": "passwords-14",
+   "q": "What's the safest way to check whether a login link you've been sent by text or email is genuine?",
+   "opts": [
+    "Click the link and see what happens",
+    "Type the company's real website address in yourself, rather than clicking the link",
+    "Ask the person who sent it whether it's safe",
+    "Forward it to a friend to check first"
+   ],
+   "correct": 1,
+   "explanation": "Never trust a link in an unexpected message. Typing the real website address in yourself means you know for certain you're on the genuine site, not a lookalike."
+  }
+ ],
+ "privacy": [
+  {
+   "id": "privacy-1",
+   "q": "Ava posts a photo of herself in school uniform outside her house. Her account is private with 200 followers. What is the problem?",
+   "opts": [
+    "There is no real problem - private accounts are always safe",
+    "It shows her school and roughly where she lives",
+    "The only problem is the uniform, the house is fine",
+    "Private accounts with under 500 followers are always safe"
+   ],
+   "correct": 1,
+   "explanation": "Even a private account shares things with everyone who follows you. Her school plus her home gives strangers enough to find her. Privacy settings can't control what followers do with what they see."
+  },
+  {
+   "id": "privacy-2",
+   "q": "A free quiz website asks for your name, birthday, school, and email to show your results. What should you think about before doing it?",
+   "opts": [
+    "Free websites often use your info - it's data harvesting",
+    "Free websites are always totally safe and trustworthy",
+    "If it asks for your school, it must be for school work",
+    "Using a nickname keeps your identity fully protected"
+   ],
+   "correct": 0,
+   "explanation": "If something is free, your data is often the real price. A quiz website has no good reason to need your school and full birthday just to show a result."
+  },
+  {
+   "id": "privacy-3",
+   "q": "In the UK, what is the youngest age you can sign up to social media without a parent's permission?",
+   "opts": [
+    "11 - the start of secondary school",
+    "16 - the same as other rules",
+    "13 - the age set by UK data protection law",
+    "18 - like other adult services"
+   ],
+   "correct": 2,
+   "explanation": "In the UK, you must be at least 13 to sign up without your parent's permission - this comes from the UK GDPR and Data Protection Act 2018. This age exists to protect younger children from data and content that isn't right for them."
+  },
+  {
+   "id": "privacy-4",
+   "q": "A company keeps sending you adverts you never signed up for. Which right lets you ask them to delete all your data?",
+   "opts": [
+    "The right to be paid back for any harm caused",
+    "The right to know why they have it",
+    "The right to move your data to another company",
+    "The right to delete your data"
+   ],
+   "correct": 3,
+   "explanation": "The right to delete your data (or \"right to be forgotten\") lets you ask a company to remove all your personal information. It is a legal right in the UK. The ICO can help if a company refuses."
+  },
+  {
+   "id": "privacy-5",
+   "q": "You download a free puzzle game. It asks to use your contacts, microphone, location, and camera. What should you do?",
+   "opts": [
+    "Say yes to everything - the game needs it to work",
+    "Only allow what the game actually needs",
+    "Say yes now, and check again in a week",
+    "Delete the game straight away, no questions asked"
+   ],
+   "correct": 1,
+   "explanation": "A puzzle game has no good reason to need your contacts, microphone, camera, or location. You can check and turn off app permissions any time in your phone settings."
+  },
+  {
+   "id": "privacy-6",
+   "q": "Someone posts an embarrassing photo of you from last year. You want it taken down. Which right helps you the most?",
+   "opts": [
+    "Your right to delete your data - it covers photos of you",
+    "A rule about defamation, because the photo damages your reputation",
+    "A rule that says every photo needs written permission",
+    "A cyber-crime rule about uploading private photos"
+   ],
+   "correct": 0,
+   "explanation": "Your right to delete your data covers photos that identify you. You can report it to the app and ask for it to be removed. If they say no, you can complain to the ICO."
+  },
+  {
+   "id": "privacy-7",
+   "q": "Your digital footprint has two parts. Which of these is something collected without you choosing to share it?",
+   "opts": [
+    "A comment left on someone's video",
+    "A photo you choose to post yourself",
+    "A review you write about something you bought",
+    "Your location, tracked in the background"
+   ],
+   "correct": 3,
+   "explanation": "Things collected without you actively choosing to share them - like location tracking or cookies - make up the hidden part of your digital footprint. What you post on purpose is the other part. Both stay online for a long time."
+  }
+ ],
+ "socialmedia": [
+  {
+   "id": "socialmedia-1",
+   "q": "Someone called \"Jamie, 16\" follows you and messages \"You seem really cool, what school do you go to?\" Their account was made 2 weeks ago, has 11 professional-looking photos, and no friends in common with you. What do you do?",
+   "opts": [
+    "Don't reply - block and report, this has too many warning signs",
+    "Reply - they seem friendly and probably just want to make friends",
+    "Check if any of your friends follow them first",
+    "Reply, but don't say your school - other info is fine"
+   ],
+   "correct": 0,
+   "explanation": "This has lots of warning signs together: new account, photos that look stolen, no friends in common, and asking about your school right away. Block and report without replying."
+  },
+  {
+   "id": "socialmedia-2",
+   "q": "Over several weeks, someone online has given you lots of compliments, asked more and more personal questions, and said \"you're the only one who really gets me - let's keep this between us.\" What should you do?",
+   "opts": [
+    "Enjoy the friendship - plenty of online friends are real",
+    "Ask for a video call to check who they really are",
+    "Block them, and don't tell anyone about it",
+    "Tell your school DSL or a trusted teacher"
+   ],
+   "correct": 3,
+   "explanation": "Compliments, more and more personal questions, and asking to \"keep it secret\" are classic grooming signs. Tell your school DSL or a trusted teacher right away. Outside school, report to CEOP at ceop.police.uk."
+  },
+  {
+   "id": "socialmedia-3",
+   "q": "A challenge is going viral where people hold their breath until they pass out. Some classmates are talking about trying it. What is the most important thing to know?",
+   "opts": [
+    "It's probably fine if friends are watching",
+    "Being popular online doesn't make a challenge safe",
+    "It's only dangerous if you do it alone",
+    "Try it once so you can warn friends from experience"
+   ],
+   "correct": 1,
+   "explanation": "This kind of challenge has caused deaths, even among young children. Being popular online doesn't make something safe. It is always okay to say no, and to tell a trusted adult."
+  },
+  {
+   "id": "socialmedia-4",
+   "q": "You've just done a livestream and realise your street sign was visible in the background. What is the main risk?",
+   "opts": [
+    "Very low risk - people would need to zoom in to see it",
+    "Medium risk - only your followers saw it",
+    "High risk - anyone watching could have recorded it",
+    "No risk - street signs are public anyway"
+   ],
+   "correct": 2,
+   "explanation": "Streams can be recorded by anyone watching, without you knowing. A street sign plus other details can help a stranger work out where you live. Check what's visible before going live."
+  },
+  {
+   "id": "socialmedia-5",
+   "q": "In an online game, someone you've played with for months asks you to send them real gift card codes, promising to pay you back. What is this most likely to be?",
+   "opts": [
+    "A scam - criminals build fake friendships for money",
+    "A genuine request, since online friendships are real",
+    "A misunderstanding - they probably mean in-game money",
+    "Okay just this once, since gift cards aren't bank details really"
+   ],
+   "correct": 0,
+   "explanation": "Building trust slowly over months and then asking for money is a known trick used by criminals. Gift card codes can't be traced once sent. Never send money or codes to someone you only know online."
+  },
+  {
+   "id": "socialmedia-6",
+   "q": "Why do people sometimes say things online they would never say face to face?",
+   "opts": [
+    "Because they are more honest when hidden",
+    "Because the internet attracts ruder people",
+    "Because online chats aren't taken as seriously",
+    "Because feeling hidden makes unkindness easier"
+   ],
+   "correct": 3,
+   "explanation": "Not seeing someone's reaction, and feeling like \"nobody knows it's me,\" makes it easier to say unkind things. The same rules of respect should still apply online."
+  },
+  {
+   "id": "socialmedia-7",
+   "q": "If you think someone online is grooming you or a friend, what is the right first step in the UK?",
+   "opts": [
+    "Block and delete all the messages straight away",
+    "Tell your school DSL or a trusted teacher, and keep the messages",
+    "Call 999 straight away, before doing anything else",
+    "Post about it publicly to warn your other friends"
+   ],
+   "correct": 1,
+   "explanation": "Your school's DSL is trained to help with this and can bring in the police if needed. Keeping the messages - names, dates, screenshots - gives important proof. CEOP is a special UK service for reporting this online."
+  }
+ ],
+ "phishing": [
+  {
+   "id": "phishing-1",
+   "q": "You get an email from \"support@paypa1.com\" saying your account will close in 24 hours unless you check your details. You use PayPal. What should you notice, and do?",
+   "opts": [
+    "The 24-hour warning means you should click fast, before it's too late",
+    "Reply asking for more time to check",
+    "It uses the number 1 instead of the letter l - it's fake",
+    "Forward it to PayPal's customer service"
+   ],
+   "correct": 2,
+   "explanation": "Swapping letters for similar-looking numbers is a common trick. The real website is paypal.com. Real companies never give 24-hour deadlines like this. Always type the real website yourself."
+  },
+  {
+   "id": "phishing-2",
+   "q": "A text says \"Royal Mail: Your parcel is held. Pay £1.99 here: rm-parcel-fee.com.\" Three friends got the same text. Does this make it seem more real?",
+   "opts": [
+    "Yes - scammers don't bother sending texts to lots of people",
+    "No - scam texts go to millions of numbers, proving nothing",
+    "Yes - Royal Mail really does charge small fees sometimes",
+    "It doesn't matter - just pay the £1.99 since it's so small"
+   ],
+   "correct": 1,
+   "explanation": "Scam texts are sent in bulk to millions of numbers at the same time. The website \"rm-parcel-fee.com\" is not Royal Mail's real site. Forward suspicious texts to 7726."
+  },
+  {
+   "id": "phishing-3",
+   "q": "Someone on a gaming platform offers you £50 a week to move money through your bank account, saying it's legal. What is this?",
+   "opts": [
+    "A money mule scam - moving stolen money for criminals",
+    "A real job opportunity that pays well for little work",
+    "Probably fine if you check with your parents first",
+    "Only risky if the amounts of money are quite large"
+   ],
+   "correct": 0,
+   "explanation": "This is a known way that criminals target young people. You must tell your school's DSL straight away. Even if you didn't know where the money came from, your account could be frozen and you could get in trouble."
+  },
+  {
+   "id": "phishing-4",
+   "q": "You find a website selling trainers at half price, and it has a padlock icon in the address bar. Does the padlock mean the website can be trusted?",
+   "opts": [
+    "Yes - the padlock proves the website has been checked and is genuine",
+    "Only if the padlock is a certain colour like green",
+    "Yes - fake websites can't get a padlock",
+    "No - the padlock just means the connection is private"
+   ],
+   "correct": 3,
+   "explanation": "The padlock just means your connection to the site is private - not that the site itself is honest. Always check the full web address, and search for the company separately before paying anything."
+  },
+  {
+   "id": "phishing-5",
+   "q": "Endless scrolling, streaks, and notifications going off often are all features of social media apps. What are they really designed to do?",
+   "opts": [
+    "Help you keep up with friends more easily",
+    "Make the app easier to use",
+    "Keep you using the app for as long as possible",
+    "Protect younger users by making the app simpler"
+   ],
+   "correct": 2,
+   "explanation": "These are called persuasive design tricks - built to keep you online for as long as possible. Understanding how they work gives you the power to take back control."
+  },
+  {
+   "id": "phishing-6",
+   "q": "Someone calls claiming to be from your bank. They say your account is at risk and ask you to move your money to a \"safe account\". What should you do?",
+   "opts": [
+    "Follow their instructions fast, so your money is safe",
+    "Hang up and call your bank, using a number you trust",
+    "Ask them security questions to check they're real",
+    "Ask for an email first before doing anything at all"
+   ],
+   "correct": 1,
+   "explanation": "No real bank will ever ask you to move your money to a \"safe account\". This is a common scam. Hang up and call your bank yourself, using a number you find independently."
+  },
+  {
+   "id": "phishing-7",
+   "q": "A friend offers you £30 to hold £500 in your bank account for a week \"to sort something out\", saying it's nothing dodgy. What should you do?",
+   "opts": [
+    "Say no straight away - this is illegal, and tell your school's DSL",
+    "Help them out, since £30 a week is good money",
+    "Ask more questions first before deciding",
+    "Agree, but only if they pay you first upfront"
+   ],
+   "correct": 0,
+   "explanation": "Even if a friend asks, moving unknown money is very suspicious and illegal. Say no, and tell your school's Designated Safeguarding Lead. Criminals often use friendships to make people say yes."
+  }
+ ],
+ "misinformation": [
+  {
+   "id": "misinformation-1",
+   "q": "A video is shared 2 million times, showing a politician apparently saying something shocking. It makes you feel angry. What should you do before sharing it?",
+   "opts": [
+    "Share it fast, so more people know before it gets removed",
+    "Like it but not share it, so you're not responsible for spreading it",
+    "Only share it if people you trust have already shared it",
+    "Stop, check the source, and look for it on other trusted sites first"
+   ],
+   "correct": 3,
+   "explanation": "Strong feelings like anger are often used on purpose to trick people. Fake videos can make people appear to say things they never said. Stop and check trusted sources first."
+  },
+  {
+   "id": "misinformation-2",
+   "q": "What is the main difference between sharing something false by mistake, and sharing something false on purpose?",
+   "opts": [
+    "By mistake, they believed it; on purpose, it's meant to trick",
+    "Mistakes happen online, purpose only happens in newspapers",
+    "Sharing by mistake is more dangerous because it spreads faster",
+    "They basically mean exactly the same thing"
+   ],
+   "correct": 0,
+   "explanation": "The key difference is whether someone meant to trick people. Sharing by mistake is done by someone who thinks it's true. Sharing on purpose is made to deceive people, like fake news made to affect an election."
+  },
+  {
+   "id": "misinformation-3",
+   "q": "A dramatic photo claims to show a recent flood in a UK city, and has thousands of shares. How could you quickly check if it's real?",
+   "opts": [
+    "Count how many verified accounts shared it",
+    "Use a reverse image search to check if it's old",
+    "Check how many likes and comments it has",
+    "Check if the person posting it has a blue tick"
+   ],
+   "correct": 1,
+   "explanation": "Reverse image search is one of the fastest ways to check a photo. Old photos are often reused with a new, false story attached. If it turns up from years ago, it's being misused."
+  },
+  {
+   "id": "misinformation-4",
+   "q": "Your cousin shares a post saying a common medicine causes cancer. People are commenting \"this is scary, sharing now!\" What is the risk of sharing it without checking?",
+   "opts": [
+    "No real risk, since health warnings are better shared too much than too little",
+    "Low risk, since most people will ignore it",
+    "High risk - false claims can stop people taking medicine they need",
+    "Only a risk if it turns out to be completely false"
+   ],
+   "correct": 2,
+   "explanation": "False health information is genuinely dangerous. People have been harmed by false claims about medicines. Always check health claims on the NHS website or Full Fact before sharing anything."
+  },
+  {
+   "id": "misinformation-5",
+   "q": "Someone in a gaming chat sends you a \"documentary\" claiming a religious group secretly controls the government. What is the risk?",
+   "opts": [
+    "Low risk - gaming chats aren't ever a real threat",
+    "Medium risk - only a problem if an adult actually sent it",
+    "No risk at all - it's just a documentary video",
+    "High risk - this is how extreme ideas online can draw people in"
+   ],
+   "correct": 3,
+   "explanation": "This is how being pulled into extreme ideas can start online. Groups target young people through gaming platforms. Sharing extreme content can be a crime. Report it to your school's DSL and at gov.uk/report-terrorism."
+  },
+  {
+   "id": "misinformation-6",
+   "q": "A headline says \"Scientists Discover Chocolate Makes You Smarter\". The story mentions one small study with 12 people. Is this a fact?",
+   "opts": [
+    "No - a big claim based on very little evidence",
+    "Yes - if scientists published it, it must be reliable",
+    "Yes - it would be illegal to make up",
+    "It depends whether other scientists agree"
+   ],
+   "correct": 0,
+   "explanation": "A study of 12 people can't prove something for millions. Headlines are written to grab attention. Always check what the actual evidence shows, not just the headline."
+  },
+  {
+   "id": "misinformation-7",
+   "q": "Which UK organisation checks whether claims made by politicians and in the news are true?",
+   "opts": [
+    "Ofcom - the TV and radio regulator",
+    "The BBC, which must be fair by its own rules",
+    "Full Fact (fullfact.org) - checks claims in politics and news",
+    "The Press Complaints group, who deal with newspaper complaints"
+   ],
+   "correct": 2,
+   "explanation": "Full Fact is the UK's independent fact-checking charity. It checks claims made by politicians, in the news, and in viral posts online. It is free to use."
+  }
+ ],
+ "wellbeing": [
+  {
+   "id": "wellbeing-1",
+   "q": "Sofia scrolls Instagram for an hour before bed. Afterwards, she feels worse about herself than before. What is the most likely reason?",
+   "opts": [
+    "Sofia is just more sensitive than most people",
+    "Comparing your normal life to everyone else's best moments online",
+    "She followed the wrong accounts, so the problem is only what she watches",
+    "Social media is meant to feel stressful, and this is normal"
+   ],
+   "correct": 1,
+   "explanation": "Scrolling without really joining in is linked to anxiety and feeling worse about yourself. You compare your ordinary moments to other people's most flattering posts. That comparison is never fair."
+  },
+  {
+   "id": "wellbeing-2",
+   "q": "An influencer posts a photo looking perfect, tagging a protein shake, saying \"This changed my life - I'm not just saying that!\" They have 800,000 followers. What is missing?",
+   "opts": [
+    "More details about the product for followers to decide for themselves",
+    "Before and after photos to prove it works",
+    "Nothing - influencers don't have to label personal recommendations",
+    "The #ad or #sponsored label that UK rules require for paid posts"
+   ],
+   "correct": 3,
+   "explanation": "UK rules say all paid promotions must be clearly labelled #ad or #sponsored. Without this, followers can't tell a genuine recommendation from a paid one."
+  },
+  {
+   "id": "wellbeing-3",
+   "q": "Keeping your phone by your bed means you check it when you wake up, and sometimes in the night. What is the biggest health effect of this?",
+   "opts": [
+    "Screen light can make it harder to sleep, hurting your mood",
+    "It makes you anxious because you see stressful news first thing",
+    "It's only a problem if you actually use your phone",
+    "It just drains your phone's battery faster"
+   ],
+   "correct": 0,
+   "explanation": "Screen light can affect your sleep. Bad sleep makes anxiety worse and affects your mood and focus the next day. Keeping devices out of the bedroom at night is a really helpful habit."
+  },
+  {
+   "id": "wellbeing-4",
+   "q": "You want to reply to someone online but you're angry about what they said. Your friend says wait 24 hours. Why is this good advice?",
+   "opts": [
+    "The other person might delete their post by then",
+    "24 hours gives you time to ask other people's opinions",
+    "Strong feelings make us post things we later regret",
+    "Apps might suspend your account for posting when angry"
+   ],
+   "correct": 2,
+   "explanation": "Strong feelings can make us act before we think. Posts made in anger often feel embarrassing later. Waiting lets you decide if you'd still want to post it the next day."
+  },
+  {
+   "id": "wellbeing-5",
+   "q": "Ellie follows 300 accounts. About 50 of them make her feel anxious or bad about herself. What should she do?",
+   "opts": [
+    "Keep following them, so she gets used to it over time",
+    "Unfollow or mute the accounts that make her feel bad",
+    "Report the accounts because they are harmful",
+    "Only check those accounts once a week"
+   ],
+   "correct": 1,
+   "explanation": "You are always in control of who you follow. Unfollowing accounts that make you feel bad is a simple, healthy choice. Your feed should add to your life, not take from it."
+  },
+  {
+   "id": "wellbeing-6",
+   "q": "Zara's school found an old account she made at 11 with embarrassing posts about teachers. She's applying to a new sixth form. Could this affect her?",
+   "opts": [
+    "No - schools can't look at private social media accounts",
+    "Only if the posts were threatening",
+    "No - deleting is automatic once you turn 18",
+    "Possibly yes - old posts stay online and can resurface"
+   ],
+   "correct": 3,
+   "explanation": "Your online reputation lasts a long time, and nothing gets deleted automatically. You do have the right to ask a company to delete your data (see Module 3) - but that doesn't undo a screenshot someone already took, or a repost. It's worth checking your public accounts, deleting posts you regret, and thinking about what you post in future."
+  },
+  {
+   "id": "wellbeing-7",
+   "q": "Which type of screen time is most linked to feeling good?",
+   "opts": [
+    "Making, chatting, or learning something new",
+    "Watching TV for hours because it's relaxing",
+    "Scrolling social media to see what's happening",
+    "Playing games alone because it feels active"
+   ],
+   "correct": 0,
+   "explanation": "Making things, learning, and really chatting with people you care about are linked to feeling good. Scrolling without joining in is most linked to anxiety. What you do online matters as much as how long."
+  }
+ ]
+}

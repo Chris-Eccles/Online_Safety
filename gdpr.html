@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="mesh" aria-hidden="true"></div>
 
@@ -39,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <section class="page-hero wrap">
     <p class="eyebrow">Data protection</p>
@@ -86,12 +87,13 @@
 
     <h2>Data retention schedule</h2>
     <table class="map-table" style="margin-bottom:16px;">
-      <thead><tr><th>Data</th><th>Kept until</th></tr></thead>
+      <thead><tr><th scope="col">Data</th><th scope="col">Kept until</th></tr></thead>
       <tbody>
         <tr><td>Student records (name, progress, scores, encrypted reflections, certificate)</td><td>Automatically deleted every 1 September, for every school</td></tr>
         <tr><td>Reflections PDF exports in storage</td><td>Deleted alongside the student record every 1 September</td></tr>
         <tr><td>Free/discount-code class licences</td><td>Deleted every 1 September if unused that year — they don't roll over</td></tr>
         <tr><td>Paid class licences (code, seat count, DSL team)</td><td>Roll over year to year; only the seats-used counter resets, since the students behind it were already wiped above</td></tr>
+        <tr><td>Certificate verification record (certificate ID, month issued, school name, no student name)</td><td>Kept so a certificate can still be checked as genuine after the student data is deleted. It contains nothing that identifies a student</td></tr>
         <tr><td>Unpaid orders</td><td>Kept until paid or cancelled, so nothing owed gets lost</td></tr>
         <tr><td>Paid orders</td><td>Archived to a private record for statutory accounting (HMRC), then removed from the live database</td></tr>
       </tbody>
@@ -100,7 +102,7 @@
 
     <h2>Who else processes data on our behalf (sub-processors)</h2>
     <table class="map-table" style="margin-bottom:16px;">
-      <thead><tr><th>Provider</th><th>What for</th><th>Where</th></tr></thead>
+      <thead><tr><th scope="col">Provider</th><th scope="col">What for</th><th scope="col">Where</th></tr></thead>
       <tbody>
         <tr><td>Supabase</td><td>Database and file storage</td><td>UK (AWS London, eu-west-2)</td></tr>
         <tr><td>Vercel</td><td>Website and app hosting</td><td>Global edge network; company based in the US</td></tr>
@@ -157,13 +159,14 @@
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
   </div>
 </footer>
 

@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="mesh" aria-hidden="true"></div>
 
@@ -39,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <section class="page-hero wrap">
     <p class="eyebrow">Privacy policy</p>
@@ -61,8 +62,8 @@
     <ul>
       <li><strong>Name</strong> — so a certificate can be issued in their name.</li>
       <li><strong>Quiz answers and scores</strong> — to confirm they've completed each module.</li>
-      <li><strong>Written reflections</strong> — only if they choose to set a PIN to continue on another device, in which case they're stored encrypted and unreadable without that PIN.</li>
-      <li><strong>A hashed PIN</strong> — never the PIN itself — only if they choose to set one.</li>
+      <li><strong>Written reflections</strong> — stored encrypted, using a key made from the student's own PIN, so they can continue on another device. We cannot read them without that PIN, and the student's teacher can read them from their dashboard.</li>
+      <li><strong>A hashed PIN</strong> — never the PIN itself. Every student sets a 4-digit PIN so their progress is protected.</li>
     </ul>
     <h3>From teachers and schools</h3>
     <ul>
@@ -77,7 +78,8 @@
     <p>This product is used directly by children. We collect the minimum needed to run the course and issue a certificate, reflections are encrypted client-side by default, and nothing is used for advertising or profiling.</p>
 
     <h2>How long we keep data</h2>
-    <p><em>[To confirm: a retention period needs setting here — e.g. for the academic year plus a fixed period, then deleted. This needs deciding before publishing.]</em></p>
+    <p><strong>Student data</strong> (name, progress, quiz scores, encrypted reflections and certificate) is kept until <strong>31 August following the school's purchase</strong>. It is then automatically and permanently deleted on 1 September, for every school.</p>
+    <p><strong>Teacher and school contact details</strong> stay for as long as the school's licence is active, and are removed if the licence is not renewed. <strong>Paid order and invoice records</strong> are archived for statutory accounting purposes and then removed from our live database. We also keep a minimal <strong>certificate verification record</strong> (certificate ID, month issued and school name, with no student name) so a certificate can still be confirmed as genuine later. Our <a href="/gdpr">GDPR page</a> has the full retention table.</p>
 
     <h2>Who else sees it</h2>
     <p>Data is hosted with Supabase (database) and processed for email delivery via a transactional email provider. We don't sell or share data with advertisers.</p>
@@ -132,13 +134,14 @@
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
   </div>
 </footer>
 

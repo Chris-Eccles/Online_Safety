@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="mesh" aria-hidden="true"></div>
 
@@ -39,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <section class="page-hero wrap">
     <p class="eyebrow">Request seats</p>
@@ -223,9 +224,9 @@ function addTeacherRow(){
   row.style.cssText = 'margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;';
   row.id = 'matTeacherRow' + id;
   row.innerHTML =
-    '<div><label class="form-label" style="font-size:12px;">Teacher name</label><input class="form-input" type="text" id="matTeacherName' + id + '"></div>' +
-    '<div><label class="form-label" style="font-size:12px;">Teacher email</label><input class="form-input" type="email" id="matTeacherEmail' + id + '"></div>' +
-    '<div><label class="form-label" style="font-size:12px;">Their school</label><input class="form-input" type="text" id="matTeacherSchool' + id + '"></div>' +
+    '<div><label class="form-label" style="font-size:12px;" for="matTeacherName' + id + '">Teacher name</label><input class="form-input" type="text" id="matTeacherName' + id + '"></div>' +
+    '<div><label class="form-label" style="font-size:12px;" for="matTeacherEmail' + id + '">Teacher email</label><input class="form-input" type="email" id="matTeacherEmail' + id + '"></div>' +
+    '<div><label class="form-label" style="font-size:12px;" for="matTeacherSchool' + id + '">Their school</label><input class="form-input" type="text" id="matTeacherSchool' + id + '"></div>' +
     '<button type="button" class="btn-secondary" onclick="document.getElementById(\'matTeacherRow' + id + '\').remove()" style="padding:12px 14px;" aria-label="Remove this teacher">✕</button>';
   document.getElementById('matTeacherRows').appendChild(row);
 }
@@ -515,13 +516,14 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity Academy. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity Academy · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity Academy · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
   </div>
 </footer>
 

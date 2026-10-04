@@ -43,14 +43,23 @@
   #loadErr{color:#F87171;font-size:13px;margin-bottom:14px;}
   #empty{color:var(--text-soft,#9AA6B8);padding:30px;text-align:center;}
   .refresh-note{font-size:11.5px;color:var(--text-soft,#9AA6B8);margin-top:10px;}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}}
+.skip-link{position:fixed;top:-60px;left:12px;z-index:10000;background:#00C9B1;color:#0F1B2D;padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none;}
+.skip-link:focus{top:12px;}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #00C9B1;outline-offset:2px;}
+.link-btn{background:none;border:0;padding:6px 0;margin:0;color:inherit;font:inherit;font-weight:700;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px;min-height:32px;}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
+<main id="main">
 <div id="gate">
   <h2>🔒 Admin access</h2>
-  <input type="password" id="adminKeyInput" placeholder="Password 1" autocomplete="off">
-  <input type="password" id="adminKeyInput2" placeholder="Password 2" autocomplete="off">
+  <input type="password" id="adminKeyInput" placeholder="Password 1" autocomplete="off" aria-label="Password 1">
+  <input type="password" id="adminKeyInput2" placeholder="Password 2" autocomplete="off" aria-label="Password 2">
   <button onclick="unlock()">Unlock</button>
   <div class="err" id="gateErr"></div>
 </div>
@@ -85,7 +94,7 @@
   <div class="summary-row" id="summaryRow"></div>
 
   <div class="controls">
-    <input type="text" id="searchBox" placeholder="Search school, teacher, email, PO, payment ref…" oninput="render()">
+    <input type="text" id="searchBox" placeholder="Search school, teacher, email, PO, payment ref…" oninput="render()" aria-label="Search school, teacher, email, PO, payment ref…">
     <select id="statusFilter" onchange="render()">
       <option value="all">All orders</option>
       <option value="paid">Paid only</option>
@@ -107,7 +116,7 @@
   <div style="background:var(--bg-2,#121a2e);border:1px solid rgba(239,68,68,.4);border-radius:14px;padding:28px;max-width:420px;width:100%;">
     <h3 style="color:#F87171;font-size:18px;margin:0 0 10px;font-family:var(--font-display,'Lexend',sans-serif);">⚠ This can't be undone</h3>
     <p style="color:var(--text-soft,#9AA6B8);font-size:13.5px;margin:0 0 14px;">This deletes every order, class code, student record and payment event, and empties storage. Type <strong style="color:#fff;">DELETE EVERYTHING</strong> below to confirm.</p>
-    <input type="text" id="wipeConfirmInput" placeholder="DELETE EVERYTHING" style="width:100%;box-sizing:border-box;padding:10px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:14px;">
+    <input type="text" id="wipeConfirmInput" placeholder="DELETE EVERYTHING" style="width:100%;box-sizing:border-box;padding:10px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:14px;" aria-label="DELETE EVERYTHING">
     <div id="wipeErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeWipeModal()" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">Cancel</button>
@@ -375,7 +384,7 @@ function render(){
   }
 
   let html = '<table><thead><tr>' +
-    '<th>Date</th><th>School / Trust</th><th>Pricing</th><th>Seats req.</th><th>Seats used</th><th>Payment</th><th>PO / Ref</th><th>DSL team</th>' +
+    '<th scope="col">Date</th><th scope="col">School / Trust</th><th scope="col">Pricing</th><th scope="col">Seats req.</th><th scope="col">Seats used</th><th scope="col">Payment</th><th scope="col">PO / Ref</th><th scope="col">DSL team</th>' +
     '</tr></thead><tbody>';
 
   rows.forEach(o => {
@@ -431,8 +440,8 @@ function addDslAdminRow(name, room){
   const row = document.createElement('div');
   row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
   row.innerHTML =
-    '<input type="text" placeholder="Name" value="' + escapeHtml(name || '') + '" class="dsl-admin-name" style="flex:2;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;">' +
-    '<input type="text" placeholder="Room / office" value="' + escapeHtml(room || '') + '" class="dsl-admin-room" style="flex:1;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;">' +
+    '<input type="text" placeholder="Name" value="' + escapeHtml(name || '') + '" class="dsl-admin-name" style="flex:2;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;" aria-label="Name">' +
+    '<input type="text" placeholder="Room / office" value="' + escapeHtml(room || '') + '" class="dsl-admin-room" style="flex:1;padding:9px 11px;border-radius:7px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:13px;" aria-label="Room / office">' +
     '<button type="button" onclick="this.closest(\'div\').remove()" style="padding:9px 12px;border-radius:7px;border:1px solid var(--border,#232e47);background:transparent;color:var(--text-soft,#9AA6B8);cursor:pointer;font-size:13px;">✕</button>';
   rowsWrap.appendChild(row);
 }
@@ -468,5 +477,6 @@ if(sessionStorage.getItem(ADMIN_KEY_STORAGE)) tryLoad();
 document.getElementById('adminKeyInput').addEventListener('keydown', e => { if(e.key === 'Enter') unlock(); });
 </script>
 
+</main>
 </body>
 </html>

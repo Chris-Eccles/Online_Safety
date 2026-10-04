@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="mesh" aria-hidden="true"></div>
 
@@ -39,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <section class="page-hero wrap" style="text-align:center;">
     <p class="eyebrow">Verify</p>
@@ -50,45 +51,46 @@
   <section class="wrap" style="display:flex; justify-content:center;">
     <div class="verify-card">
       <div class="verify-input-row">
-        <input type="text" id="certInput" class="form-input" placeholder="e.g. OR-4F9K21" maxlength="20" autocomplete="off">
+        <input type="text" id="certInput" class="form-input" placeholder="e.g. OR-4F9K21-2026" maxlength="20" aria-label="Certificate ID" autocomplete="off">
         <button class="btn btn-primary" id="verifyBtn" style="flex-shrink:0;">Check</button>
       </div>
-      <p class="form-hint">Certificate IDs look like OR-XXXXXX and are printed on every student's certificate.</p>
+      <p class="form-hint">Certificate IDs look like OR-XXXXXX-2026 and are printed on every student's certificate.</p>
       <div class="verify-result pending" id="verifyResult"></div>
     </div>
   </section>
 
 
 <script>
-document.getElementById('verifyBtn').addEventListener('click', function(){
+(function(){
   var input = document.getElementById('certInput');
   var result = document.getElementById('verifyResult');
-  var id = input.value.trim();
-  result.className = 'verify-result show pending';
-  if (!id) {
-    result.textContent = 'Enter a certificate ID first.';
-    return;
-  }
-  // Verification isn't wired up to a real database yet — this deliberately
-  // does not fake a pass/fail result. Replace this with a real Supabase
-  // lookup against student_records.cert_id once that's built.
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  var safeId = escapeHtml(id);
-  result.innerHTML = "Certificate lookup isn't live yet, so we're not able to check " + safeId + " automatically just yet. In the meantime, " +
-    '<a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the certificate ID and we\'ll confirm it by hand.';
-  // A real event listener, not an inline onclick - passes the raw id straight
-  // through as a JS value instead of re-encoding it into an HTML attribute,
-  // which avoids a quoting/escaping mess (and the injection risk that comes with it).
-  var emailLink = document.getElementById('verifyEmailLink');
-  if (emailLink) {
-    emailLink.addEventListener('click', function(e){
-      if (window.oreadyOpenContact) {
-        e.preventDefault();
-        window.oreadyOpenContact('Certificate ID: ' + id + ' — ');
+  var btn = document.getElementById('verifyBtn');
+  result.setAttribute('role','status'); result.setAttribute('aria-live','polite');
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function show(cls, html){ result.className = 'verify-result show ' + cls; result.innerHTML = html; }
+  async function check(){
+    var id = input.value.trim();
+    if(!id){ show('pending','Enter a certificate ID first.'); return; }
+    btn.disabled = true; show('pending','Checking...');
+    try{
+      var r = await fetch('/api/verify-certificate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id: id }) });
+      var d = await r.json();
+      if(r.status === 429 || d.error){ show('pending', esc(d.error || 'Please try again in a moment.')); }
+      else if(d.valid){
+        show('ok', '<strong>&#10003; Genuine certificate.</strong><br>' + esc(d.certId) + ' was issued' + (d.issued ? ' in ' + esc(d.issued) : '') + (d.school ? ' to a student at ' + esc(d.school) : '') + ' for completing all seven Online Ready modules.');
+      } else if(d.reason === 'format'){
+        show('pending','That doesn\'t look like a certificate ID. They look like OR-ABC123-2026 and are printed on the certificate.');
+      } else {
+        show('bad','<strong>We couldn\'t find that certificate.</strong><br>Check the ID for typing mistakes (it is easy to mix up 0 and O). If you think it should be genuine, <a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the ID.');
+        var l = document.getElementById('verifyEmailLink');
+        if(l) l.addEventListener('click', function(e){ if(window.oreadyOpenContact){ e.preventDefault(); window.oreadyOpenContact('Certificate ID: ' + id + ' - '); } });
       }
-    });
+    }catch(e){ show('pending','Could not check just now. Please try again.'); }
+    btn.disabled = false;
   }
-});
+  btn.addEventListener('click', check);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); check(); } });
+})();
 </script>
 </main>
 
@@ -130,13 +132,14 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
   </div>
 </footer>
 

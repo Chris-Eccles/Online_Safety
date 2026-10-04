@@ -748,6 +748,8 @@ a{ color:inherit; }
   text-align:left; display:none;
 }
 .verify-result.show{ display:block; }
+.verify-result.ok{ background:rgba(52,211,153,0.1); color:var(--text); border:1px solid rgba(52,211,153,0.35); }
+.verify-result.bad{ background:rgba(248,113,113,0.1); color:var(--text); border:1px solid rgba(248,113,113,0.35); }
 .verify-result.pending{ background:rgba(255,255,255,0.04); color:var(--text-soft); border:1px solid var(--border); }
 
 /* ---------- generic status/eyebrow icon badge ---------- */
@@ -808,3 +810,13 @@ a{ color:inherit; }
   .btn{ min-height:44px; }
   .nav-toggle{ min-width:44px; min-height:44px; }
 }
+
+
+/* ---------- accessibility additions ---------- */
+.skip-link{position:fixed;top:-60px;left:12px;z-index:10000;background:var(--brand);color:#04241A;padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none;}
+.skip-link:focus{top:12px;}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:4px;}
+.btn:focus-visible,.nav-toggle:focus-visible{outline-offset:4px;}
+main a:not(.btn){text-underline-offset:3px;}
+@media (forced-colors:active){:focus-visible{outline:3px solid Highlight;}.btn{border:2px solid ButtonText;}}
+@media (prefers-contrast:more){:root{--text-soft:rgba(245,244,251,.9);--text-faint:rgba(245,244,251,.82);--border:rgba(255,255,255,.4);}}

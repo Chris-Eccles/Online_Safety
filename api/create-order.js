@@ -180,6 +180,9 @@ function matAdminEmailHtml({ teacherName, trustName, matDashboardToken }) {
   `;
 }
 
+// Case-insensitive, and tolerant of stray/doubled spaces ("free  please ").
+function normaliseCode(v) { return String(v || '').trim().replace(/\s+/g, ' ').toUpperCase(); }
+
 function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied }) {
   const isPerStudent = pricingOption !== 'whole-school';
   const unitPrice = discountApplied ? 0 : 1; // £1 per seat, per year - free when the FREE discount code was used
@@ -345,7 +348,7 @@ module.exports = async (req, res) => {
     // which meant anyone reading the page source could claim free seats.
     // Unset DISCOUNT_CODE entirely to turn discounts off - no code will match.
     const discountApplied = !!process.env.DISCOUNT_CODE &&
-      (discountCode || '').trim().toUpperCase() === process.env.DISCOUNT_CODE.trim().toUpperCase();
+      normaliseCode(discountCode) === normaliseCode(process.env.DISCOUNT_CODE);
 
     const pricingLabel = pricingOption === 'whole-school'
       ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote to follow)'

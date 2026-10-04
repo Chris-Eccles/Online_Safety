@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="mesh" aria-hidden="true"></div>
 
@@ -39,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <section class="page-hero wrap">
     <p class="eyebrow">Cookie policy</p>
@@ -53,7 +54,7 @@
     <p>This site doesn't use tracking or advertising cookies, and doesn't run any analytics. A few pages load resources from other companies' servers to work at all: fonts from Google Fonts and, on some pages, library code from cdnjs.com and jsdelivr.net. None of these set a tracking cookie on this site, but loading them does mean your browser makes a direct request to those companies' servers, which reveals your IP address to them in the ordinary way any web request does.</p>
 
     <h2>The course app</h2>
-    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and, only if you choose to set a PIN, a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
+    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and, protected by your PIN, a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
 
     <h2>Contact box</h2>
     <p>The "Contact us" box on every page sends your message to our server to email to us. It doesn't use cookies, and nothing is stored beyond what's needed to reply to you.</p>
@@ -102,13 +103,14 @@
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
-    <p class="footer-bottom-meta">Abity · [company number / registered address to add] · <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+    <p class="footer-bottom-meta">Abity · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
   </div>
 </footer>
 
