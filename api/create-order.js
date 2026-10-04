@@ -52,6 +52,7 @@
  */
 const { Resend } = require('resend');
 const { createClient } = require('@supabase/supabase-js');
+const V = require('./_lib/validate');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -118,7 +119,7 @@ const PAYMENT_REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 async function generateUniquePaymentRef() {
   for (let attempt = 0; attempt < 8; attempt++) {
     let suffix = '';
-    for (let i = 0; i < 4; i++) suffix += PAYMENT_REF_CHARS[Math.floor(Math.random() * PAYMENT_REF_CHARS.length)];
+    for (let i = 0; i < 4; i++) suffix += PAYMENT_REF_CHARS[require('crypto').randomInt(PAYMENT_REF_CHARS.length)];
     const candidate = 'ABITY-' + suffix;
     const { data } = await supabase.from('orders').select('id').eq('payment_ref', candidate).maybeSingle();
     if (!data) return candidate;
@@ -183,12 +184,12 @@ function matAdminEmailHtml({ teacherName, trustName, matDashboardToken }) {
 // Case-insensitive, and tolerant of stray/doubled spaces ("free  please ").
 function normaliseCode(v) { return String(v || '').trim().replace(/\s+/g, ' ').toUpperCase(); }
 
-function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied }) {
-  const isPerStudent = pricingOption !== 'whole-school';
+function financeEmailHtml({ schoolOrTrustName, schoolAddress, financeEmail, seats, pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied }) {
+  const isPerStudent = true; // flat-rate quotes were removed; every order is per-student
   const unitPrice = discountApplied ? 0 : 1; // £1 per seat, per year - free when the FREE discount code was used
   const seatCount = Number(seats) || 0;
   const total = isPerStudent ? (unitPrice * seatCount) : null;
-  const reference = paymentRef || po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName);
+  const reference = escapeHtml(paymentRef || po || (invoiceNumber ? 'INV-' + invoiceNumber : schoolOrTrustName));
   const discountRow = discountApplied
     ? `<p style="margin:0 0 12px;background:#EBFBF7;border:1px solid #BEE8DF;color:#00756A;border-radius:6px;padding:8px 12px;font-weight:bold;">Discount code applied — no payment is due on this order.</p>`
     : '';
@@ -243,6 +244,7 @@ function financeEmailHtml({ schoolOrTrustName, financeEmail, seats, pricingOptio
           <td style="vertical-align:top;width:50%;">
             <p style="margin:0 0 4px;font-weight:bold;">Bill to</p>
             <p style="margin:2px 0;">${escapeHtml(schoolOrTrustName)}</p>
+            ${schoolAddress ? `<p style="margin:2px 0;">${escapeHtml(schoolAddress).replace(/\n/g, '<br>')}</p>` : ''}
             <p style="margin:2px 0;">${escapeHtml(financeEmail)}</p>
           </td>
         </tr>
@@ -283,7 +285,7 @@ function internalNotifyEmailHtml({ schoolOrTrustName, seats, pricingLabel, teach
   return `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0F1B2D;">
       <h2 style="margin-bottom:4px;">New order: ${escapeHtml(schoolOrTrustName)}</h2>
-      <p>${seats || '0'} seats · ${pricingLabel}${isMat ? ' · MAT' : ''}</p>
+      <p>${escapeHtml(seats || '0')} seats · ${escapeHtml(pricingLabel)}${isMat ? ' · MAT' : ''}</p>
       <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Teacher</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${escapeHtml(teacherName)} (${escapeHtml(teacherEmail)})</td></tr>
         <tr><td style="padding:6px 0;border-bottom:1px solid #eee;">Finance contact</td><td style="padding:6px 0;border-bottom:1px solid #eee;">${escapeHtml(financeEmail)}</td></tr>
@@ -307,12 +309,13 @@ module.exports = async (req, res) => {
   // 8 orders per 30 minutes is far more than any real school needs in one
   // sitting (schools place one order, maybe two if they made a mistake).
   const { checkRateLimit, clientIp } = require('./_lib/rateLimit');
-  const rl = await checkRateLimit(supabase, { bucket: 'create-order:' + clientIp(req), limit: 8, windowSeconds: 1800 });
+  const rl = await checkRateLimit(supabase, { bucket: 'create-order:' + clientIp(req), limit: 6, windowSeconds: 1800 });
   if (!rl.allowed) {
     res.status(429).json({ error: 'Too many order attempts from this connection - please try again shortly, or email hello@abity.co.uk.' });
     return;
   }
 
+  let cleanupRef = null;
   try {
     // Server-side enforcement of the orders-paused toggle (admin.html), so
     // orders can't go through even if someone bypasses the order page's own
@@ -325,22 +328,73 @@ module.exports = async (req, res) => {
       return;
     }
 
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const {
-      orgType, teacherName, teacherEmail, schoolName, matName,
-      financeEmail, pricingOption, seats, po, discountCode, matTeachers,
-      dslTeam
-    } = body || {};
+    if (!V.originOk(req)) {
+      res.status(403).json({ error: 'This form can only be submitted from the Online Ready website.' });
+      return;
+    }
 
-    if (!teacherName || !teacherEmail || !schoolName || !financeEmail) {
-      res.status(400).json({ error: 'Missing required fields.' });
-      return;
+    // ---- Validate everything. Nothing from the request is trusted. ----
+    let body;
+    try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; } catch (e) { body = null; }
+    if (!body || typeof body !== 'object') { res.status(400).json({ error: 'That request wasn\'t understood.' }); return; }
+
+    let v;
+    try {
+      const isMatIn = body.orgType === 'mat';
+      v = {
+        isMat: isMatIn,
+        teacherName: V.line(body.teacherName, 'your name', { max: 100 }),
+        teacherEmail: V.email(body.teacherEmail, 'your email'),
+        schoolName: V.line(body.schoolName, 'school name', { max: 150 }),
+        matName: isMatIn ? V.line(body.matName, 'trust name', { max: 150 }) : '',
+        financeEmail: V.email(body.financeEmail, 'finance email'),
+        schoolAddress: V.block(body.schoolAddress, 'school address', { max: 400, min: 10 }),
+        seats: V.seats(body.seats),
+        po: V.line(body.po, 'PO number', { max: 50, required: false }),
+        discountCode: V.line(body.discountCode, 'discount code', { max: 40, required: false }),
+        matTeachers: [],
+        dslTeam: []
+      };
+      if (isMatIn && Array.isArray(body.matTeachers)) {
+        if (body.matTeachers.length > 50) throw new V.ValidationError('You can add up to 50 teachers at once. Email hello@abity.co.uk to add more.');
+        const seen = new Set([v.teacherEmail]);
+        body.matTeachers.forEach(t => {
+          if (!t || (!t.name && !t.email)) return;
+          const e = V.email(t.email, 'teacher email');
+          if (seen.has(e)) throw new V.ValidationError('The same email address is listed twice (' + e + ').');
+          seen.add(e);
+          v.matTeachers.push({ name: V.line(t.name, 'teacher name', { max: 100 }), email: e, school: V.line(t.school, 'teacher school', { max: 150, required: false }) });
+        });
+      }
+      if (Array.isArray(body.dslTeam)) {
+        if (body.dslTeam.length > 10) throw new V.ValidationError('You can add up to 10 safeguarding team members here.');
+        body.dslTeam.forEach(d => {
+          if (!d || !(d.name || d.room || d.photoDataUrl)) return;
+          v.dslTeam.push({
+            name: V.line(d.name, 'safeguarding team name', { max: 100, required: false }),
+            room: V.line(d.room, 'safeguarding team room', { max: 100, required: false }),
+            photo: d.photoDataUrl ? V.image(d.photoDataUrl) : null
+          });
+        });
+      }
+    } catch (verr) {
+      if (verr instanceof V.ValidationError) { res.status(400).json({ error: verr.message }); return; }
+      throw verr;
     }
-    const isMat = orgType === 'mat';
-    if (isMat && !matName) {
-      res.status(400).json({ error: 'Trust name is required for a MAT sign-up.' });
-      return;
+    const { isMat, teacherName, teacherEmail, schoolName, matName, financeEmail, schoolAddress, po, discountCode } = v;
+    const seats = v.seats;
+    const pricingOption = 'per-student';
+    const matTeachers = v.matTeachers;
+
+    // Per-recipient + global limits: stops the form being used to flood someone else's inbox
+    // (every order emails the addresses typed into it) or to burn through the email quota.
+    const recipients = Array.from(new Set([teacherEmail, financeEmail].concat(matTeachers.map(t => t.email))));
+    for (const addr of recipients) {
+      const r = await checkRateLimit(supabase, { bucket: 'order-email:' + addr, limit: 3, windowSeconds: 86400 });
+      if (!r.allowed) { res.status(429).json({ error: 'We have already sent several emails to ' + addr + ' today. Please try again tomorrow, or email hello@abity.co.uk.' }); return; }
     }
+    const g = await checkRateLimit(supabase, { bucket: 'create-order:global', limit: 300, windowSeconds: 3600 });
+    if (!g.allowed) { res.status(429).json({ error: 'We are receiving a lot of orders right now. Please try again in a little while, or email hello@abity.co.uk.' }); return; }
 
     // The discount code's actual value lives only in DISCOUNT_CODE (an env
     // var you set in Vercel), never in this file or on the public order page -
@@ -350,9 +404,9 @@ module.exports = async (req, res) => {
     const discountApplied = !!process.env.DISCOUNT_CODE &&
       normaliseCode(discountCode) === normaliseCode(process.env.DISCOUNT_CODE);
 
-    const pricingLabel = pricingOption === 'whole-school'
-      ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote to follow)'
-      : (discountApplied ? 'Per student — FREE (code applied)' : 'Per student (£1/seat)');
+    const pricingLabel = discountApplied ? 'Per student — FREE (code applied)' : 'Per student (£1/seat)';
+    const cleanup = { armed: true, trustId: null, codes: [] };
+    cleanupRef = cleanup;
 
     let trustId = null;
     let matDashboardToken = null;
@@ -361,17 +415,12 @@ module.exports = async (req, res) => {
     // client-side, so order.html never needs its own Supabase credentials.
     // Each entry becomes one card in the carousel shown on the course welcome
     // screen and in Module 1 - in the order the school added them in.
-    async function uploadDslPhoto(dataUrl, filename, contentType) {
-      if (!dataUrl) return null;
+    async function uploadDslPhoto(img) {
+      if (!img) return null;
       try {
-        const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
-        const resolvedType = (match && match[1]) || contentType || 'image/jpeg';
-        const base64 = match ? match[2] : dataUrl;
-        const buffer = Buffer.from(base64, 'base64');
-        const ext = ((filename || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-        const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
-        const { error: uploadErr } = await supabase.storage.from('dsl-photos').upload(path, buffer, {
-          contentType: resolvedType, upsert: false
+        const path = require('crypto').randomUUID() + '.' + img.ext;
+        const { error: uploadErr } = await supabase.storage.from('dsl-photos').upload(path, img.buffer, {
+          contentType: img.contentType, upsert: false
         });
         if (uploadErr) { console.error('DSL photo upload failed:', uploadErr.message); return null; }
         const { data: pub } = supabase.storage.from('dsl-photos').getPublicUrl(path);
@@ -382,10 +431,9 @@ module.exports = async (req, res) => {
       }
     }
 
-    const dslTeamList = Array.isArray(dslTeam) ? dslTeam.filter(d => d && (d.name || d.room || d.photoDataUrl)) : [];
     const resolvedDslTeam = [];
-    for (const d of dslTeamList) {
-      const photoUrl = await uploadDslPhoto(d.photoDataUrl, d.photoFilename, d.photoContentType);
+    for (const d of v.dslTeam) {
+      const photoUrl = await uploadDslPhoto(d.photo);
       resolvedDslTeam.push({ name: d.name || null, room: d.room || null, photoUrl });
     }
     // Legacy single-value columns stay populated from the first team member,
@@ -397,20 +445,19 @@ module.exports = async (req, res) => {
       matDashboardToken = randomToken();
       const { data: trust, error: trustErr } = await supabase
         .from('trusts')
-        .insert({ trust_name: matName, mat_dashboard_token: matDashboardToken, seats_allocated: Number(seats) || 0, seat_type: discountApplied ? 'free' : 'paid' })
+        .insert({ trust_name: matName, mat_dashboard_token: matDashboardToken, seats_allocated: seats, seat_type: discountApplied ? 'free' : 'paid' })
         .select('id')
         .single();
       if (trustErr) throw new Error('Could not create trust: ' + trustErr.message);
       trustId = trust.id;
+      cleanup.trustId = trust.id;
     }
 
     // Build the full list of teachers to provision: the purchaser, plus any
     // additional teachers submitted in the MAT section of the form.
     const teacherList = [{ name: teacherName, email: teacherEmail, school: schoolName, isPurchaser: true }];
-    if (isMat && Array.isArray(matTeachers)) {
-      matTeachers.forEach(t => {
-        if (t && t.name && t.email) teacherList.push({ name: t.name, email: t.email, school: t.school || matName, isPurchaser: false });
-      });
+    if (isMat) {
+      matTeachers.forEach(t => teacherList.push({ name: t.name, email: t.email, school: t.school || matName, isPurchaser: false }));
     }
 
     const provisioned = [];
@@ -420,7 +467,7 @@ module.exports = async (req, res) => {
       const { error: insertErr } = await supabase.from('license_keys').insert({
         code, dashboard_token: dashboardToken, trust_id: trustId,
         display_name: t.name, school_name: t.school,
-        seats_allowed: isMat ? 0 : (Number(seats) || 0), // per-teacher seat split for a MAT is set later by hand
+        seats_allowed: isMat ? 0 : seats, // per-teacher seat split for a MAT is set later by hand
         seats_used: 0,
         // Tags whether this licence was paid for or created with a discount code (e.g. FREE),
         // so the annual purge knows which seats roll over and which get taken back - see
@@ -433,6 +480,7 @@ module.exports = async (req, res) => {
         dsl_team: t.isPurchaser ? resolvedDslTeam : []
       });
       if (insertErr) throw new Error('Could not create class code for ' + t.name + ': ' + insertErr.message);
+      cleanup.codes.push(code);
       provisioned.push({ ...t, code, dashboardToken });
     }
 
@@ -443,19 +491,27 @@ module.exports = async (req, res) => {
     let invoiceNumber = null;
     const paymentRef = await generateUniquePaymentRef();
     try {
-      const { data: orderRow, error: orderInsertErr } = await supabase.from('orders').insert({
+      const orderPayload = {
         teacher_name: teacherName,
         teacher_email: teacherEmail,
         school_name: isMat ? matName : schoolName,
         finance_email: financeEmail,
-        pricing_option: pricingOption === 'whole-school' ? 'whole-school' : 'per-student',
-        seats_requested: Number(seats) || 0,
+        pricing_option: 'per-student',
+        seats_requested: seats,
         po_number: po || null,
         dsl_name: dslName || null,
         dsl_photo_url: dslPhotoUrl,
         payment_ref: paymentRef,
-        license_code: provisioned[0] ? provisioned[0].code : null
-      }).select('invoice_number').single();
+        license_code: provisioned[0] ? provisioned[0].code : null,
+        school_address: schoolAddress
+      };
+      let ins = await supabase.from('orders').insert(orderPayload).select('invoice_number').single();
+      if (ins.error && /school_address/.test(ins.error.message || '')) {
+        // column not added yet - still record the order rather than lose it
+        delete orderPayload.school_address;
+        ins = await supabase.from('orders').insert(orderPayload).select('invoice_number').single();
+      }
+      const orderRow = ins.data, orderInsertErr = ins.error;
       if (orderInsertErr) throw orderInsertErr;
       invoiceNumber = orderRow ? orderRow.invoice_number : null;
     } catch (orderErr) {
@@ -464,6 +520,7 @@ module.exports = async (req, res) => {
       // and this order needs manual reconciliation later.
       console.error('Could not record order for invoice tracking:', orderErr.message);
     }
+    cleanup.armed = false; // from here on emails go out, so we keep what we've created
     const invoiceDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
     // Send every teacher their own login email
@@ -495,7 +552,7 @@ module.exports = async (req, res) => {
       to: financeEmail,
       subject: (discountApplied ? 'Order confirmed (free)' : (invoiceNumber ? 'Invoice INV-' + invoiceNumber : 'Invoice')) + ' — Online Ready for ' + (isMat ? matName : schoolName),
       html: financeEmailHtml({
-        schoolOrTrustName: isMat ? matName : schoolName, financeEmail, seats,
+        schoolOrTrustName: isMat ? matName : schoolName, schoolAddress, financeEmail, seats,
         pricingOption, pricingLabel, po, invoiceNumber, invoiceDate, paymentRef, discountApplied
       })
     });
@@ -506,7 +563,7 @@ module.exports = async (req, res) => {
       await resend.emails.send({
         from: SENDER,
         to: INTERNAL_NOTIFY_EMAIL,
-        subject: 'New order: ' + (isMat ? matName : schoolName) + ' (' + (Number(seats) || 0) + ' seats)',
+        subject: 'New order: ' + (isMat ? matName : schoolName) + ' (' + seats + ' seats)',
         html: internalNotifyEmailHtml({
           schoolOrTrustName: isMat ? matName : schoolName, seats, pricingLabel,
           teacherName, teacherEmail, financeEmail, po, isMat, invoiceNumber, paymentRef
@@ -524,6 +581,12 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.error('create-order failed:', err);
-    res.status(500).json({ error: err.message || 'Something went wrong setting up your account.' });
+    try {
+      if (cleanupRef && cleanupRef.armed) {
+        if (cleanupRef.codes.length) await supabase.from('license_keys').delete().in('code', cleanupRef.codes);
+        if (cleanupRef.trustId) await supabase.from('trusts').delete().eq('id', cleanupRef.trustId);
+      }
+    } catch (e) { console.error('cleanup after failed order also failed:', e.message); }
+    res.status(500).json({ error: 'Something went wrong setting up your account. Nothing has been charged. Please try again, or email hello@abity.co.uk.' });
   }
 };

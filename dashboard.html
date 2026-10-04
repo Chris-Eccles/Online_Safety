@@ -246,7 +246,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <div id="dslModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:9998;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeDslModal()">
   <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:26px;max-width:460px;width:100%;max-height:85vh;overflow-y:auto;">
     <h3 style="font-family:var(--font-head);font-size:18px;margin:0 0 6px;">Your safeguarding team</h3>
-    <p style="color:var(--slate-light);font-size:13px;margin:0 0 16px;">Shown to your own students on the course welcome screen and in Module 1 - just this school's team, independent of any other school in your trust. Photos aren't editable here yet; email us a photo and we'll add it for you.</p>
+    <p style="color:var(--slate-light);font-size:13px;margin:0 0 16px;">Shown to your own students on the course welcome screen and in Module 1 - just this school's team, independent of any other school in your trust. You can add a photo for each person (optional). Photos should be JPEG, PNG or WebP.</p>
     <div id="dslRows"></div>
     <button type="button" class="btn-secondary" style="margin:10px 0 18px;" onclick="addDslRow()">+ Add a safeguarding lead</button>
     <div id="dslSaveErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
@@ -515,54 +515,94 @@ function closeCertModal(){
 
 /** Safeguarding team editor - each school's own dashboard (own dashboard_token)
  * can set its own team, independently of every other school, including other
- * schools in the same trust. Name + room only for now; photos still go via email. */
+ * schools in the same trust. Name, room and an optional photo per person. */
 function openDslModal(){
   const rows = document.getElementById('dslRows');
   rows.innerHTML = '';
   const team = (currentLicense && Array.isArray(currentLicense.dsl_team) && currentLicense.dsl_team.length)
     ? currentLicense.dsl_team
-    : [{name:'', room:''}];
-  team.forEach(member => addDslRow(member.name, member.room));
+    : [{name:'', room:'', photoUrl:null}];
+  team.forEach(member => addDslRow(member.name, member.room, member.photoUrl));
   document.getElementById('dslSaveErr').textContent = '';
   document.getElementById('dslModalOverlay').style.display = 'flex';
 }
 function closeDslModal(){
   document.getElementById('dslModalOverlay').style.display = 'none';
 }
-function addDslRow(name, room){
+const DSL_INPUT_STYLE = 'background:var(--navy,#0A0F1E);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:9px 11px;font-size:13.5px;min-height:44px;';
+function addDslRow(name, room, photoUrl){
   const rows = document.getElementById('dslRows');
   const row = document.createElement('div');
-  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+  row.className = 'dsl-row';
+  row.style.cssText = 'border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px;';
+  row.dataset.photoUrl = photoUrl || '';
   row.innerHTML =
-    '<input type="text" placeholder="Name (e.g. Mrs J. Example)" class="dsl-name-input" value="' + escapeHtml(name||'') + '" style="flex:2;background:var(--navy,#0A0F1E);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:9px 11px;font-size:13.5px;" aria-label="Name (e.g. Mrs J. Example)">' +
-    '<input type="text" placeholder="Room (optional)" class="dsl-room-input" value="' + escapeHtml(room||'') + '" style="flex:1;background:var(--navy,#0A0F1E);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:9px 11px;font-size:13.5px;" aria-label="Room (optional)">' +
-    '<button type="button" onclick="this.parentElement.remove()" style="background:transparent;border:none;color:var(--slate-light);cursor:pointer;font-size:16px;padding:4px;" title="Remove">✕</button>';
+    '<div style="display:flex;gap:8px;align-items:center;">' +
+      '<input type="text" placeholder="Name (e.g. Mrs J. Example)" class="dsl-name-input" maxlength="100" value="' + escapeHtml(name||'') + '" style="flex:2;min-width:0;' + DSL_INPUT_STYLE + '" aria-label="Name">' +
+      '<input type="text" placeholder="Room (optional)" class="dsl-room-input" maxlength="100" value="' + escapeHtml(room||'') + '" style="flex:1;min-width:0;' + DSL_INPUT_STYLE + '" aria-label="Room">' +
+      '<button type="button" class="dsl-remove" style="background:transparent;border:none;color:var(--slate-light);cursor:pointer;font-size:18px;min-width:44px;min-height:44px;" aria-label="Remove this person">✕</button>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;align-items:center;margin-top:8px;">' +
+      '<img class="dsl-thumb" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:1px solid var(--border);' + (photoUrl ? '' : 'display:none;') + '"' + (photoUrl ? ' src="' + escapeHtml(photoUrl) + '"' : '') + '>' +
+      '<label style="font-size:12.5px;color:var(--slate-light);flex:1;">Photo (optional)<br><input type="file" class="dsl-photo-input" accept="image/jpeg,image/png,image/webp" style="margin-top:4px;max-width:100%;color:var(--warm-white);"></label>' +
+      '<button type="button" class="dsl-photo-clear" style="background:transparent;border:1px solid var(--border);color:var(--slate-light);border-radius:8px;cursor:pointer;font-size:12.5px;min-height:44px;padding:0 10px;' + (photoUrl ? '' : 'display:none;') + '">Remove photo</button>' +
+    '</div>';
+  row.querySelector('.dsl-remove').onclick = () => row.remove();
+  const thumb = row.querySelector('.dsl-thumb'), clear = row.querySelector('.dsl-photo-clear');
+  clear.onclick = () => { row.dataset.photoUrl = ''; row._newPhoto = null; thumb.style.display = 'none'; clear.style.display = 'none'; row.querySelector('.dsl-photo-input').value = ''; };
+  row.querySelector('.dsl-photo-input').addEventListener('change', e => {
+    const f = e.target.files[0]; if(!f) return;
+    const errEl = document.getElementById('dslSaveErr');
+    if(!/^image\/(jpeg|png|webp)$/.test(f.type)){ errEl.textContent = 'Photos must be JPEG, PNG or WebP.'; e.target.value = ''; return; }
+    // Redraw through a canvas: shrinks the photo and drops any hidden location data (EXIF) phones add.
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 800, scale = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const url = c.toDataURL('image/jpeg', 0.85);
+        row._newPhoto = url; thumb.src = url; thumb.style.display = ''; clear.style.display = '';
+        errEl.textContent = '';
+      };
+      img.onerror = () => { errEl.textContent = 'That file could not be read as an image.'; };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
   rows.appendChild(row);
+}
+async function uploadDslPhoto(dataUrl){
+  const r = await fetch('/api/dsl-photo', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: currentToken, photoDataUrl: dataUrl }) });
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok || !j.url) throw new Error(j.error || 'Could not upload the photo.');
+  return j.url;
 }
 async function saveDslTeam(){
   const rows = [...document.getElementById('dslRows').children];
-  const existing = (currentLicense && Array.isArray(currentLicense.dsl_team)) ? currentLicense.dsl_team : [];
-  const team = rows.map(r => {
-    const name = r.querySelector('.dsl-name-input').value.trim();
-    // This editor doesn't touch photos - carry over whatever photo this person
-    // already had (matched by name) rather than wiping it out on every save.
-    const matched = existing.find(m => (m.name||'').trim().toLowerCase() === name.toLowerCase());
-    return { name, room: r.querySelector('.dsl-room-input').value.trim(), photoUrl: matched ? (matched.photoUrl||null) : null };
-  }).filter(m => m.name);
-
   const errEl = document.getElementById('dslSaveErr');
   const btn = document.getElementById('dslSaveBtn');
-  if(currentLicense && currentLicense.code === DEMO_LICENSE.code){
-    currentLicense.dsl_team = team;
-    closeDslModal();
-    alert('This is demo data - nothing was really saved. Once Supabase is connected, this saves for real.');
-    return;
-  }
+  const isDemo = currentLicense && currentLicense.code === DEMO_LICENSE.code;
   btn.disabled = true; btn.textContent = 'Saving…';
   try{
+    const team = [];
+    for(const r of rows){
+      const name = r.querySelector('.dsl-name-input').value.trim();
+      if(!name) continue;
+      let photoUrl = r.dataset.photoUrl || null;
+      if(r._newPhoto){ photoUrl = isDemo ? r._newPhoto : await uploadDslPhoto(r._newPhoto); }
+      team.push({ name, room: r.querySelector('.dsl-room-input').value.trim(), photoUrl });
+    }
+    if(isDemo){
+      currentLicense.dsl_team = team;
+      closeDslModal();
+      alert('This is demo data - nothing was really saved. Once Supabase is connected, this saves for real.');
+      return;
+    }
     const { data, error } = await getSupabase().rpc('update_dsl_team_by_token', {p_token: currentToken, p_dsl_team: team});
     if(error || !data) throw new Error(error ? error.message : 'Could not save - please try again.');
-    // Keep any existing photoUrls that were already set server-side (this editor doesn't touch photos).
     currentLicense.dsl_team = team;
     closeDslModal();
   }catch(err){

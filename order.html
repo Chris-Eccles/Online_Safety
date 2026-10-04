@@ -110,22 +110,17 @@
         </div>
 
         <div class="form-row">
-          <label class="form-label">Pricing</label>
-          <div class="pricing-toggle">
-            <label>
-              <input type="radio" name="pricingOption" value="per-student" checked>
-              <span>Per student: £1/seat, per year</span>
-            </label>
-            <label>
-              <input type="radio" name="pricingOption" value="whole-school">
-              <span id="wholeSchoolLabel">Whole school flat rate: contact us for a quote</span>
-            </label>
-          </div>
+          <label class="form-label" for="schoolAddress" id="schoolAddressLabel">School address</label>
+          <textarea class="form-input" id="schoolAddress" rows="3" maxlength="400" required autocomplete="street-address" placeholder="Street, town, postcode"></textarea>
+          <p class="form-hint">This goes on the invoice.</p>
         </div>
+
+        <p class="form-hint" style="margin:0 0 14px;"><strong>Pricing:</strong> £1 per student per year.</p>
 
         <div class="form-row" id="seatsRow">
           <label class="form-label" for="seatsRequested" id="seatsLabel">Seats requested</label>
-          <input class="form-input" type="number" id="seatsRequested" min="1" placeholder="e.g. 210">
+          <input class="form-input" type="number" id="seatsRequested" min="1" max="15000" step="1" required inputmode="numeric" placeholder="e.g. 210">
+          <p class="form-hint">Up to 15,000 seats per order.</p>
           <p class="form-hint" id="seatsHint" style="display:none;">Total across the whole trust is fine. We'll help you split seats between schools once we're in touch.</p>
         </div>
 
@@ -211,7 +206,7 @@ function toggleOrgType(){
   document.getElementById('teacherEmailLabel').textContent = isMat ? 'Your email' : 'Your email';
   document.getElementById('schoolNameLabel').textContent = isMat ? 'Your own school name' : 'School name';
   document.getElementById('schoolNameHint').style.display = isMat ? 'block' : 'none';
-  document.getElementById('wholeSchoolLabel').textContent = isMat ? 'Whole trust flat rate: contact us for a quote' : 'Whole school flat rate: contact us for a quote';
+  document.getElementById('schoolAddressLabel').textContent = isMat ? 'Your own school\u2019s address' : 'School address';
   document.getElementById('seatsLabel').textContent = isMat ? 'Seats requested (across the whole trust)' : 'Seats requested';
   if(isMat && matTeacherCount === 0) addTeacherRow();
 }
@@ -317,14 +312,15 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   var schoolName = document.getElementById('schoolName').value.trim();
   var matName = document.getElementById('matName').value.trim();
   var financeEmail = document.getElementById('financeEmail').value.trim();
-  var pricingOption = document.querySelector('input[name="pricingOption"]:checked').value;
+  var pricingOption = 'per-student';
+  var schoolAddress = document.getElementById('schoolAddress').value.trim();
   var seats = document.getElementById('seatsRequested').value.trim();
   var po = document.getElementById('poNumber').value.trim();
   var discountCode = document.getElementById('discountCode').value.trim().toUpperCase();
   var status = document.getElementById('orderStatus');
   var submitBtn = document.querySelector('#orderForm button[type="submit"]');
 
-  if(!teacherName || !teacherEmail || !schoolName || !financeEmail){
+  if(!teacherName || !teacherEmail || !schoolName || !financeEmail || !schoolAddress){
     status.className = 'form-status show error';
     status.textContent = 'Please fill in all the required fields.';
     return;
@@ -335,7 +331,13 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     return;
   }
 
-  var pricingLabel = pricingOption === 'whole-school' ? 'Whole ' + (isMat ? 'trust' : 'school') + ' flat rate (quote needed)' : 'Per student (£1/seat)';
+  var seatNum = Number(seats);
+  if(!/^\d+$/.test(seats) || seatNum < 1 || seatNum > 15000){
+    status.className = 'form-status show error';
+    status.textContent = 'Please enter a whole number of seats between 1 and 15,000. For more than that, email hello@abity.co.uk.';
+    return;
+  }
+  var pricingLabel = 'Per student (£1/seat)';
   if(discountCode) pricingLabel += ' — discount code applied if valid';
 
   var matTeachers = [];
@@ -405,7 +407,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   var payload = {
     orgType: isMat ? 'mat' : 'school',
     teacherName: teacherName, teacherEmail: teacherEmail, schoolName: schoolName,
-    matName: matName, financeEmail: financeEmail, pricingOption: pricingOption,
+    matName: matName, financeEmail: financeEmail, schoolAddress: schoolAddress,
     seats: seats, po: po, discountCode: discountCode, matTeachers: matTeachers,
     dslTeam: dslTeam
   };
@@ -418,7 +420,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     if(isMat) bodyLines.push('Trust name: ' + matName);
     bodyLines.push(
       'Purchaser name: ' + teacherName, 'Purchaser email: ' + teacherEmail,
-      'Purchaser\u2019s own school: ' + schoolName, 'Finance email: ' + financeEmail,
+      'Purchaser\u2019s own school: ' + schoolName, 'Finance email: ' + financeEmail, 'School address: ' + schoolAddress.replace(/\n/g, ', '),
       'Pricing option: ' + pricingLabel, 'Seats requested: ' + (seats || 'n/a'), 'PO number: ' + (po || 'n/a')
     );
     if(isMat){

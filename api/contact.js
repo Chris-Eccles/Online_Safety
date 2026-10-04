@@ -43,18 +43,21 @@ module.exports = async (req, res) => {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const name = (body.name || '').trim();
-    const email = (body.email || '').trim();
-    const message = (body.message || '').trim();
+    const V = require('./_lib/validate');
+    if (!V.originOk(req)) { res.status(403).json({ error: 'Not allowed.' }); return; }
+    let name, email, message;
+    try {
+      name = V.line(body.name, 'your name', { max: 100 });
+      email = V.email(body.email, 'email address');
+      message = V.block(body.message, 'your message', { max: 3000 });
+    } catch (verr) {
+      if (verr instanceof V.ValidationError) { res.status(400).json({ error: verr.message }); return; }
+      throw verr;
+    }
+    // Each message emails the address typed in, so cap per recipient too
+    const rlEmail = await checkRateLimit(supabase, { bucket: 'contact-email:' + email, limit: 3, windowSeconds: 86400 });
+    if (!rlEmail.allowed) { res.status(429).json({ error: 'We have already got several messages from that address today - we will reply soon.' }); return; }
 
-    if (!name || !email || !message) {
-      res.status(400).json({ error: 'Name, email and message are all required.' });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: 'That email address doesn\'t look right.' });
-      return;
-    }
 
     await resend.emails.send({
       from: SENDER,
