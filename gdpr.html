@@ -83,7 +83,7 @@
     <p>Covered in full on our <a href="/security">security page</a>, in short: the database is hosted in the UK (AWS London region, via Supabase); written reflections are encrypted in the student's own browser with a key derived from their PIN before anything is sent anywhere, so nobody — including us — can read one without that student's PIN; PINs themselves are never stored, only a one-way hash; and database access is restricted with row-level security plus server-side functions scoped by school, so one school can never see another's data. We never handle card or bank details — schools pay by invoice/bank transfer.</p>
 
     <h3>7. Accountability</h3>
-    <p>This page, the privacy policy, and the security page are our public record of what we do and why. There's a single named contact for any data protection query (below). We're a small, early-stage operation — we're honest that we haven't yet completed a formal written Data Protection Impact Assessment or finished our ICO registration, and we're not going to claim otherwise. Both are in progress; this page will be updated the moment they are.</p>
+    <p>This page, the privacy policy, and the security page are our public record of what we do and why. There's a single named contact for any data protection query (below). We're a small, early-stage operation — we're honest that our <a href="/dpia">Data Protection Impact Assessment</a> is published (as a draft pending legal review), but we haven't yet finished our ICO registration, and we're not going to claim otherwise. This page will be updated the moment that is done.</p>
 
     <h2>Data retention schedule</h2>
     <table class="map-table" style="margin-bottom:16px;">
@@ -105,12 +105,12 @@
       <thead><tr><th scope="col">Provider</th><th scope="col">What for</th><th scope="col">Where</th></tr></thead>
       <tbody>
         <tr><td>Supabase</td><td>Database and file storage</td><td>UK (AWS London, eu-west-2)</td></tr>
-        <tr><td>Vercel</td><td>Website and app hosting</td><td>Global edge network; company based in the US</td></tr>
+        <tr><td>Vercel</td><td>Website and app hosting</td><td>Functions run in London; delivered via a global network; company based in the US</td></tr>
         <tr><td>Resend</td><td>Sending login-detail and invoice emails</td><td>Company based in the US</td></tr>
         <tr><td>Monzo</td><td>Receiving school payments by bank transfer — we read transaction references only, never card details</td><td>UK</td></tr>
       </tbody>
     </table>
-    <p>Where a provider is based outside the UK, we rely on their published standard contractual clauses or equivalent safeguards for the transfer. We haven't yet had our data processing agreements with every sub-processor formally reviewed by a solicitor — that's part of the "pending legal review" note at the top of this page.</p>
+    <p>Where a provider is based outside the UK, we rely on their published standard contractual clauses or equivalent safeguards for the transfer. The agreements are public: <a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">Supabase</a>, <a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel</a> and <a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend</a>. We haven't yet had them formally reviewed by a solicitor — that's part of the "pending legal review" note at the top of this page.</p>
 
     <h2>Your rights, and how to use them</h2>
     <p>If you're a <strong>school</strong>, you're the controller for your students' data — contact us at <a href="mailto:hello@abity.co.uk">email us</a> to access, correct, export, or delete any student's data, and we'll action it directly. If you're a <strong>student, parent, or carer</strong>, the quickest route is your school's Data Protection Lead, since they hold the relevant consent and context — but you're welcome to contact us directly too, and we'll loop your school in. If you're a <strong>teacher or finance contact</strong> whose own details we hold for an order, contact us directly for access, correction, or deletion.</p>
@@ -138,6 +138,7 @@
         <li><a href="/#how">How it works</a></li>
         <li><a href="/#pricing">Pricing</a></li>
         <li><a href="/curriculum">Curriculum mapping</a></li>
+        <li><a href="/sources">Sources</a></li>
       </ul>
     </div>
 
@@ -156,6 +157,7 @@
       <ul>
         <li><a href="/privacy">Privacy policy</a></li>
         <li><a href="/gdpr">GDPR compliance</a></li>
+        <li><a href="/dpia">Data protection impact assessment</a></li>
         <li><a href="/terms">Terms of service</a></li>
         <li><a href="/security">Security</a></li>
         <li><a href="/cookies">Cookie policy</a></li>

@@ -1,0 +1,187 @@
+{
+  "_about": "Single source of truth for every statistic and reference shown to students and on the website. The monthly job (api/check-sources.js) checks every URL here and reminds you when a figure is due for review. To update a figure: change it here, change it in course.html / index.html, then run: node scripts/build-sources.js",
+  "checked": "2026-10-04",
+  "stats": [
+    {
+      "id": "cb-online-bullying",
+      "where": "Module 1 intro; homepage",
+      "figure": "1 in 5 (19.1%)",
+      "claim": "Children aged 10 to 15 in England and Wales who experienced an online bullying behaviour in the last year",
+      "publisher": "Office for National Statistics",
+      "title": "Bullying and online experiences among children in England and Wales: year ending March 2023",
+      "year": 2024,
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/bulletins/bullyingandonlineexperiencesamongchildreninenglandandwales/yearendingmarch2023",
+      "expect": "online bullying behaviour",
+      "reviewBy": "2027-03-01"
+    },
+    {
+      "id": "cb-told-no-one",
+      "where": "Module 1 intro; homepage",
+      "figure": "18%",
+      "claim": "Children who experienced online bullying and told no one (18.1%)",
+      "publisher": "Office for National Statistics",
+      "title": "Bullying and online experiences among children in England and Wales: year ending March 2023",
+      "year": 2024,
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/bulletins/bullyingandonlineexperiencesamongchildreninenglandandwales/yearendingmarch2023",
+      "expect": "did not tell anyone",
+      "reviewBy": "2027-03-01"
+    },
+    {
+      "id": "pw-123456",
+      "where": "Module 2 intro",
+      "figure": "23.2 million",
+      "claim": "Hacked accounts worldwide that used the password 123456",
+      "publisher": "National Cyber Security Centre (NCSC)",
+      "title": "Most hacked passwords revealed as UK cyber survey exposes gaps in online security",
+      "year": 2019,
+      "url": "https://www.ncsc.gov.uk/news/most-hacked-passwords-revealed-as-uk-cyber-survey-exposes-gaps-in-online-security",
+      "expect": "123456",
+      "reviewBy": "2027-10-01"
+    },
+    {
+      "id": "pw-stolen-creds",
+      "where": "Module 2 intro",
+      "figure": "22%",
+      "claim": "Data breaches that began with stolen login details (credential abuse), the most common way in",
+      "publisher": "Verizon",
+      "title": "2025 Data Breach Investigations Report",
+      "year": 2025,
+      "url": "https://www.verizon.com/business/resources/reports/2025-dbir-data-breach-investigations-report.pdf",
+      "reviewBy": "2027-05-01"
+    },
+    {
+      "id": "sm-friend-request",
+      "where": "Module 4 intro",
+      "figure": "35%",
+      "claim": "Children aged 10 to 15 who accepted a friend request from someone they did not know in the last year",
+      "publisher": "Office for National Statistics",
+      "title": "Bullying and online experiences among children in England and Wales: year ending March 2023",
+      "year": 2024,
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/bulletins/bullyingandonlineexperiencesamongchildreninenglandandwales/yearendingmarch2023",
+      "expect": "friend request",
+      "reviewBy": "2027-03-01"
+    },
+    {
+      "id": "sm-stranger-dms",
+      "where": "Module 4 intro",
+      "figure": "55%",
+      "claim": "Children who report receiving direct messages from people they have never spoken to",
+      "publisher": "Ofcom",
+      "title": "Understanding online communications among children (2026)",
+      "year": 2026,
+      "url": "https://www.ofcom.org.uk/siteassets/resources/documents/research-and-data/online-research/understanding-online-comms-among-children/2026/ofcom---understanding-online-communications-among-children.pdf?v=425063",
+      "reviewBy": "2027-06-01"
+    },
+    {
+      "id": "ph-fraud-losses",
+      "where": "Module 5 intro",
+      "figure": "£1.28bn",
+      "claim": "Stolen through payment fraud in the UK in 2025",
+      "publisher": "UK Finance",
+      "title": "Annual Fraud Report 2026",
+      "year": 2026,
+      "url": "https://www.ukfinance.org.uk/system/files/2026-06/UK%20Finance%20Fraud%20Report%202026.pdf",
+      "reviewBy": "2027-06-01"
+    },
+    {
+      "id": "ph-breach-phishing",
+      "where": "Module 5 intro",
+      "figure": "85%",
+      "claim": "UK businesses that had a cyber breach or attack in the last year and experienced phishing",
+      "publisher": "Department for Science, Innovation and Technology (DSIT)",
+      "title": "Cyber security breaches survey 2025/2026",
+      "year": 2026,
+      "url": "https://www.gov.uk/government/statistics/cyber-security-breaches-survey-20252026/cyber-security-breaches-survey-20252026",
+      "expect": "phishing",
+      "reviewBy": "2027-04-01"
+    },
+    {
+      "id": "ph-businesses-phished",
+      "where": "Module 5 intro",
+      "figure": "38%",
+      "claim": "All UK businesses that reported phishing attacks in the last year",
+      "publisher": "Department for Science, Innovation and Technology (DSIT)",
+      "title": "Cyber security breaches survey 2025/2026",
+      "year": 2026,
+      "url": "https://www.gov.uk/government/statistics/cyber-security-breaches-survey-20252026/cyber-security-breaches-survey-20252026",
+      "expect": "phishing",
+      "reviewBy": "2027-04-01"
+    },
+    {
+      "id": "mi-links-unclicked",
+      "where": "Module 6 intro",
+      "figure": "59%",
+      "claim": "Links shared on Twitter that the person sharing them had never clicked (2016 study)",
+      "publisher": "Gabielkov, Ramachandran, Chaintreau and Legout, ACM SIGMETRICS",
+      "title": "Social Clicks: What and Who Gets Read on Twitter?",
+      "year": 2016,
+      "url": "https://dl.acm.org/doi/10.1145/2964791.2901462",
+      "reviewBy": "2028-10-01"
+    },
+    {
+      "id": "mi-six-times",
+      "where": "Module 6 intro",
+      "figure": "6x",
+      "claim": "Time true news took, compared with false news, to reach 1,500 people on Twitter",
+      "publisher": "Vosoughi, Roy and Aral, Science",
+      "title": "The spread of true and false news online",
+      "year": 2018,
+      "url": "https://www.science.org/doi/10.1126/science.aap9559",
+      "reviewBy": "2028-10-01"
+    },
+    {
+      "id": "mi-fake-profiles",
+      "where": "Module 6 intro",
+      "figure": "3 in 10",
+      "claim": "12 to 17-year-olds in the UK who do not know how to spot a fake social media profile",
+      "publisher": "Ofcom",
+      "title": "Children and parents: media use and attitudes report 2025",
+      "year": 2025,
+      "url": "https://www.ofcom.org.uk/siteassets/resources/documents/research-and-data/media-literacy-research/children/childrens-media-use-and-attitudes-report-2025/childrens-media-literacy-report-2025.pdf?v=396621",
+      "reviewBy": "2027-06-01"
+    },
+    {
+      "id": "wb-time-online",
+      "where": "Module 7 intro; homepage",
+      "figure": "about 3 hours",
+      "claim": "Average time online each day for 8 to 14-year-olds; time online almost doubles by ages 15 to 17",
+      "publisher": "Ofcom",
+      "title": "Children and parents: media use and attitudes report (2026)",
+      "year": 2026,
+      "url": "https://www.ofcom.org.uk/siteassets/resources/documents/research-and-data/media-literacy-research/children/2026-children-and-parents-report/children-and-parents-media-use-and-attitudes-report-2025-6.pdf?v=418231",
+      "reviewBy": "2027-06-01"
+    },
+    {
+      "id": "wb-too-high",
+      "where": "Module 7 intro",
+      "figure": "37%",
+      "claim": "8 to 17-year-olds who say their screen time is too high",
+      "publisher": "Ofcom",
+      "title": "Children and parents: media use and attitudes report (2026)",
+      "year": 2026,
+      "url": "https://www.ofcom.org.uk/siteassets/resources/documents/research-and-data/media-literacy-research/children/2026-children-and-parents-report/children-and-parents-media-use-and-attitudes-report-2025-6.pdf?v=418231",
+      "reviewBy": "2027-06-01"
+    },
+    {
+      "id": "wb-pressure",
+      "where": "Module 7 intro",
+      "figure": "70%",
+      "claim": "8 to 17-year-olds who use social media or messaging apps and feel pressure to be popular online at least sometimes",
+      "publisher": "Ofcom",
+      "title": "Children and parents: media use and attitudes report (2026)",
+      "year": 2026,
+      "url": "https://www.ofcom.org.uk/siteassets/resources/documents/research-and-data/media-literacy-research/children/2026-children-and-parents-report/children-and-parents-media-use-and-attitudes-report-2025-6.pdf?v=418231",
+      "reviewBy": "2027-06-01"
+    }
+  ],
+  "references": [
+    { "topic": "Safeguarding guidance for schools", "title": "Keeping children safe in education", "publisher": "Department for Education", "url": "https://www.gov.uk/government/publications/keeping-children-safe-in-education--2" },
+    { "topic": "Platforms' legal duties to protect children", "title": "Online Safety Act 2023", "publisher": "legislation.gov.uk", "url": "https://www.legislation.gov.uk/ukpga/2023/50/contents" },
+    { "topic": "Upskirting is a criminal offence", "title": "Voyeurism (Offences) Act 2019", "publisher": "legislation.gov.uk", "url": "https://www.legislation.gov.uk/ukpga/2019/2/contents" },
+    { "topic": "Support for children", "title": "Childline", "publisher": "NSPCC", "url": "https://www.childline.org.uk" },
+    { "topic": "Getting a nude image taken down", "title": "Report Remove", "publisher": "Childline and the Internet Watch Foundation", "url": "https://www.childline.org.uk/info-advice/bullying-abuse-safety/online-mobile-safety/remove-nude-image-shared-online/" },
+    { "topic": "Reporting online grooming", "title": "CEOP Safety Centre", "publisher": "National Crime Agency", "url": "https://www.ceop.police.uk" },
+    { "topic": "Reporting scams and phishing", "title": "Phishing and scam reporting", "publisher": "National Cyber Security Centre", "url": "https://www.ncsc.gov.uk/collection/phishing-scams" },
+    { "topic": "Reporting fraud", "title": "Action Fraud", "publisher": "City of London Police", "url": "https://www.actionfraud.police.uk" }
+  ]
+}

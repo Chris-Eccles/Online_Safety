@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en-GB" class="or-gate">
+<head>
+<meta charset="UTF-8">
+<style>.or-gate{visibility:hidden !important;}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Protection Impact Assessment — Online Ready</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="description" content="Our Data Protection Impact Assessment for Online Ready: what data we process, the risks to students, what we do about them, and the processors we use, with links to their data processing agreements.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="mesh" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="/">
+      <span class="wordmark-tick" aria-hidden="true">✓</span>
+      Online Ready
+    </a>
+    <nav class="main-nav" id="siteNav" aria-label="Primary">
+      <a href="/#modules">Modules</a>
+      <a href="/#how">How it works</a>
+      <a href="/#compliance">Compliance</a>
+      <a href="/#pricing">Pricing</a>
+    <a href="/curriculum">Curriculum</a>
+    <a href="/gdpr">GDPR</a>
+    </nav>
+    <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu"><span class="nav-toggle-bar" aria-hidden="true"></span></button>
+    <a class="btn btn-primary nav-cta" href="/order">Request seats</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-hero wrap">
+    <p class="eyebrow">Data protection</p>
+    <h1 class="section-title">Data Protection Impact Assessment</h1>
+    <p class="section-sub">Written for a school's Data Protection Officer, DSL or governors who need to see the risks we have identified and what we do about them. It sits alongside our <a href="/privacy">privacy policy</a>, <a href="/gdpr">GDPR page</a> and <a href="/security">security page</a>.</p>
+  </section>
+
+  <section class="wrap prose">
+    <div class="draft-banner">
+      <span class="draft-banner-icon">⚠️</span>
+      <div><strong>Draft, pending legal review.</strong> This is our own assessment, written by the person who built the service. It has not yet been reviewed by a solicitor or data protection specialist. It is an accurate technical description, not legal advice. Your school remains responsible for its own DPIA, and you are welcome to use this as an input to it.</div>
+    </div>
+    <p class="meta-updated">Version 1.0 · October 2026 · reviewed at least once a year, and whenever the service changes in a way that affects personal data</p>
+
+    <h2>1. Why we did this</h2>
+    <p>Online Ready is used by children, and a school is the controller of that data. Even where a DPIA is not strictly required, we think a service for children should be able to show its working. This document covers the student course, the teacher and trust dashboards, and the ordering process.</p>
+
+    <h2>2. What the service does</h2>
+    <p>A school orders seats. Each class gets a class code. Students use the code to join, choose a display name and a 4-digit PIN, and complete seven short modules with quizzes. On passing a module they earn a certificate. Teachers see progress on a dashboard. Multi-academy trusts can see and allocate seats across their schools. Students can write short reflections in some activities.</p>
+    <p><strong>Roles.</strong> The school is the controller for student data and we are the processor. For order and invoicing details (teacher name, email, finance contact), we are the controller.</p>
+
+    <h2>3. What data we process</h2>
+    <div style="overflow-x:auto;">
+    <table class="map-table" style="margin-bottom:16px;">
+      <thead><tr><th scope="col">Data</th><th scope="col">Whose</th><th scope="col">Why</th><th scope="col">How long</th></tr></thead>
+      <tbody>
+        <tr><td>Display name, class code</td><td>Student</td><td>To show progress to the teacher and name the certificate</td><td>Deleted 1 September each year</td></tr>
+        <tr><td>PIN (stored only as a one-way hash)</td><td>Student</td><td>So a student can return to their own progress</td><td>Deleted 1 September each year</td></tr>
+        <tr><td>Modules completed, quiz scores and attempts</td><td>Student</td><td>Progress, passing, certificate</td><td>Deleted 1 September each year</td></tr>
+        <tr><td>Written reflections (encrypted in the student's browser with a key derived from their PIN)</td><td>Student</td><td>Learning activity; teacher can see them only where the student's device has shared them</td><td>Deleted 1 September each year</td></tr>
+        <tr><td>Certificate ID, month issued, school name (no student name)</td><td>Student (not identifiable)</td><td>So a certificate can be verified as genuine</td><td>Kept</td></tr>
+        <tr><td>Teacher name, email, school, finance contact, PO number</td><td>Staff</td><td>Set up access, invoice, support</td><td>Paid orders archived for accounting; unpaid kept until paid or cancelled</td></tr>
+        <tr><td>Safeguarding team name, room and optional photo</td><td>Staff (DSL)</td><td>Shown to students so they know who to talk to</td><td>While the licence exists</td></tr>
+        <tr><td>Technical logs (IP address, request times)</td><td>Anyone</td><td>Security, rate limiting, fault-finding</td><td>Short-lived, held by our hosting providers</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><strong>What we do not collect from students:</strong> email address, date of birth, home address, photo, location, device identifiers for tracking, or any advertising data. There is no public sign-up, no analytics cookie, and no profiling.</p>
+    <p><strong>Special category data.</strong> We do not ask for any. A student could choose to write something sensitive in a reflection, which is why reflections are encrypted so that we cannot read them, and why the course tells students to talk to a trusted adult rather than write about serious concerns.</p>
+
+    <h2>4. Necessity and proportionality</h2>
+    <p>Lawful basis: the school's public task or legitimate interest in educating and safeguarding pupils (Keeping children safe in education expects schools to teach online safety). For our own order data, performance of a contract. We collect the minimum needed: a student needs a name for the certificate and a PIN to resume. Every student record is deleted automatically on 1 September, whether or not the school has paid again. Students and parents can ask their school, or us, to access or delete a record at any time.</p>
+
+    <h2>5. Risks and what we do about them</h2>
+    <div style="overflow-x:auto;">
+    <table class="map-table" style="margin-bottom:16px;">
+      <thead><tr><th scope="col">Risk</th><th scope="col">Likelihood / severity</th><th scope="col">What we do</th><th scope="col">Left over</th></tr></thead>
+      <tbody>
+        <tr><td>One school seeing another school's data</td><td>Low / High</td><td>Row-level security on every table; the browser holds only a public key; reads and writes go through server-side functions scoped to the school's class code or dashboard token</td><td>Low</td></tr>
+        <tr><td>Someone guessing a student's PIN to read their progress or reflections</td><td>Medium / Medium</td><td>PIN stored as a hash; attempts are limited and the account locks after repeated failures; reflections are encrypted with a key derived from the PIN, so a database leak alone does not expose them</td><td>Low</td></tr>
+        <tr><td>A student faking a certificate</td><td>Medium / Low</td><td>Quiz answers are held on the server and marked there; certificates are only issued by the server; certificate IDs can be checked on our <a href="/verify">verification page</a></td><td>Low</td></tr>
+        <tr><td>Student writes something sensitive in a reflection</td><td>Medium / Medium</td><td>Reflections encrypted; course prompts students to speak to a trusted adult; the safeguarding team is shown inside the course</td><td>Medium. The school's safeguarding procedures remain the safety net</td></tr>
+        <tr><td>Data kept longer than needed</td><td>Low / Medium</td><td>Automated deletion every 1 September (a scheduled job, not a manual task)</td><td>Low</td></tr>
+        <tr><td>Data leaving the UK</td><td>Medium / Low</td><td>Database and storage are in the UK (AWS London). Our functions are set to run in London. Our hosting and email providers are US companies and rely on UK-approved transfer safeguards (see section 6)</td><td>Low</td></tr>
+        <tr><td>A teacher losing access or a student being locked out</td><td>Medium / Low</td><td>Teacher dashboard link can be re-sent by email; teachers can reset a student's PIN without ever seeing it, and the student keeps their progress</td><td>Low</td></tr>
+        <tr><td>Public access to safeguarding team photos</td><td>Low / Low</td><td>Photos are optional, staff-chosen, and only a name and room are required. The storage area for these photos is currently publicly readable if the exact file address is known. We plan to switch to time-limited links</td><td>Low-medium until fixed</td></tr>
+        <tr><td>A processor suffering a breach</td><td>Low / High</td><td>Data minimisation limits what could be exposed (no email, address or date of birth for any student); processors are named below; we will tell the school without undue delay and help it assess whether the ICO must be told within 72 hours</td><td>Low</td></tr>
+        <tr><td>Our own mistakes or one-person dependency</td><td>Medium / Medium</td><td>Honest limitation: this is a small operation. Backups are held by Supabase; changes are logged; annual review of this document</td><td>Medium</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2>6. Who else processes data (sub-processors) and their agreements</h2>
+    <div style="overflow-x:auto;">
+    <table class="map-table" style="margin-bottom:16px;">
+      <thead><tr><th scope="col">Provider</th><th scope="col">What for</th><th scope="col">Where</th><th scope="col">Data processing agreement</th></tr></thead>
+      <tbody>
+        <tr><td>Supabase</td><td>Database, file storage</td><td>UK (AWS London, eu-west-2)</td><td><a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">Supabase DPA</a></td></tr>
+        <tr><td>Vercel</td><td>Website and server functions</td><td>Functions run in London (lhr1); content delivered from a global network; US company</td><td><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel DPA</a></td></tr>
+        <tr><td>Resend</td><td>Emails (login details, dashboard links, invoices)</td><td>US company</td><td><a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend DPA</a></td></tr>
+        <tr><td>Monzo</td><td>Receiving bank transfers; we read payment references only, never card details</td><td>UK</td><td>Bank terms; we hold no student data in it</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>For US providers we rely on the UK Extension to the EU-US Data Privacy Framework where the provider is certified, or the standard contractual clauses and UK addendum in their agreements. We have not yet had these agreements reviewed by a solicitor. We will tell schools before adding or replacing a sub-processor.</p>
+
+    <h2>7. Children's code</h2>
+    <p>Students can only join through a class code a school has issued, and we process their data only to deliver the course on the school's instruction, so the ICO's Children's code does not formally apply to us. We follow its spirit anyway: minimum data, no profiling, no nudging, no advertising, and plain language for the age group.</p>
+
+    <h2>8. Outcome</h2>
+    <p>We assess the overall residual risk to students as <strong>low</strong>, because the data is minimal, short-lived and partly encrypted, and a school controls who joins. The two items we are working to improve are the public photo storage and independent legal and security review. We do not believe the processing needs prior consultation with the ICO.</p>
+
+    <h2>9. Actions we have committed to</h2>
+    <ul>
+      <li>Move safeguarding team photos to time-limited links.</li>
+      <li>Complete our ICO registration and have these documents reviewed by a solicitor.</li>
+      <li>Commission an independent security test and accessibility audit.</li>
+      <li>Review this DPIA every year, and whenever we change what data is collected or who processes it.</li>
+    </ul>
+
+    <h2>Questions</h2>
+    <p><a href="mailto:hello@abity.co.uk">Email us</a> if your DPO needs more detail, a signed processing agreement for your school, or a copy of this document for your records.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <span class="wordmark wordmark-small">
+        <span class="wordmark-tick" aria-hidden="true">✓</span>
+        Online Ready
+      </span>
+      <p class="footer-tagline">Online safety, certified. Built for UK secondary schools.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="/#modules">Modules</a></li>
+        <li><a href="/#how">How it works</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/curriculum">Curriculum mapping</a></li>
+        <li><a href="/sources">Sources</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Schools</h4>
+      <ul>
+        <li><a href="/for-teachers">For teachers</a></li>
+        <li><a href="/order">Request seats</a></li>
+        <li><a href="/verify">Verify a certificate</a></li>
+        <li><a href="mailto:hello@abity.co.uk">Contact us</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="/privacy">Privacy policy</a></li>
+        <li><a href="/gdpr">GDPR compliance</a></li>
+        <li><a href="/dpia">Data protection impact assessment</a></li>
+        <li><a href="/terms">Terms of service</a></li>
+        <li><a href="/security">Security</a></li>
+        <li><a href="/cookies">Cookie policy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <p>© <span id="footerYear">2026</span> Abity. All rights reserved.</p>
+    <p class="footer-bottom-meta">Abity · <!-- TODO: add company number and registered address here when ready --> <a href="mailto:hello@abity.co.uk" style="color:inherit;text-decoration:underline;">email us</a></p>
+  </div>
+</footer>
+
+<script src="/js/script.js"></script>
+</body>
+</html>

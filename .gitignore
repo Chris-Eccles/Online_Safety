@@ -1,0 +1,10 @@
+# Stray files created by the sandbox file system when a file is deleted while open
+.fuse_hidden*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+node_modules/
+.vercel/
+.env
+.env.*

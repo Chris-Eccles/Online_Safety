@@ -820,3 +820,6 @@ a{ color:inherit; }
 main a:not(.btn){text-underline-offset:3px;}
 @media (forced-colors:active){:focus-visible{outline:3px solid Highlight;}.btn{border:2px solid ButtonText;}}
 @media (prefers-contrast:more){:root{--text-soft:rgba(245,244,251,.9);--text-faint:rgba(245,244,251,.82);--border:rgba(255,255,255,.4);}}
+
+.why-stat .stat-src{display:inline-block;margin-left:4px;font-size:.85em;color:var(--text-faint);text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+.why-stat .stat-src:hover{color:var(--brand);}

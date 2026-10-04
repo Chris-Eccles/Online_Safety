@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "regions": ["lhr1"],
   "crons": [
-    { "path": "/api/annual-purge", "schedule": "0 0 1 9 *" }
+    { "path": "/api/annual-purge", "schedule": "0 0 1 9 *" },
+    { "path": "/api/check-sources", "schedule": "0 8 1 * *" }
   ]
 }
