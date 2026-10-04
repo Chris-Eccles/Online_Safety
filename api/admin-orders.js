@@ -41,15 +41,34 @@ module.exports = async (req, res) => {
     if (codes.length) {
       const { data: licenses } = await supabase
         .from('license_keys')
-        .select('code, seats_allowed, seats_used, dsl_team')
+        .select('code, seats_allowed, seats_used, dsl_team, trust_id')
         .in('code', codes);
-      (licenses || []).forEach(l => { usageByCode[l.code] = { seats_allowed: l.seats_allowed, seats_used: l.seats_used, dsl_team: l.dsl_team }; });
+      (licenses || []).forEach(l => { usageByCode[l.code] = { seats_allowed: l.seats_allowed, seats_used: l.seats_used, dsl_team: l.dsl_team, trust_id: l.trust_id }; });
+
+      // A trust order covers every school in the trust, so show the trust-wide
+      // numbers (seats bought vs seats used across all its schools), not just
+      // the first school's slice of it.
+      const trustIds = Array.from(new Set((licenses || []).map(l => l.trust_id).filter(Boolean)));
+      if (trustIds.length) {
+        const [{ data: trusts }, { data: members }] = await Promise.all([
+          supabase.from('trusts').select('id, seats_allocated').in('id', trustIds),
+          supabase.from('license_keys').select('trust_id, seats_used').in('trust_id', trustIds)
+        ]);
+        const allocated = {}, used = {}, schools = {};
+        (trusts || []).forEach(t => { allocated[t.id] = t.seats_allocated; });
+        (members || []).forEach(m => { used[m.trust_id] = (used[m.trust_id] || 0) + (m.seats_used || 0); schools[m.trust_id] = (schools[m.trust_id] || 0) + 1; });
+        Object.keys(usageByCode).forEach(c => {
+          const u = usageByCode[c];
+          if (u.trust_id) { u.seats_allowed = allocated[u.trust_id]; u.seats_used = used[u.trust_id] || 0; u.trust_schools = schools[u.trust_id] || 0; }
+        });
+      }
     }
 
     const rows = (orders || []).map(o => ({
       ...o,
       seats_allowed: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_allowed : null,
       seats_used: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_used : null,
+      trust_schools: usageByCode[o.license_code] ? (usageByCode[o.license_code].trust_schools || null) : null,
       dsl_team: usageByCode[o.license_code] ? (usageByCode[o.license_code].dsl_team || []) : []
     }));
 

@@ -35,7 +35,7 @@ function timingSafeStringEqual(a, b) {
  * to stop. */
 async function requireAdminAuth(req, res, supabase) {
   const ip = clientIp(req);
-  const rl = await checkRateLimit(supabase, { bucket: 'admin-auth:' + ip, limit: 15, windowSeconds: 600 });
+  const rl = await checkRateLimit(supabase, { bucket: 'admin-auth:' + ip, limit: 60, windowSeconds: 600 });
   if (!rl.allowed) {
     res.status(429).json({ error: 'Too many attempts from this connection - try again in a few minutes.' });
     return false;

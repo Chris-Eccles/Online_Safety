@@ -238,6 +238,7 @@ body[data-screen="screen-dashboard"] #a11y-toggle,body[data-screen="screen-modul
 body[data-screen="screen-dashboard"] #a11y-panel,body[data-screen="screen-module"] #a11y-panel,body[data-screen="screen-certificate"] #a11y-panel,body[data-screen="screen-trial-end"] #a11y-panel{bottom:138px;max-height:calc(100vh - 160px);}
 body[data-screen] .save-toast{bottom:96px;}
 @media print{#dsl-footer{display:none !important;}}
+body.trial-mode #dsl-footer .dsl-footer-inner::after{content:"Example details";font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:1.5px solid var(--border);border-radius:20px;padding:3px 9px;color:var(--slate-light);white-space:nowrap;}
 .screen{display:none;}.screen.active{display:flex;flex-direction:column;flex:1;}
 
 
@@ -2160,7 +2161,7 @@ const AppState = {
 
 /** Core session state */
 let studentName='', completedModules={}, currentModuleId=null, currentSlide=0,
-    quizState={}, reflectionData={}, teacherEmail='', moduleProgress={}, activityData={};
+    quizState={}, reflectionData={}, teacherEmail='', moduleProgress={}, activityData={}, moduleLastSlide={};
 
 /** ═══════════════════════════════════════════════════════════════════════
  * SCHOOL SAFEGUARDING CONTACTS — EDIT THIS BLOCK FOR YOUR SCHOOL
@@ -2216,8 +2217,17 @@ let codeAlreadyValidated = false;
  * so it's safe for anyone to open as many times as they like. */
 const TRIAL_MODE = new URLSearchParams(window.location.search).get('trial')==='1';
 const TRIAL_MODULE_ID = 'cyberbullying';
+/* Blank portrait + made-up details, so the public demo shows what the safeguarding bar looks like. */
+const TRIAL_PORTRAIT = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23CBD5E1'/%3E%3Ccircle cx='40' cy='31' r='14' fill='%2394A3B8'/%3E%3Cpath d='M12 80c0-17 12-27 28-27s28 10 28 27z' fill='%2394A3B8'/%3E%3C/svg%3E";
+const TRIAL_DSL_TEAM = [
+  {name:'Mrs J. Example',room:'Room 14, Student Services',photoUrl:TRIAL_PORTRAIT},
+  {name:'Mr A. Sample',room:'Room 3, Pastoral Office',photoUrl:TRIAL_PORTRAIT}
+];
 
 function startTrialPreview(){
+  document.body.classList.add('trial-mode');
+  liveDslTeam=TRIAL_DSL_TEAM;
+  renderWelcomeDslCard();
   studentName='Preview';
   currentModuleId=TRIAL_MODULE_ID;currentSlide=0;quizState={};
   completedModules={};moduleProgress={};reflectionData={};activityData={};
@@ -2552,7 +2562,7 @@ function proceedToDashboard(n,restored){
   studentName=n;
   document.getElementById('dash-name').textContent=n.split(' ')[0];
   const saved=loadProgress();
-  if(saved){completedModules=saved.completedModules||{};reflectionData=saved.reflectionData||{};moduleProgress=saved.moduleProgress||{};activityData=saved.activityData||{};}
+  if(saved){completedModules=saved.completedModules||{};reflectionData=saved.reflectionData||{};moduleProgress=saved.moduleProgress||{};activityData=saved.activityData||{};moduleLastSlide=saved.moduleLastSlide||{};}
   if(restored){
     if(restored.completedModules)completedModules=mergeCompletedModules(completedModules,restored.completedModules);
     if(restored.reflectionData)reflectionData=mergeReflectionData(reflectionData,restored.reflectionData);
@@ -2659,11 +2669,21 @@ function openModule(id){
   document.getElementById('mod-header-title').textContent=mod.title;
   showScreen('screen-module');
   const saved=loadProgress();
-  const alreadyStarted=completedModules[id]||
-    Object.keys((reflectionData||{})[id]||{}).length>0||
-    (saved&&saved.currentModuleId===id&&(saved.currentSlide||0)>0);
+  // Where did this student leave THIS module? Per-module memory first, then the single
+  // "current position" pointer, then the furthest slide reached (e.g. from another device).
+  let resumeAt=0;
+  if(!completedModules[id]){
+    if(typeof moduleLastSlide[id]==='number')resumeAt=moduleLastSlide[id];
+    else if(saved&&saved.currentModuleId===id)resumeAt=saved.currentSlide||0;
+    else if(moduleProgress[id])resumeAt=moduleProgress[id];
+  } else if(saved&&saved.currentModuleId===id){
+    resumeAt=saved.currentSlide||0;
+  }
+  resumeAt=Math.max(0,Math.min(resumeAt,mod.slides.length-1));
+  const alreadyStarted=completedModules[id]||resumeAt>0||
+    Object.keys((reflectionData||{})[id]||{}).length>0;
   if(alreadyStarted){
-    currentSlide=(saved&&saved.currentModuleId===id)?(saved.currentSlide||0):0;
+    currentSlide=resumeAt;
     renderCurrentSlide();
   } else {
     currentSlide=0;
@@ -2674,6 +2694,7 @@ function openModule(id){
 function renderCurrentSlide(){
   const mod=modules.find(m=>m.id===currentModuleId);
   const slide=mod.slides[currentSlide];const total=mod.slides.length;
+  if(!TRIAL_MODE)moduleLastSlide[currentModuleId]=currentSlide; // remembered per module, so leaving to try another module doesn't lose your place
   document.getElementById('slide-prog-fill').style.width=((currentSlide+1)/total*100)+'%';
   document.getElementById('slide-prog-bar').setAttribute('aria-valuenow',Math.round((currentSlide+1)/total*100));
   document.getElementById('mod-header-sub').textContent='Slide '+(currentSlide+1)+' of '+total;
@@ -3705,7 +3726,7 @@ function nextQuestion(){
     quizState.score=f.score;quizState.total=f.total;quizState.passed=f.passed;quizState.showResults=true;
     if(f.certId)AppState.certId=f.certId;
     if(f.passed&&!f.certId){setTimeout(()=>launchConfetti(45),250);}
-    if(f.passed){completedModules[currentModuleId]={score:f.score,total:f.total,passed:true,date:Date.now()};saveProgress();pushStudentRecord();}
+    if(f.passed){completedModules[currentModuleId]={score:f.score,total:f.total,passed:true,date:Date.now()};delete moduleLastSlide[currentModuleId];saveProgress();pushStudentRecord();}
     renderQuizResults();
   }
 }
@@ -4218,7 +4239,7 @@ function saveProgress(){
   if(TRIAL_MODE)return;
   if(!studentRecordKey)return; // not logged in as anyone yet - nothing safe to save
   const key=progressKeyFor(studentRecordKey.licenseCode,studentRecordKey.nameKey);
-  const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,savedAt:Date.now()};
+  const data={studentName,completedModules,currentModuleId,currentSlide,reflectionData,moduleProgress,activityData,moduleLastSlide,savedAt:Date.now()};
   try{
     localStorage.setItem(key,JSON.stringify(data));
     // A small, non-sensitive pointer so a returning visit on this same device
@@ -4413,7 +4434,7 @@ function mountDslCarousel(containerId,dslTeam){
     }
     const d=team[i];
     if(photoEl){
-      if(d.photoUrl&&/^https:\/\//.test(d.photoUrl)){photoEl.src=d.photoUrl;photoEl.alt=d.name||'';photoEl.style.display='block';}
+      if(d.photoUrl&&(/^https:\/\//.test(d.photoUrl)||(typeof TRIAL_PORTRAIT!=='undefined'&&d.photoUrl===TRIAL_PORTRAIT))){photoEl.src=d.photoUrl;photoEl.alt=d.name||'';photoEl.style.display='block';}
       else{photoEl.style.display='none';}
     }
     if(textEl){

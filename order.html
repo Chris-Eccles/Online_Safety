@@ -452,6 +452,17 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
     var result = await response.json();
 
     if(!response.ok){
+      // A "please check this" message (bad email, too many seats, a repeated address...)
+      // is shown right here so they can fix it - only genuine server faults fall back to email.
+      if(response.status >= 400 && response.status < 500 && result.error){
+        sendingOverlay.style.display = 'none';
+        status.className = 'form-status show error';
+        status.textContent = result.error;
+        status.scrollIntoView({behavior:'smooth', block:'center'});
+        submitBtn.disabled = false;
+        submitBtn.textContent = origBtnText;
+        return;
+      }
       throw new Error(result.error || 'Server error');
     }
 

@@ -400,7 +400,7 @@ function render(){
       '<td class="school-cell"><strong>' + escapeHtml(o.school_name) + '</strong><div>' + escapeHtml(o.teacher_name) + ' · ' + escapeHtml(o.teacher_email) + '</div></td>' +
       '<td>' + (o.pricing_option === 'whole-school' ? 'Whole school/trust' : 'Per student (£1)') + '</td>' +
       '<td>' + (o.seats_requested != null ? o.seats_requested : '—') + '</td>' +
-      '<td>' + (o.seats_used != null ? (o.seats_used + ' / ' + (o.seats_allowed != null ? o.seats_allowed : '?')) : '—') + '</td>' +
+      '<td>' + (o.seats_used != null ? (o.seats_used + ' / ' + (o.seats_allowed != null ? o.seats_allowed : '?')) : '—') + (o.trust_schools ? '<div style="font-size:11px;color:var(--text-faint,#8892a6);">across ' + o.trust_schools + ' schools</div>' : '') + '</td>' +
       '<td>' + (paid
           ? '<span class="pill paid">Paid ' + fmtDate(o.payment_received_at) + '</span>'
           : '<span class="pill unpaid">Awaiting payment</span>') + '</td>' +

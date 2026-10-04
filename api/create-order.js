@@ -236,10 +236,13 @@ function financeEmailHtml({ schoolOrTrustName, schoolAddress, financeEmail, seat
         <tr>
           <td style="vertical-align:top;width:50%;">
             <p style="margin:0 0 4px;font-weight:bold;">From</p>
-            <p style="margin:2px 0;">${INVOICE.businessName}</p>
+            ${discountApplied
+              ? `<p style="margin:2px 0;">Abity Academy</p>
+            <p style="margin:2px 0;">No bank details - no payment required</p>`
+              : `<p style="margin:2px 0;">${INVOICE.businessName}</p>
             <p style="margin:2px 0;">${INVOICE.address}</p>
             ${companyNumberRow}
-            ${vatRow}
+            ${vatRow}`}
           </td>
           <td style="vertical-align:top;width:50%;">
             <p style="margin:0 0 4px;font-weight:bold;">Bill to</p>
