@@ -98,6 +98,9 @@
       Element.prototype.scrollIntoView=function(){};
     }
   }catch(e){}
+  /* The public demo (?trial=1) never shows the welcome or code screens, so keep them out of the page from the very
+   * first paint: their autofocus inputs would otherwise steal focus and scroll the marketing page down to the demo. */
+  try{if(/[?&]trial=1/.test(location.search))document.documentElement.classList.add('is-trial');}catch(e){}
   window.__a11y={KEY:KEY,PRESETS:PRESETS,load:load,apply:apply,contrast:contrast,osTheme:osTheme};
   try{apply(load());}catch(e){}
 })();
@@ -249,6 +252,7 @@ body[data-screen="screen-dashboard"] #a11y-toggle,body[data-screen="screen-modul
 body[data-screen="screen-dashboard"] #a11y-panel,body[data-screen="screen-module"] #a11y-panel,body[data-screen="screen-certificate"] #a11y-panel,body[data-screen="screen-trial-end"] #a11y-panel{bottom:138px;max-height:calc(100vh - 160px);}
 body[data-screen] .save-toast{bottom:96px;}
 @media print{#dsl-footer{display:none !important;}}
+html.is-trial #screen-welcome,html.is-trial #screen-code,html.is-trial #screen-email-gate{display:none !important;}
 body.trial-mode #dsl-footer .dsl-footer-inner::after{content:"Example details";font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:1.5px solid var(--border);border-radius:20px;padding:3px 9px;color:var(--slate-light);white-space:nowrap;}
 .screen{display:none;}.screen.active{display:flex;flex-direction:column;flex:1;}
 
