@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en-GB" class="or-gate">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
-<style>.or-gate{visibility:hidden !important;}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cookie policy — Online Ready</title>
+<title>Page not found — Online Ready</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="description" content="What cookies and local storage Online Ready actually uses.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -31,8 +30,8 @@
       <a href="/#how">How it works</a>
       <a href="/#compliance">Compliance</a>
       <a href="/#pricing">Pricing</a>
-    <a href="/curriculum">Curriculum</a>
-    <a href="/gdpr">GDPR</a>
+      <a href="/curriculum">Curriculum</a>
+      <a href="/gdpr">GDPR</a>
     </nav>
     <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu"><span class="nav-toggle-bar" aria-hidden="true"></span></button>
     <a class="btn btn-primary nav-cta" href="/order">Request seats</a>
@@ -40,28 +39,16 @@
 </header>
 
 <main>
-
-  <section class="page-hero wrap">
-    <p class="eyebrow">Cookie policy</p>
-    <h1 class="section-title">Cookie policy</h1>
+  <section class="page-hero wrap" style="text-align:center;padding:100px 0 110px;">
+    <p class="eyebrow">404</p>
+    <h1 class="section-title" style="max-width:none;">That page isn't here.</h1>
+    <p class="section-sub" style="margin:0 auto 28px;">The link might be out of date, or the page may have moved. Here are a few places that definitely exist:</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/" class="btn btn-primary">Back to homepage</a>
+      <a href="/order" class="btn btn-ghost">Request seats</a>
+      <a href="/for-teachers" class="btn btn-ghost">For teachers</a>
+    </div>
   </section>
-
-  <section class="wrap prose">
-    <p class="meta-updated">Last updated — draft</p>
-
-    <h2>Short version</h2>
-    <p>This site doesn't use tracking or advertising cookies, and doesn't run any analytics. A few pages load resources from other companies' servers to work at all: fonts from Google Fonts and, on some pages, library code from cdnjs.com and jsdelivr.net. None of these set a tracking cookie on this site, but loading them does mean your browser makes a direct request to those companies' servers, which reveals your IP address to them in the ordinary way any web request does.</p>
-
-    <h2>The course app</h2>
-    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and, only if you choose to set a PIN, a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
-
-    <h2>Contact box</h2>
-    <p>The "Contact us" box on every page sends your message to our server to email to us. It doesn't use cookies, and nothing is stored beyond what's needed to reply to you.</p>
-
-    <h2>If this changes</h2>
-    <p>If we ever add analytics (e.g. to see which pages are useful) or advertising, this page will be updated first, and we'll ask for consent where the law requires it.</p>
-  </section>
-
 </main>
 
 <footer class="site-footer">

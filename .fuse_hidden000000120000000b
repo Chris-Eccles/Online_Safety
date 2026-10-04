@@ -13,7 +13,7 @@
 <meta name="description" content="How the 7 Online Ready modules map to KCSIE, RSE statutory guidance, and Education for a Connected World.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -44,7 +44,7 @@
   <section class="page-hero wrap">
     <p class="eyebrow">The course</p>
     <h1 class="section-title">Mapped to the guidance you're inspected on.</h1>
-    <p class="section-sub">Every module below is written against real UK statutory guidance. This mapping is a summary and scheme of work to support your own curriculum planning, and isn't a substitute for reading the underlying guidance yourself. Paragraph numbers are checked against the edition named below, but the DfE reissues KCSIE every September, so always confirm against your current copy.</p>
+    <p class="section-sub">Every module below is written against real UK statutory guidance — not a general internet-safety pamphlet retrofitted with references afterwards. This mapping is provided as a summary and scheme of work to support your own curriculum planning, and isn't a substitute for reading the underlying guidance yourself — paragraph numbers are checked against the edition named below, but the DfE reissues KCSIE every September, so always confirm against your current copy.</p>
   </section>
 
   <section class="map-table-wrap wrap">
@@ -60,31 +60,31 @@
       <tbody>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#8B5CF6"></span>01 Cyberbullying &amp; child-on-child abuse</td>
-          <td>Part 5: child-on-child abuse, harmful sexual behaviour</td>
+          <td>Part 5 — child-on-child abuse, harmful sexual behaviour</td>
           <td>"Being Safe" strand</td>
           <td>Online bullying</td>
         </tr>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#F59E0B"></span>02 Passwords &amp; account security</td>
-          <td>Annex C: online safety, security</td>
+          <td>Annex C — online safety, security</td>
           <td>Internet safety and harms</td>
           <td>Privacy and security</td>
         </tr>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#06B6D4"></span>03 Privacy &amp; personal data</td>
-          <td>Annex C: online safety</td>
+          <td>Annex C — online safety</td>
           <td>Internet safety and harms</td>
           <td>Privacy and security; Managing online information</td>
         </tr>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#EC4899"></span>04 Social media safety</td>
-          <td>Part 5: grooming, exploitation, online safety</td>
+          <td>Part 5 — grooming, exploitation, online safety</td>
           <td>"Being Safe" strand</td>
           <td>Online relationships; Online reputation</td>
         </tr>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#10B981"></span>05 Phishing &amp; online scams</td>
-          <td>Annex C: online safety (financial harm)</td>
+          <td>Annex C — online safety (financial harm)</td>
           <td>Internet safety and harms</td>
           <td>Privacy and security</td>
         </tr>
@@ -96,7 +96,7 @@
         </tr>
         <tr>
           <td class="mod-name"><span class="mod-dot" style="--c:#A78BFA"></span>07 Wellbeing &amp; screen time</td>
-          <td>Annex C: online safety, mental wellbeing</td>
+          <td>Annex C — online safety, mental wellbeing</td>
           <td>Internet safety and harms; Mental wellbeing</td>
           <td>Health, wellbeing and lifestyle</td>
         </tr>
@@ -106,12 +106,12 @@
 
   <section class="wrap prose" style="max-width:100%;">
     <h2 style="margin-top:0;">Full scheme of work</h2>
-    <p>Keeping Children Safe in Education (KCSIE) 2026, in force from 1 September 2026, asks schools to teach online safety against four categories of risk: <strong>content</strong> (being exposed to harmful material), <strong>contact</strong> (being subjected to harmful interaction with others), <strong>conduct</strong> (a child's own online behaviour increasing risk to themselves or others), and <strong>commerce</strong> (risks like scams, gambling-style mechanics, and financial exploitation) — commonly referred to as "the four Cs". Every Online Ready module is written to sit against one or more of these categories, alongside the statutory RSE/Health Education guidance and the "Education for a Connected World" framework referenced in the summary table above.</p>
+    <p>Keeping Children Safe in Education (KCSIE) 2026 — in force from 1 September 2026 — asks schools to teach online safety against four categories of risk: <strong>content</strong> (being exposed to harmful material), <strong>contact</strong> (being subjected to harmful interaction with others), <strong>conduct</strong> (a child's own online behaviour increasing risk to themselves or others), and <strong>commerce</strong> (risks like scams, gambling-style mechanics, and financial exploitation) — commonly referred to as "the four Cs". Every Online Ready module is written to sit against one or more of these categories, alongside the statutory RSE/Health Education guidance and the "Education for a Connected World" framework referenced in the summary table above.</p>
     <p>This is intended as a starting point you can drop into your own PSHE/RSE curriculum map or safeguarding file — adjust timing, grouping, and delivery to fit your own setting. It doesn't replace reading KCSIE itself, and the DSL contact shown to students is pulled from whoever you've set in your dashboard, not written by us.</p>
 
     <h3 style="margin-top:36px;">01 · Cyberbullying &amp; Child-on-Child Abuse</h3>
     <p><strong>Four Cs:</strong> Conduct, Contact &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, form time or PSHE &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a larger question bank</p>
-    <p>Students learn what counts as cyberbullying versus a one-off disagreement, why online unkindness can hurt as much as in person, how to report it on the platforms they actually use, and, just as importantly, what to do if they see it happen to someone else, including how and why to go to their school's Designated Safeguarding Lead.</p>
+    <p>Students learn what counts as cyberbullying versus a one-off disagreement, why online unkindness can hurt as much as in person, how to report it on the platforms they actually use, and — just as importantly — what to do if they see it happen to someone else, including how and why to go to their school's Designated Safeguarding Lead.</p>
 
     <h3>02 · Passwords &amp; Account Security</h3>
     <p><strong>Four Cs:</strong> Commerce, Conduct &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, PSHE or Computing &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a 14-question bank</p>
@@ -123,7 +123,7 @@
 
     <h3>04 · Social Media Safety</h3>
     <p><strong>Four Cs:</strong> Contact, Content &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, form time or PSHE &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a question bank</p>
-    <p>Students learn to spot fake or impersonator profiles, understand the grooming process in age-appropriate terms (signs, not graphic detail), and recognise when an online "challenge" or trend has moved from silly to dangerous, and who to tell.</p>
+    <p>Students learn to spot fake or impersonator profiles, understand the grooming process in age-appropriate terms (signs, not graphic detail), and recognise when an online "challenge" or trend has moved from silly to dangerous — and who to tell.</p>
 
     <h3>05 · Phishing &amp; Online Scams</h3>
     <p><strong>Four Cs:</strong> Commerce, Content &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, PSHE or Computing &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a question bank</p>
@@ -131,11 +131,11 @@
 
     <h3>06 · Misinformation &amp; Critical Thinking</h3>
     <p><strong>Four Cs:</strong> Content &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, PSHE or English/Media &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a question bank</p>
-    <p>Students learn how to fact-check something they see online before sharing it, how to spot fake news and manipulated images/video, and how misinformation, disinformation and conspiracy theories spread. This is the specific content risk added to KCSIE's online safety guidance in the 2025 update and carried into 2026.</p>
+    <p>Students learn how to fact-check something they see online before sharing it, how to spot fake news and manipulated images/video, and how misinformation, disinformation and conspiracy theories spread — the specific content risk added to KCSIE's online safety guidance in the 2025 update and carried into 2026.</p>
 
     <h3>07 · Wellbeing &amp; Screen Time</h3>
     <p><strong>Four Cs:</strong> Conduct &nbsp;·&nbsp; <strong>Suggested timing:</strong> Year 7, ~30 min, form time or PSHE &nbsp;·&nbsp; <strong>Assessment:</strong> built-in 7-question quiz, 70% pass mark, retake from a question bank</p>
-    <p>Students learn how heavy screen time and app design choices (infinite scroll, streaks, notifications) can affect mood and sleep, and build a few simple, realistic habits for a healthier balance. It isn't a "ban screens" message.</p>
+    <p>Students learn how heavy screen time and app design choices (infinite scroll, streaks, notifications) can affect mood and sleep, and build a few simple, realistic habits for a healthier balance — not a "ban screens" message.</p>
 
     <h3 style="margin-top:36px;">After the course</h3>
     <p>Every student who passes all seven modules gets a dated certificate, and your dashboard shows pass/fail and scores per module per student — useful evidence for your safeguarding file or next Ofsted/ISI inspection that online safety education actually happened, not just that a policy exists on paper.</p>

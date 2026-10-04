@@ -13,7 +13,7 @@
 <meta name="description" content="What cookies and local storage Online Ready actually uses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -50,13 +50,13 @@
     <p class="meta-updated">Last updated — draft</p>
 
     <h2>Short version</h2>
-    <p>This site doesn't use tracking or advertising cookies, and doesn't run any analytics. A few pages load resources from other companies' servers to work at all: fonts from Google Fonts and, on some pages, library code from cdnjs.com and jsdelivr.net. None of these set a tracking cookie on this site, but loading them does mean your browser makes a direct request to those companies' servers, which reveals your IP address to them in the ordinary way any web request does.</p>
+    <p>This site doesn't use tracking or advertising cookies, and doesn't run any analytics. A few pages load resources from other companies' servers to work at all — fonts from Google Fonts, and (on some pages) library code from cdnjs.com and jsdelivr.net. None of these set a tracking cookie on this site, but loading them does mean your browser makes a direct request to those companies' servers, which reveals your IP address to them in the ordinary way any web request does.</p>
 
     <h2>The course app</h2>
-    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and, only if you choose to set a PIN, a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
+    <p>The course itself uses your browser's local storage (not a cookie, technically) to save your progress on your own device, remember your accessibility preferences (text size, theme, font), and — only if you choose to set a PIN — a small amount of encrypted data to let you continue on another device. See our <a href="/security">security page</a> for detail.</p>
 
     <h2>Contact box</h2>
-    <p>The "Contact us" box on every page sends your message to our server to email to us. It doesn't use cookies, and nothing is stored beyond what's needed to reply to you.</p>
+    <p>The "Contact us" box on every page sends your message to our server to email to us — it doesn't use cookies, and nothing is stored beyond what's needed to reply to you.</p>
 
     <h2>If this changes</h2>
     <p>If we ever add analytics (e.g. to see which pages are useful) or advertising, this page will be updated first, and we'll ask for consent where the law requires it.</p>

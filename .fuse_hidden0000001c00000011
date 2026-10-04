@@ -13,7 +13,7 @@
 <meta name="description" content="A KCSIE-aligned online safety course for Year 7. Seven short modules, one certificate, zero admin for teachers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -46,7 +46,7 @@
     <div class="hero-copy">
       <p class="eyebrow">An Abity product · Built for KS3</p>
       <h1 class="hero-title">Get every student<br>to <span class="grad-text">100% online<br>ready.</span></h1>
-      <p class="hero-sub">Seven short modules covering cyberbullying, passwords, privacy, social media, scams, misinformation and wellbeing. One certificate at the end. Built to KCSIE standard, so it does the job of a real safeguarding resource.</p>
+      <p class="hero-sub">Seven short modules covering cyberbullying, passwords, privacy, social media, scams, misinformation and wellbeing. One certificate at the end. Built to KCSIE standard — not a leaflet with your school badge stuck on it.</p>
       <div class="hero-actions">
         <a href="#demo" class="btn btn-primary btn-lg">Try a free module</a>
         <a href="#pricing" class="btn btn-ghost btn-lg">See pricing</a>
@@ -88,7 +88,7 @@
   <section class="why wrap">
     <div class="why-stat">
       <span class="stat-figure">1 in 5</span>
-      <p>young people in the UK have experienced cyberbullying, and most never tell an adult.</p>
+      <p>young people in the UK have experienced cyberbullying — most never tell an adult.</p>
     </div>
     <div class="why-stat">
       <span class="stat-figure">7 hrs</span>
@@ -105,13 +105,13 @@
     <div class="wrap">
       <p class="eyebrow">The course</p>
       <h2 class="section-title">Seven modules.<br>Nothing skipped, nothing wasted.</h2>
-      <p class="section-sub">Around 30 minutes each, self-paced, with scenario-based questions rather than tick-box quizzes. The content is written for a reading age of 9, so every student can follow it, not just confident readers.</p>
+      <p class="section-sub">Around 30 minutes each, self-paced, with scenario-based questions rather than tick-box quizzes — and content written for a reading age of 9, so it lands with every student, not just confident readers.</p>
 
       <ol class="module-grid">
         <li class="module-card" style="--c:#8B5CF6">
           <span class="module-num">01</span>
           <h3>Cyberbullying &amp; child-on-child abuse</h3>
-          <p>What it is, why it hurts, and exactly what to do, including image-based abuse and upskirting, named plainly.</p>
+          <p>What it is, why it hurts, and exactly what to do — including image-based abuse and upskirting, named plainly.</p>
         </li>
         <li class="module-card" style="--c:#F59E0B">
           <span class="module-num">02</span>
@@ -126,7 +126,7 @@
         <li class="module-card" style="--c:#EC4899">
           <span class="module-num">04</span>
           <h3>Social media safety</h3>
-          <p>Fake profiles, grooming red flags, and the pressure of online challenges. We cover them directly rather than hinting.</p>
+          <p>Fake profiles, grooming red flags, and the pressure of online challenges — covered directly, not hinted at.</p>
         </li>
         <li class="module-card" style="--c:#10B981">
           <span class="module-num">05</span>
@@ -162,17 +162,17 @@
         <li class="step">
           <span class="step-num">02</span>
           <h3>Personalise</h3>
-          <p>Add your school's name, logo, and your DSL's name and location, so the safeguarding message points somewhere real.</p>
+          <p>Add your school's name, logo, and your DSL's name and location — so the safeguarding message points somewhere real.</p>
         </li>
         <li class="step">
           <span class="step-num">03</span>
           <h3>Share codes</h3>
-          <p>One code per student. Hand them out however suits your lesson: printed, projected, or dropped into Teams.</p>
+          <p>One code per student. Hand them out however suits your lesson — printed, projected, or dropped into Teams.</p>
         </li>
         <li class="step">
           <span class="step-num">04</span>
           <h3>Get results</h3>
-          <p>Pass/fail, scores, and full reflections per student all land in one place, ready for your safeguarding file.</p>
+          <p>Pass/fail, scores, and full reflections per student — land in one place, ready for your safeguarding file.</p>
         </li>
       </ol>
     </div>
@@ -183,13 +183,13 @@
     <div class="wrap">
       <p class="eyebrow">Built to standard</p>
       <h2 class="section-title">Not just<br>"online safety-shaped."</h2>
-      <p class="section-sub">Written against the actual guidance schools are inspected on.</p>
+      <p class="section-sub">Written against the actual guidance schools are inspected on — not a general internet-safety pamphlet with a school logo bolted on.</p>
 
       <ul class="stamp-grid">
         <li class="stamp"><span class="stamp-mark">✓</span>KCSIE-aligned content</li>
         <li class="stamp"><span class="stamp-mark">✓</span>Online Safety Act 2023 covered</li>
         <li class="stamp"><span class="stamp-mark">✓</span>DSL identified by name, not role</li>
-        <li class="stamp"><span class="stamp-mark">✓</span>Reflections handled with care, never a script for harm</li>
+        <li class="stamp"><span class="stamp-mark">✓</span>Reflections handled with care — never a script for harm</li>
         <li class="stamp"><span class="stamp-mark">✓</span>UK-hosted data</li>
         <li class="stamp"><span class="stamp-mark">✓</span>Built by a working UK computer science teacher</li>
       </ul>
@@ -201,7 +201,7 @@
     <div class="wrap demo-inner has-frame">
       <p class="eyebrow">See it first</p>
       <h2 class="section-title">Sit where your<br>students will sit.</h2>
-      <p class="section-sub">A real module, running live below. No code, no sign-up, nothing to install. This is exactly what a student sees.</p>
+      <p class="section-sub">A real module, running live below — no code, no sign-up, nothing to install. This is exactly what a student sees.</p>
       <div class="browser-frame">
         <div class="browser-frame-bar">
           <div class="browser-frame-dots"><span></span><span></span><span></span></div>
@@ -218,8 +218,8 @@
   <section class="testimonials" id="testimonials">
     <div class="wrap">
       <p class="eyebrow">What schools say</p>
-      <h2 class="section-title">We're early.<br>Here's where this goes.</h2>
-      <p class="section-sub">Online Ready is brand new. These cards are placeholders showing how real feedback from DSLs and teachers will appear here once schools have used the course. Nothing below is a real quote yet.</p>
+      <h2 class="section-title">We're early —<br>here's where this goes.</h2>
+      <p class="section-sub">Online Ready is brand new. These cards are placeholders showing how real feedback from DSLs and teachers will appear here once schools have used the course — nothing below is a real quote yet.</p>
 
       <div class="testimonial-grid">
         <div class="testimonial-card testimonial-placeholder">
@@ -247,7 +247,7 @@
       <div class="pricing-copy">
         <p class="eyebrow">Pricing</p>
         <h2 class="section-title">One price.<br>No tiers to work out.</h2>
-        <p class="section-sub">Pay once per student, per year. Invoiced to your school's finance team, with no card details and no faff.</p>
+        <p class="section-sub">Pay once per student, per year. Invoiced to your school's finance team — no card details, no faff.</p>
       </div>
 
       <div class="price-card">

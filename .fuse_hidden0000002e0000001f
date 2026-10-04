@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Dashboard — Online Ready</title>
 <meta name="description" content="See your students' progress, scores, and certificates at a glance.">
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
@@ -275,7 +275,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
         <div class="cert-modules-row" id="certModalMods"></div>
         <div class="cert-foot">
           <div class="cert-sig"><img src="/images/signature-ceccles.png" alt="Signature" style="height:34px;width:auto;display:block;margin-bottom:2px;object-fit:contain;object-position:left bottom;"><div class="sig-line"></div><div class="sig-name">C Eccles</div><div class="sig-role">Abity Academy &#183; Course Director</div></div>
-          <svg class="cert-seal" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" fill="#FBF8F0" stroke="#C9A227" stroke-width="2"/><circle cx="40" cy="40" r="29" fill="none" stroke="#C9A227" stroke-width="1"/><path d="M40 20L46 33L60 35L50 45L52 59L40 52L28 59L30 45L20 35L34 33Z" fill="#00A896" opacity=".88"/><text x="40" y="44" text-anchor="middle" font-family="Lexend, sans-serif" font-size="9" font-weight="700" fill="#0F1B2D">PASS</text></svg>
+          <svg class="cert-seal" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" fill="#FBF8F0" stroke="#C9A227" stroke-width="2"/><circle cx="40" cy="40" r="29" fill="none" stroke="#C9A227" stroke-width="1"/><path d="M40 20L46 33L60 35L50 45L52 59L40 52L28 59L30 45L20 35L34 33Z" fill="#00A896" opacity=".88"/><text x="40" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#0F1B2D">PASS</text></svg>
           <div class="cert-date-block"><div class="lbl">Date of Award</div><div class="val" id="certModalDate"></div></div>
         </div>
       </div>

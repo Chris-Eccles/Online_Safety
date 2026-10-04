@@ -14,16 +14,16 @@
   body{background:var(--navy,#0A0F1E);min-height:100vh;}
   .admin-wrap{max-width:1200px;margin:0 auto;padding:36px 20px 60px;}
   .admin-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
-  .admin-head h1{font-family:var(--font-display,'Lexend',sans-serif);font-size:26px;color:var(--warm-white,#fff);margin:0;}
+  .admin-head h1{font-family:var(--font-display,'Bricolage Grotesque',sans-serif);font-size:26px;color:var(--warm-white,#fff);margin:0;}
   .admin-head .sub{color:var(--text-soft,#9AA6B8);font-size:13px;}
   #gate{max-width:360px;margin:80px auto;background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:14px;padding:30px;text-align:center;}
-  #gate h2{color:#fff;font-size:18px;margin:0 0 14px;font-family:var(--font-display,'Lexend',sans-serif);}
+  #gate h2{color:#fff;font-size:18px;margin:0 0 14px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);}
   #gate input{width:100%;box-sizing:border-box;padding:11px 14px;border-radius:9px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:12px;}
   #gate button{width:100%;padding:11px;border-radius:9px;border:none;background:var(--brand,#00C9B1);color:#06241f;font-weight:800;cursor:pointer;font-size:14px;}
   #gate .err{color:#F87171;font-size:12.5px;margin-top:10px;min-height:16px;}
   .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
   .summary-card{background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:12px;padding:16px 18px;}
-  .summary-card .num{font-family:var(--font-display,'Lexend',sans-serif);font-size:26px;font-weight:800;color:#fff;}
+  .summary-card .num{font-family:var(--font-display,'Bricolage Grotesque',sans-serif);font-size:26px;font-weight:800;color:#fff;}
   .summary-card .lbl{font-size:12px;color:var(--text-soft,#9AA6B8);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
   .controls input[type="text"]{flex:1;min-width:200px;padding:9px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--bg-2,#121a2e);color:#fff;font-size:13.5px;}
@@ -105,7 +105,7 @@
 
 <div id="wipeModal" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg-2,#121a2e);border:1px solid rgba(239,68,68,.4);border-radius:14px;padding:28px;max-width:420px;width:100%;">
-    <h3 style="color:#F87171;font-size:18px;margin:0 0 10px;font-family:var(--font-display,'Lexend',sans-serif);">⚠ This can't be undone</h3>
+    <h3 style="color:#F87171;font-size:18px;margin:0 0 10px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);">⚠ This can't be undone</h3>
     <p style="color:var(--text-soft,#9AA6B8);font-size:13.5px;margin:0 0 14px;">This deletes every order, class code, student record and payment event, and empties storage. Type <strong style="color:#fff;">DELETE EVERYTHING</strong> below to confirm.</p>
     <input type="text" id="wipeConfirmInput" placeholder="DELETE EVERYTHING" style="width:100%;box-sizing:border-box;padding:10px 13px;border-radius:8px;border:1px solid var(--border,#232e47);background:var(--navy,#0A0F1E);color:#fff;font-size:14px;margin-bottom:14px;">
     <div id="wipeErr" style="color:#F87171;font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
@@ -118,7 +118,7 @@
 
 <div id="dslAdminModal" style="display:none;position:fixed;inset:0;background:rgba(10,14,36,0.82);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--bg-2,#121a2e);border:1px solid var(--border,#232e47);border-radius:14px;padding:28px;max-width:460px;width:100%;">
-    <h3 style="color:#fff;font-size:18px;margin:0 0 4px;font-family:var(--font-display,'Lexend',sans-serif);">🛡 Safeguarding team</h3>
+    <h3 style="color:#fff;font-size:18px;margin:0 0 4px;font-family:var(--font-display,'Bricolage Grotesque',sans-serif);">🛡 Safeguarding team</h3>
     <p id="dslAdminSchool" style="color:var(--text-soft,#9AA6B8);font-size:13px;margin:0 0 16px;"></p>
     <p style="color:var(--text-soft,#9AA6B8);font-size:12.5px;margin:0 0 12px;">Safety net for schools that haven't set their own team yet via their dashboard. Saving here overwrites their team with whatever's below.</p>
     <div id="dslAdminRows"></div>

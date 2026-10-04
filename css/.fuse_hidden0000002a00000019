@@ -1,6 +1,6 @@
 /* ============================================================
    ONLINE READY — v2, bolder direction
-   One typeface throughout: Lexend
+   Display: Bricolage Grotesque · Body/UI: Manrope · Data: Space Mono
    The palette IS the product: the 7 module colours drive the mesh
    background and the readiness meter, rather than an arbitrary theme.
    ============================================================ */
@@ -20,9 +20,9 @@
   --m1:#8B5CF6; --m2:#F59E0B; --m3:#06B6D4; --m4:#EC4899;
   --m5:#10B981; --m6:#F97316; --m7:#A78BFA;
 
-  --font-display: 'Lexend', sans-serif;
-  --font-body:    'Lexend', sans-serif;
-  --font-mono:    'Lexend', sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body:    'Manrope', sans-serif;
+  --font-mono:    'Space Mono', monospace;
 
   --max-w: 1160px;
   --radius: 18px;

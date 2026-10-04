@@ -13,7 +13,7 @@
 <meta name="description" content="Check whether an Online Ready certificate ID is genuine.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -44,7 +44,7 @@
   <section class="page-hero wrap" style="text-align:center;">
     <p class="eyebrow">Verify</p>
     <h1 class="section-title" style="max-width:none;">Check a certificate.</h1>
-    <p class="section-sub" style="margin:0 auto;">Enter a certificate ID to confirm it's genuine. This only ever confirms pass/fail — it never shows a student's name or their written answers to whoever's checking.</p>
+    <p class="section-sub" style="margin:0 auto;">Enter a certificate ID to confirm it's genuine. This only ever confirms pass or fail. It never shows a student's name or their written answers to whoever is checking.</p>
   </section>
 
   <section class="wrap" style="display:flex; justify-content:center;">
@@ -74,7 +74,7 @@ document.getElementById('verifyBtn').addEventListener('click', function(){
   // lookup against student_records.cert_id once that's built.
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   var safeId = escapeHtml(id);
-  result.innerHTML = "Certificate lookup isn't live yet — we're not able to check " + safeId + " automatically just yet. In the meantime, " +
+  result.innerHTML = "Certificate lookup isn't live yet, so we're not able to check " + safeId + " automatically just yet. In the meantime, " +
     '<a href="mailto:hello@abity.co.uk" id="verifyEmailLink">email us</a> with the certificate ID and we\'ll confirm it by hand.';
   // A real event listener, not an inline onclick - passes the raw id straight
   // through as a JS value instead of re-encoding it into an HTML attribute,

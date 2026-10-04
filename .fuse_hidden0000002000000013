@@ -13,7 +13,7 @@
 <meta name="description" content="Request seats for your school and get an invoice and access code back.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -44,7 +44,7 @@
   <section class="page-hero wrap">
     <p class="eyebrow">Request seats</p>
     <h1 class="section-title">Get your school set up.</h1>
-    <p class="section-sub">Fill this in and your login is emailed to you automatically, so there's no waiting on us. An invoice goes straight to your finance contact at the same time.</p>
+    <p class="section-sub">Fill this in and your login is emailed to you automatically — no waiting on us. An invoice goes straight to your finance contact at the same time.</p>
   </section>
 
   <section class="wrap">
@@ -96,7 +96,7 @@
         <div id="matTeachersSection" style="display:none;">
           <div class="form-row">
             <label class="form-label">Add other teachers in your trust</label>
-            <p class="form-hint" style="margin-top:-4px;margin-bottom:10px;">Each one gets their own class code, their own login, and their own dashboard for their own school. You'll also get a trust-wide dashboard that sees all of them.</p>
+            <p class="form-hint" style="margin-top:-4px;margin-bottom:10px;">Each one gets their own class code, their own login, and their own dashboard for their own school — you'll additionally get a trust-wide dashboard that sees all of them.</p>
             <div id="matTeacherRows"></div>
             <button type="button" class="btn-secondary" onclick="addTeacherRow()" style="margin-top:6px;">+ Add another teacher</button>
           </div>
@@ -113,11 +113,11 @@
           <div class="pricing-toggle">
             <label>
               <input type="radio" name="pricingOption" value="per-student" checked>
-              <span>Per student: £1/seat, per year</span>
+              <span>Per student — £1/seat, per year</span>
             </label>
             <label>
               <input type="radio" name="pricingOption" value="whole-school">
-              <span id="wholeSchoolLabel">Whole school flat rate: contact us for a quote</span>
+              <span id="wholeSchoolLabel">Whole school flat rate — contact us for a quote</span>
             </label>
           </div>
         </div>
@@ -125,7 +125,7 @@
         <div class="form-row" id="seatsRow">
           <label class="form-label" for="seatsRequested" id="seatsLabel">Seats requested</label>
           <input class="form-input" type="number" id="seatsRequested" min="1" placeholder="e.g. 210">
-          <p class="form-hint" id="seatsHint" style="display:none;">Total across the whole trust is fine. We'll help you split seats between schools once we're in touch.</p>
+          <p class="form-hint" id="seatsHint" style="display:none;">Total across the whole trust is fine — we'll help you split seats between schools once we're in touch.</p>
         </div>
 
         <div class="form-row">
@@ -148,7 +148,7 @@
         <div id="dslTeamRows"></div>
         <button type="button" class="btn-secondary" onclick="addDslRow()" style="margin-bottom:18px;">+ Add a safeguarding lead</button>
 
-        <p style="font-size:12px;color:var(--text-faint);margin:0 0 12px;">We'll use the details above to set up your account and send your invoice — see our <a href="/privacy" style="color:var(--brand);">privacy policy</a>. By submitting this, you're confirming you have permission to share the name or photo of anyone you've listed as a safeguarding contact above.</p>
+        <p style="font-size:12px;color:var(--text-faint);margin:0 0 12px;">We'll use the details above to set up your account and send your invoice — see our <a href="/privacy" style="color:var(--brand);">privacy policy</a>. By submitting this, you're confirming you have permission to share the name/photo of anyone you've listed as a safeguarding contact above.</p>
         <button type="submit" class="btn btn-primary btn-block">Send request</button>
         <div class="form-status" id="orderStatus"></div>
       </form>
@@ -160,7 +160,7 @@
     <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;width:100%;box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);">
       <p style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--brand);margin:0 0 10px;">Before we send this</p>
       <h3 style="font-family:var(--font-display);font-size:22px;margin:0 0 14px;">Check these email addresses</h3>
-      <p style="color:var(--text-soft);font-size:14px;margin:0 0 18px;">We'll send the class code, invoice and login links to exactly what's below. A typo here means someone just never gets their email, with no error and no warning.</p>
+      <p style="color:var(--text-soft);font-size:14px;margin:0 0 18px;">We'll send the class code, invoice and login links to exactly what's below. A typo here means someone just never gets their email — no error, no warning.</p>
       <div id="emailConfirmList" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:22px;font-size:14px;line-height:1.7;"></div>
       <div style="display:flex;gap:10px;">
         <button type="button" class="btn btn-ghost" style="flex:1;" id="emailConfirmBack">&#8592; Go back and check</button>
@@ -210,7 +210,7 @@ function toggleOrgType(){
   document.getElementById('teacherEmailLabel').textContent = isMat ? 'Your email' : 'Your email';
   document.getElementById('schoolNameLabel').textContent = isMat ? 'Your own school name' : 'School name';
   document.getElementById('schoolNameHint').style.display = isMat ? 'block' : 'none';
-  document.getElementById('wholeSchoolLabel').textContent = isMat ? 'Whole trust flat rate: contact us for a quote' : 'Whole school flat rate: contact us for a quote';
+  document.getElementById('wholeSchoolLabel').textContent = isMat ? 'Whole trust flat rate — contact us for a quote' : 'Whole school flat rate — contact us for a quote';
   document.getElementById('seatsLabel').textContent = isMat ? 'Seats requested (across the whole trust)' : 'Seats requested';
   if(isMat && matTeacherCount === 0) addTeacherRow();
 }

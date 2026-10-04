@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=/course.html">
+<title>Redirecting… — Online Ready</title>
+<script>location.replace('/course.html' + location.search);</script>
+</head>
+<body>
+<p>Redirecting to <a href="/course.html">the course</a>…</p>
+</body>
+</html>

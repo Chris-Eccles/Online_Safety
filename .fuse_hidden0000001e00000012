@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trust Dashboard — Online Ready</title>
 <meta name="description" content="See every teacher's classes across your trust at a glance.">
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Lexend',sans-serif;--font-head:'Lexend',sans-serif;}
+:root{--navy:#0F1B2D;--navy-mid:#1A2F4A;--teal:#00C9B1;--teal-dark:#009E8E;--teal-glow:rgba(0,201,177,0.15);--warm-white:#F7F9FC;--slate:#4A5568;--slate-light:#718096;--amber:#F59E0B;--red:#EF4444;--green:#10B981;--card-bg:#162035;--border:rgba(255,255,255,0.08);--font-ui:'Nunito',sans-serif;--font-head:'Space Grotesk',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);min-height:100vh;line-height:1.5;}
 button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:inherit;}

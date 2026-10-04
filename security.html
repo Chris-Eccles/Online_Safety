@@ -13,7 +13,7 @@
 <meta name="description" content="How Online Ready protects student data: encryption, hosting, and access control, explained plainly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -52,13 +52,13 @@
     <p>Course progress is stored locally on the student's own device by default. If a student sets a personal PIN to continue on a different device, their progress and reflections sync to our database, hosted in the UK.</p>
 
     <h2>Reflections are encrypted before they ever leave the device</h2>
-    <p>Written reflection answers are encrypted in the student's browser — using a key derived from their own PIN via PBKDF2, then AES-256-GCM — before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
+    <p>Written reflection answers are encrypted in the student's browser, using a key derived from their own PIN via PBKDF2 and then AES-256-GCM, before anything is sent anywhere. Nobody with access to the database, including us, can read a reflection's content without that student's PIN.</p>
 
     <h2>PINs aren't stored</h2>
     <p>A student's PIN is never saved anywhere. Only a one-way hash of it is stored, purely to check a returning student is who they say they are. The PIN itself only ever exists, briefly, in the student's own browser.</p>
 
     <h2>Access control</h2>
-    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes — never another school's data.</p>
+    <p>Database access is restricted with row-level security. Teachers only ever see results for their own school's codes, never another school's data.</p>
 
     <h2>No advertising, no tracking sold on</h2>
     <p>We don't sell, rent, or share student data with advertisers. This site itself doesn't run advertising trackers.</p>
