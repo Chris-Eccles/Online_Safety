@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Dashboard — Online Ready</title>
 <meta name="description" content="See your students' progress, scores, and certificates at a glance.">
@@ -220,6 +221,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
             <th>Status</th>
             <th>Certificate</th>
             <th>Reflections</th>
+            <th>PIN</th>
           </tr>
         </thead>
         <tbody id="studentRows"></tbody>
@@ -599,8 +601,32 @@ function renderTable(){
       + '<td>' + statusChip + '</td>'
       + '<td>' + certCell + '</td>'
       + '<td>' + reflectCell + '</td>'
+      + '<td>' + pinCell(s) + '</td>'
       + '</tr>';
   }).join('');
+}
+
+function pinCell(s){
+  if(s.pin_reset_open) return '<span class="status-chip progress" title="The student can sign in now and choose a new PIN. Open for up to 48 hours.">Reset open</span>';
+  return '<button type="button" class="btn-secondary" style="padding:6px 12px;font-size:12.5px;" onclick="resetStudentPin(currentStudents[' + currentStudents.indexOf(s) + '].display_name, this)">Reset PIN</button>';
+}
+
+async function resetStudentPin(name, btn){
+  if(!confirm('Reset the PIN for ' + name + '?\n\nTheir progress, scores and certificate are kept. The next time they sign in with their name, they will choose a new PIN. This stays open for 48 hours, so ask them to sign in soon.')) return;
+  btn.disabled = true;
+  const orig = btn.textContent; btn.textContent = 'Resetting...';
+  try{
+    if(currentLicense && currentLicense.code === DEMO_LICENSE.code && isDemoBypassAllowed()){ const st=currentStudents.find(x=>x.display_name===name); if(st){st.pin_reset_open=true;} renderTable(); return; }
+    const {data, error} = await getSupabase().rpc('reset_student_pin', {p_token: currentToken, p_name: name});
+    if(error || !data || !data.ok){
+      alert((data && data.error) || 'Could not reset the PIN just now. Please try again.');
+      btn.disabled = false; btn.textContent = orig; return;
+    }
+    const st=currentStudents.find(x=>x.display_name===name); if(st){st.pin_reset_open=true;} renderTable();
+  }catch(e){
+    alert('Connection error. Please try again.');
+    btn.disabled = false; btn.textContent = orig;
+  }
 }
 
 /** Asks the get-reflection-url Edge Function to sign one reflections PDF path -
@@ -731,6 +757,9 @@ window.addEventListener('DOMContentLoaded', function(){
   }catch(e){}
 
   if(urlToken){
+    // Remove the secret token from the address bar straight away so it isn't left in
+    // browser history, screenshots or shared screens. (It is kept for this tab session.)
+    try{ history.replaceState(null, '', window.location.pathname); }catch(e){}
     document.getElementById('tokenInput').value = urlToken.trim();
     submitToken();
     return;

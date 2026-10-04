@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,17 @@
   try{
     var p = JSON.parse(localStorage.getItem('cybersmart_a11y_prefs') || '{}');
     var html = document.documentElement;
-    if(p.theme) html.setAttribute('data-a11y-theme', p.theme);
+    var th = p.theme;
+    if(!th){
+      if(window.matchMedia('(prefers-contrast: more)').matches) th = 'high-contrast';
+      else if(window.matchMedia('(prefers-color-scheme: light)').matches) th = 'light';
+    }
+    if(th && th !== 'dark') html.setAttribute('data-a11y-theme', th);
     if(p.font) html.setAttribute('data-a11y-font', p.font);
     if(p.size) html.setAttribute('data-a11y-size', p.size);
     if(p.cb) html.setAttribute('data-a11y-cb', '1');
+    if(p.motion) html.setAttribute('data-a11y-motion', '1');
+    if(p.spacing) html.setAttribute('data-a11y-spacing', '1');
   }catch(e){}
 })();
 </script>
@@ -61,6 +68,48 @@ html[data-a11y-size="xl"] body{zoom:1.32;}
    blue-green vs vermillion pair (Okabe-Ito palette), which stays
    distinguishable for red-green colour blindness - the most common form. */
 html[data-a11y-cb="1"]{--green:#009E73;--red:#D55E00;}
+
+/* ══ WCAG 2.2 AA+ additions ══ */
+/* Dark theme: lift muted text/accents so they clear 4.5:1 on every surface */
+:root{--slate:#94A3B8;--slate-light:#A0AEC0;--red:#F87171;--blue:#60A5FA;}
+html[data-a11y-cb="1"]{--red:#F28C3C;--green:#2BD3A0;}
+/* Light + cream: darker accent text colours (all >=5.3:1 on every surface) and
+   white text on those accents. */
+html[data-a11y-theme="light"],html[data-a11y-theme="cream"]{--teal:#00695C;--teal-dark:#004D43;--teal-glow:rgba(0,105,92,.14);--amber:#8A4B00;--green:#0B6B4D;--red:#B42318;--blue:#1D4ED8;--blue-glow:rgba(29,78,216,.14);--on-accent:#FFFFFF;--slate:#4B5563;--slate-light:#3F4A5A;}
+html[data-a11y-theme="light"][data-a11y-cb="1"],html[data-a11y-theme="cream"][data-a11y-cb="1"]{--green:#00634A;--red:#A33D00;}
+html[data-a11y-theme="light"]{color-scheme:light;}
+html[data-a11y-theme="cream"]{color-scheme:light;}
+html[data-a11y-theme="high-contrast"]{--amber:#FFD400;--red:#FF8A8A;--green:#7CFFB2;--blue:#8FC7FF;--on-accent:#000000;}
+.order-slot{color:var(--slate-light) !important;}
+/* Motion: honour the OS setting and offer a manual switch */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}}
+html[data-a11y-motion="1"] *,html[data-a11y-motion="1"] *::before,html[data-a11y-motion="1"] *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}
+/* WCAG 1.4.12 text spacing, on request */
+html[data-a11y-spacing="1"] body,html[data-a11y-spacing="1"] body *{line-height:1.6 !important;letter-spacing:.12em !important;word-spacing:.16em !important;}
+html[data-a11y-spacing="1"] .slide-area p{margin-bottom:2em !important;}
+/* Target size (2.5.8 / 2.5.5) and focus-not-obscured (2.4.11) */
+.sort-chip,.fill-word,.fill-blank,.order-chip,.match-item,.spot-card,.tf-btn,.a11y-opt,.flip-card,.order-slot,.sort-bin-drop{min-height:44px;}
+.fill-blank{height:auto;min-height:44px;}
+html{scroll-padding:16px 0 96px;}
+button.fill-word{font-family:var(--font-ui);color:var(--warm-white);}
+.sort-chip[role="button"]{cursor:pointer;}
+.sort-chip.armed,.fill-word.armed{outline:3px solid var(--teal);outline-offset:2px;}
+.sort-bin.armed-target{outline:2px dashed var(--teal);outline-offset:3px;border-radius:12px;}
+.sort-bin[role="button"]{cursor:pointer;}
+.order-slot.filled[role="button"]{cursor:pointer;}
+[role="button"]:focus-visible,.sort-chip:focus-visible,.sort-bin:focus-visible,.fill-blank:focus-visible,.order-slot:focus-visible,.a11y-opt:focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+.a11y-switch input{position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1;}
+.a11y-switch input:focus-visible+.a11y-switch-track{outline:3px solid var(--teal);outline-offset:3px;}
+#a11y-panel .a11y-opt{min-height:44px;font-size:13px;}
+#a11y-panel .a11y-label{font-size:12.5px;}
+#a11y-panel .a11y-reset{min-height:44px;font-size:13px;}
+.skip-link{position:fixed;top:-60px;left:12px;z-index:10000;background:var(--teal);color:var(--on-accent);padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none;transition:top .15s;}
+.skip-link:focus{top:12px;}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+#btn-listen{display:none;}
+#btn-listen[aria-pressed="true"]{border-color:var(--teal);color:var(--teal);}
+@media (forced-colors:active){.sort-chip.armed,.fill-word.armed,[tabindex]:focus-visible,button:focus-visible{outline:3px solid Highlight;}.slide-prog-fill{forced-color-adjust:none;background:Highlight;}.quiz-opt.correct,.fill-blank.correct,.tf-btn.correct{border:3px solid Highlight;}.quiz-opt.wrong,.tf-btn.wrong-pick{border:3px dashed CanvasText;}}
+
 
 #a11y-toggle{position:fixed;bottom:16px;left:16px;z-index:9998;width:46px;height:46px;border-radius:50%;background:var(--card-bg);border:1.5px solid var(--border);color:var(--warm-white);font-family:var(--font-ui);font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);}
 #a11y-toggle:hover{border-color:var(--teal);}
@@ -707,9 +756,9 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 <button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress" style="display:none;">&#x21BA; Reset</button>
 
 <!-- ACCESSIBILITY -->
-<button id="a11y-toggle" onclick="toggleA11yPanel()" aria-label="Accessibility options" title="Accessibility options">Aa</button>
-<div id="a11y-panel" role="dialog" aria-label="Accessibility options">
-  <h4>Accessibility</h4>
+<button id="a11y-toggle" onclick="toggleA11yPanel()" aria-label="Accessibility options" aria-expanded="false" aria-controls="a11y-panel" title="Accessibility options">Aa</button>
+<div id="a11y-panel" role="dialog" aria-labelledby="a11y-title">
+  <h4 id="a11y-title">Accessibility</h4>
   <p style="font-size:11.5px;color:var(--slate-light);margin:0;">Changes apply straight away and are remembered on this device.</p>
 
   <div class="a11y-group">
@@ -733,7 +782,8 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   <div class="a11y-group">
     <span class="a11y-label">Background &amp; text colour</span>
     <div class="a11y-opts" data-a11y-group="theme">
-      <button class="a11y-opt" data-value="" onclick="setA11y('theme','')">Dark</button>
+      <button class="a11y-opt" data-value="" onclick="setA11y('theme','')">Auto (device)</button>
+      <button class="a11y-opt" data-value="dark" onclick="setA11y('theme','dark')">Dark</button>
       <button class="a11y-opt" data-value="light" onclick="setA11y('theme','light')">Light</button>
       <button class="a11y-opt" data-value="cream" onclick="setA11y('theme','cream')">Cream</button>
       <button class="a11y-opt" data-value="high-contrast" onclick="setA11y('theme','high-contrast')">High contrast</button>
@@ -743,9 +793,18 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   <div class="a11y-cb-row">
     <span class="a11y-label" style="margin:0;">Colour-blind friendly mode</span>
     <label class="a11y-switch">
-      <input type="checkbox" id="a11y-cb-check" onchange="setA11yCb(this.checked)">
+      <input type="checkbox" id="a11y-cb-check" aria-label="Colour-blind friendly mode" onchange="setA11yCb(this.checked)">
       <span class="a11y-switch-track"></span>
     </label>
+  </div>
+
+  <div class="a11y-cb-row">
+    <span class="a11y-label" style="margin:0;">Reduce motion</span>
+    <label class="a11y-switch"><input type="checkbox" id="a11y-motion-check" aria-label="Reduce motion" onchange="setA11yFlag('motion',this.checked)"><span class="a11y-switch-track"></span></label>
+  </div>
+  <div class="a11y-cb-row">
+    <span class="a11y-label" style="margin:0;">Extra text spacing</span>
+    <label class="a11y-switch"><input type="checkbox" id="a11y-spacing-check" aria-label="Extra text spacing" onchange="setA11yFlag('spacing',this.checked)"><span class="a11y-switch-track"></span></label>
   </div>
 
   <button class="a11y-reset" onclick="resetA11y()">Reset to default</button>
@@ -873,7 +932,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   <div class="module-header">
     <button class="btn-back" onclick="goToDashboard()">&#8592; All modules</button>
     <div class="module-header-info">
-      <div class="module-header-title" id="mod-header-title"></div>
+      <div class="module-header-title" id="mod-header-title" role="heading" aria-level="1"></div>
       <div class="module-header-sub" id="mod-header-sub"></div>
     </div>
     <div class="slide-prog-bar" role="progressbar" id="slide-prog-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Module progress"><div class="slide-prog-fill" id="slide-prog-fill"></div></div>
@@ -881,6 +940,7 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   <div class="slide-area" id="slide-area"></div>
   <div class="module-nav">
     <button class="btn-secondary" id="btn-prev" onclick="prevSlide()" style="display:none">&#8592; Go back</button>
+    <button class="btn-secondary" id="btn-listen" onclick="toggleReadAloud()" aria-pressed="false">&#128266; Listen</button>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
       <div id="next-btn-hint" style="display:none;font-size:12px;color:var(--amber);font-weight:600;" role="status" aria-live="polite">Please write a proper answer above to continue.</div>
       <button class="btn-nav-next" id="btn-next" onclick="nextSlide()">Next &#8594;</button>
@@ -1185,21 +1245,37 @@ function loadA11yPrefs(){
 function saveA11yPrefs(p){
   try{localStorage.setItem(A11Y_KEY,JSON.stringify(p));}catch(e){}
 }
+function osTheme(){
+  try{
+    if(window.matchMedia('(prefers-contrast: more)').matches)return 'high-contrast';
+    if(window.matchMedia('(prefers-color-scheme: light)').matches)return 'light';
+  }catch(e){}
+  return '';
+}
 function applyA11yAttrs(p){
   const html=document.documentElement;
-  if(p.theme)html.setAttribute('data-a11y-theme',p.theme);else html.removeAttribute('data-a11y-theme');
+  const th=p.theme||osTheme();
+  if(th&&th!=='dark')html.setAttribute('data-a11y-theme',th);else html.removeAttribute('data-a11y-theme');
   if(p.font)html.setAttribute('data-a11y-font',p.font);else html.removeAttribute('data-a11y-font');
   if(p.size)html.setAttribute('data-a11y-size',p.size);else html.removeAttribute('data-a11y-size');
   if(p.cb)html.setAttribute('data-a11y-cb','1');else html.removeAttribute('data-a11y-cb');
+  if(p.motion)html.setAttribute('data-a11y-motion','1');else html.removeAttribute('data-a11y-motion');
+  if(p.spacing)html.setAttribute('data-a11y-spacing','1');else html.removeAttribute('data-a11y-spacing');
 }
 function syncA11yPanelUI(p){
   ['size','font','theme'].forEach(group=>{
     document.querySelectorAll('[data-a11y-group="'+group+'"] .a11y-opt').forEach(btn=>{
-      btn.classList.toggle('active',(btn.getAttribute('data-value')||'')===(p[group]||''));
+      const on=(btn.getAttribute('data-value')||'')===(p[group]||'');
+      btn.classList.toggle('active',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
     });
   });
   const cb=document.getElementById('a11y-cb-check');
   if(cb)cb.checked=!!p.cb;
+  const mo=document.getElementById('a11y-motion-check');
+  if(mo)mo.checked=!!p.motion;
+  const sp=document.getElementById('a11y-spacing-check');
+  if(sp)sp.checked=!!p.spacing;
 }
 function setA11y(key,value){
   const p=loadA11yPrefs();
@@ -1208,9 +1284,10 @@ function setA11y(key,value){
   applyA11yAttrs(p);
   syncA11yPanelUI(p);
 }
-function setA11yCb(checked){
+function setA11yCb(checked){setA11yFlag('cb',checked);}
+function setA11yFlag(key,checked){
   const p=loadA11yPrefs();
-  if(checked)p.cb=true;else delete p.cb;
+  if(checked)p[key]=true;else delete p[key];
   saveA11yPrefs(p);
   applyA11yAttrs(p);
   syncA11yPanelUI(p);
@@ -1220,16 +1297,90 @@ function resetA11y(){
   applyA11yAttrs({});
   syncA11yPanelUI({});
 }
-function toggleA11yPanel(){
-  document.getElementById('a11y-panel').classList.toggle('show');
+function toggleA11yPanel(force){
+  const panel=document.getElementById('a11y-panel');
+  const toggle=document.getElementById('a11y-toggle');
+  const open=(typeof force==='boolean')?force:!panel.classList.contains('show');
+  panel.classList.toggle('show',open);
+  toggle.setAttribute('aria-expanded',open?'true':'false');
+  if(open){
+    const first=panel.querySelector('.a11y-opt.active')||panel.querySelector('button');
+    if(first)first.focus();
+  } else if(panel.contains(document.activeElement)){
+    toggle.focus();
+  }
 }
 document.addEventListener('click',function(e){
   const panel=document.getElementById('a11y-panel');
   const toggle=document.getElementById('a11y-toggle');
   if(!panel||!panel.classList.contains('show'))return;
   if(panel.contains(e.target)||toggle.contains(e.target))return;
-  panel.classList.remove('show');
+  toggleA11yPanel(false);
 });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    const panel=document.getElementById('a11y-panel');
+    if(panel&&panel.classList.contains('show')){toggleA11yPanel(false);}
+    stopReadAloud();
+  }
+});
+
+/* ── Read aloud (browser speech, nothing leaves the device) ── */
+function stopReadAloud(){
+  try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
+  const b=document.getElementById('btn-listen');
+  if(b){b.setAttribute('aria-pressed','false');b.innerHTML='&#128266; Listen';}
+}
+function toggleReadAloud(){
+  if(!('speechSynthesis' in window))return;
+  const b=document.getElementById('btn-listen');
+  if(b&&b.getAttribute('aria-pressed')==='true'){stopReadAloud();return;}
+  const area=document.getElementById('slide-area');
+  const text=(area&&area.innerText||'').replace(/\s+/g,' ').trim();
+  if(!text)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=document.documentElement.lang||'en-GB';
+  u.rate=0.95;
+  u.onend=u.onerror=()=>stopReadAloud();
+  window.speechSynthesis.speak(u);
+  if(b){b.setAttribute('aria-pressed','true');b.innerHTML='&#9209; Stop';}
+}
+
+/* ── After every screen/slide change: title, focus, listen button ── */
+let a11yFirstRender=true;
+function a11yAfterRender(){
+  try{
+    stopReadAloud();
+    const lb=document.getElementById('btn-listen');
+    const scr=document.querySelector('.screen.active');
+    const inModule=scr&&scr.id==='screen-module';
+    if(lb)lb.style.display=(inModule&&('speechSynthesis' in window))?'inline-flex':'none';
+    const head=document.getElementById('mod-header-title');
+    const sub=document.getElementById('mod-header-sub');
+    document.title=inModule&&head&&head.textContent?(head.textContent+' – '+(sub?sub.textContent:'')+' | Online Ready'):'Online Ready';
+    if(a11yFirstRender){a11yFirstRender=false;return;}
+    const target=inModule
+      ?document.querySelector('#slide-area .quiz-q-text, #slide-area .quiz-title, #slide-area h2, #slide-area h1')
+      :(scr&&scr.querySelector('h1, h2'));
+    if(target){target.setAttribute('tabindex','-1');target.focus({preventScroll:true});}
+  }catch(e){}
+}
+(function(){
+  const skip=document.createElement('a');
+  skip.href='#';skip.className='skip-link';skip.textContent='Skip to main content';
+  skip.addEventListener('click',function(e){
+    e.preventDefault();
+    const m=document.querySelector('.screen.active');
+    if(m){m.setAttribute('tabindex','-1');m.focus();}
+  });
+  document.body.insertBefore(skip,document.body.firstChild);
+  document.querySelectorAll('.screen').forEach(el=>el.setAttribute('role','main'));
+  document.querySelectorAll('svg:not([role]):not([aria-label])').forEach(el=>el.setAttribute('aria-hidden','true'));
+})();
+if(window.matchMedia){
+  try{window.matchMedia('(prefers-color-scheme: light)').addEventListener('change',()=>applyA11yAttrs(loadA11yPrefs()));}catch(e){}
+}
 syncA11yPanelUI(loadA11yPrefs());
 
 
@@ -1465,7 +1616,7 @@ function buildFinalQuizCallout(){
  * =========================================================================
  * Manages UI transition flows between welcome, dashboard, module, and quiz views.
  */
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);a11yAfterRender();}
 
 function showAccessError(msg){
   const el=document.getElementById('access-error');
@@ -1545,6 +1696,7 @@ async function submitAccessCode(){
 let studentRecordActive = false;
 let studentRecordKey = null; // {licenseCode, nameKey}
 let sessionPinCryptoKey = null; // AES-GCM key derived from the PIN, kept in memory only (never saved anywhere)
+let holdReflectionPush = false; // true after a PIN reset until the student has new reflections to save
 let sessionPinHash = null; // pin_hash re-sent with every write so the server can verify it before accepting changes
 
 /** Hashes a PIN together with the class code and name, so raw PINs are never stored or sent as plain text. */
@@ -1671,10 +1823,14 @@ async function syncStudentRecord(code, name, pin){
     // status === 'ok'
     studentRecordActive=true;studentRecordKey={licenseCode,nameKey};sessionPinCryptoKey=pinKey;sessionPinHash=pinHash;
     const restoredReflections=await decryptWithPinKey(data.reflections_ct,data.reflections_iv);
+    // After a teacher-approved PIN reset the old encrypted reflections can't be opened with the new PIN.
+    // Don't overwrite the stored (teacher-readable) copy with an empty set; wait until the student writes new ones.
+    holdReflectionPush=!!(data.pin_was_reset&&data.reflections_ct&&!restoredReflections);
     return {ok:true,restored:{
       completedModules:data.completed_modules||{},
       certId:data.cert_id||null,
       reflectionData:restoredReflections||null,
+      pinWasReset:!!data.pin_was_reset,
       currentModuleId:data.current_module_id||null,
       currentSlide:data.current_slide||0,
       moduleProgress:data.module_progress||{},
@@ -1698,9 +1854,11 @@ async function pushStudentRecord(certId){
       current_slide:currentSlide,
       module_progress:moduleProgress
     };
-    const enc=await encryptWithPinKey(reflectionData);
+    const hasReflections=!!reflectionData&&Object.values(reflectionData).some(m=>m&&Object.values(m).some(v=>String(v||'').trim()));
+    if(hasReflections)holdReflectionPush=false;
+    const enc=holdReflectionPush?null:await encryptWithPinKey(reflectionData);
     if(enc){update.reflections_ct=enc.ct;update.reflections_iv=enc.iv;}
-    const teacherEnc=await wrapReflectionsForTeacher(reflectionData);
+    const teacherEnc=holdReflectionPush?null:await wrapReflectionsForTeacher(reflectionData);
     if(teacherEnc){update.reflections_teacher_ct=teacherEnc.ct;update.reflections_teacher_iv=teacherEnc.iv;update.reflections_teacher_key_wrapped=teacherEnc.wrappedKey;}
     if(certId){update.cert_id=certId;}
     // push_student_record re-checks the PIN hash server-side before writing anything -
@@ -1745,6 +1903,9 @@ async function startCourse(){
   btn.innerHTML=origText;btn.disabled=false;
   if(!syncResult.ok){showAccessError(syncResult.message);pinEl.focus();pinEl.select();return;}
   proceedToDashboard(n,syncResult.restored);
+  if(syncResult.restored&&syncResult.restored.pinWasReset){
+    try{alert('Your new PIN is set. Your progress, scores and certificate are all still here. Remember this PIN, you will need it next time.');}catch(e){}
+  }
 }
 
 
@@ -1886,6 +2047,7 @@ function renderCurrentSlide(){
     taBoxes.forEach((ta,idx)=>{
       const wc=ta.closest('.reflection-box').querySelector('.ref-word-count');
       // Restore saved value
+      ta.setAttribute('aria-label',((ta.closest('.reflection-box').querySelector('.ref-label')||{}).textContent||'Your answer').trim()+' (written answer)');
       const savedVal=(reflectionData[currentModuleId]||{})[currentSlide+'_'+idx]||'';
       if(savedVal){ta.value=savedVal;updateWordCount(ta,wc);}
       ta.addEventListener('input',()=>{
@@ -1906,6 +2068,7 @@ function renderCurrentSlide(){
   } else if(slide.type==='activity'){
     renderActivitySlide(slide);
   }
+  a11yAfterRender();
 }
 
 
@@ -2040,7 +2203,7 @@ function mountActivity(container,def,storageKey,onDone){
     '<div class="activity-eyebrow">'+icon+' Have a go</div>'
     +'<div class="activity-instructions">'+def.instructions+'</div>'
     +bodyHtml
-    +'<div class="activity-status"></div>';
+    +'<div class="activity-status" role="status" aria-live="polite"></div>';
 
   const saved=getActivitySaved(storageKey);
   if(saved&&saved.complete){
@@ -2135,27 +2298,95 @@ function buildSortHtml(slide){
 
 function initSortActivity(slide,container,complete){
   const chips=[...container.querySelectorAll('.sort-chip')];
+  const bins=[...container.querySelectorAll('.sort-bin')];
   let placedCount=0;
   const total=slide.items.length;
+  let armed=null;
+
+  function setStatus(t,c){
+    const st=container.querySelector('.activity-status');
+    if(st){st.textContent=t||'';st.className='activity-status'+(c?' '+c:'');}
+  }
+  function disarm(){
+    if(armed){armed.classList.remove('armed');armed.setAttribute('aria-pressed','false');}
+    armed=null;
+    bins.forEach(b=>b.classList.remove('armed-target'));
+  }
+  function arm(chip){
+    if(armed===chip){disarm();setStatus('');return;}
+    disarm();
+    armed=chip;
+    chip.classList.add('armed');
+    chip.setAttribute('aria-pressed','true');
+    bins.forEach(b=>b.classList.add('armed-target'));
+    setStatus('Selected: '+chip.textContent.trim()+'. Now choose the column it belongs in.');
+  }
+  function place(chip,bin){
+    if(bin.dataset.bin===chip.dataset.bin){
+      disarm();
+      chip.classList.add('placed-correct');
+      chip.setAttribute('tabindex','-1');
+      chip.setAttribute('aria-disabled','true');
+      chip.removeAttribute('aria-pressed');
+      bin.querySelector('.sort-bin-drop').appendChild(chip);
+      placedCount++;
+      if(placedCount<total)setStatus(placedCount+' of '+total+' placed correctly.');
+      if(placedCount===total)complete({});
+    } else {
+      chip.classList.add('shake');
+      setTimeout(()=>chip.classList.remove('shake'),400);
+      setStatus('Not quite - try a different column.','warn');
+    }
+  }
+
+  // Keyboard / tap alternative to dragging (WCAG 2.1.1, 2.5.7): choose an
+  // item, then choose the column it belongs in.
+  bins.forEach(bin=>{
+    const label=(bin.querySelector('.sort-bin-label')||{}).textContent||'column';
+    bin.setAttribute('role','button');
+    bin.setAttribute('tabindex','0');
+    bin.setAttribute('aria-label','Column: '+label.trim()+'. Place the selected item here.');
+    const go=()=>{
+      if(armed)place(armed,bin);
+      else setStatus('Choose an item first, then choose its column.','warn');
+    };
+    bin.addEventListener('click',go);
+    bin.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+  });
 
   chips.forEach(chip=>{
+    chip.setAttribute('role','button');
+    chip.setAttribute('tabindex','0');
+    chip.setAttribute('aria-pressed','false');
+    chip.addEventListener('keydown',e=>{
+      if(chip.classList.contains('placed-correct'))return;
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();arm(chip);}
+    });
     chip.addEventListener('pointerdown',(e)=>{
       if(chip.classList.contains('placed-correct'))return;
       e.preventDefault();
       const rect=chip.getBoundingClientRect();
-      const ghost=chip.cloneNode(true);
-      ghost.classList.add('sort-ghost');
-      ghost.style.width=rect.width+'px';
-      ghost.style.left=rect.left+'px';
-      ghost.style.top=rect.top+'px';
-      document.body.appendChild(ghost);
-      chip.classList.add('dragging');
+      const startX=e.clientX,startY=e.clientY;
+      let moved=false,ghost=null;
       const offX=e.clientX-rect.left, offY=e.clientY-rect.top;
 
+      function startDrag(){
+        moved=true;
+        ghost=chip.cloneNode(true);
+        ghost.classList.add('sort-ghost');
+        ghost.removeAttribute('role');ghost.removeAttribute('tabindex');
+        ghost.style.width=rect.width+'px';
+        ghost.style.left=rect.left+'px';
+        ghost.style.top=rect.top+'px';
+        document.body.appendChild(ghost);
+        chip.classList.add('dragging');
+      }
       function move(ev){
+        if(!moved&&Math.hypot(ev.clientX-startX,ev.clientY-startY)>6)startDrag();
+        if(!ghost)return;
         ghost.style.left=(ev.clientX-offX)+'px';
         ghost.style.top=(ev.clientY-offY)+'px';
-        container.querySelectorAll('.sort-bin').forEach(bin=>{
+        bins.forEach(bin=>{
           const r=bin.getBoundingClientRect();
           const over=ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom;
           bin.classList.toggle('drag-over',over);
@@ -2164,27 +2395,14 @@ function initSortActivity(slide,container,complete){
       function up(ev){
         document.removeEventListener('pointermove',move);
         document.removeEventListener('pointerup',up);
+        if(!moved){chip.focus();arm(chip);return;}
         ghost.remove();
         chip.classList.remove('dragging');
-        container.querySelectorAll('.sort-bin').forEach(bin=>{
+        bins.forEach(bin=>{
           bin.classList.remove('drag-over');
           const r=bin.getBoundingClientRect();
           const over=ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom;
-          if(over){
-            if(bin.dataset.bin===chip.dataset.bin){
-              chip.classList.add('placed-correct');
-              bin.querySelector('.sort-bin-drop').appendChild(chip);
-              placedCount++;
-              const status=container.querySelector('.activity-status');
-              if(status&&placedCount<total){status.textContent=placedCount+' of '+total+' placed correctly.';status.className='activity-status';}
-              if(placedCount===total) complete({});
-            } else {
-              chip.classList.add('shake');
-              setTimeout(()=>chip.classList.remove('shake'),400);
-              const status=container.querySelector('.activity-status');
-              if(status){status.textContent='Not quite - try a different column.';status.className='activity-status warn';}
-            }
-          }
+          if(over)place(chip,bin);
         });
       }
       document.addEventListener('pointermove',move);
@@ -2215,9 +2433,9 @@ function restoreSortComplete(slide,container){
 function buildFillHtml(slide){
   let sentence=slide.sentence;
   slide.blanks.forEach(b=>{
-    sentence=sentence.replace('{{'+b.id+'}}','<span class="fill-blank" data-blank="'+b.id+'" data-answer="'+b.answer+'">?</span>');
+    sentence=sentence.replace('{{'+b.id+'}}','<span class="fill-blank" role="button" tabindex="0" data-blank="'+b.id+'" data-answer="'+b.answer+'">?</span>');
   });
-  const bankHtml=slide.wordbank.map(w=>'<div class="fill-word" draggable="true" data-word="'+w+'">'+w+'</div>').join('');
+  const bankHtml=slide.wordbank.map(w=>'<button type="button" class="fill-word" draggable="true" data-word="'+w+'">'+w+'</button>').join('');
   return '<div class="fill-sentence">'+sentence+'</div><div class="fill-wordbank">'+bankHtml+'</div><button type="button" class="fill-submit-btn" disabled>Check my answers</button>';
 }
 
@@ -2233,6 +2451,7 @@ function initFillActivity(slide,container,complete){
     if(!status)return;
     status.textContent=text||'';
     status.className='activity-status'+(cls?' '+cls:'');
+    syncBlankAria();
   }
 
   function updateSubmitState(){
@@ -2240,17 +2459,25 @@ function initFillActivity(slide,container,complete){
     submitBtn.disabled=!ready;
   }
 
+  function syncBlankAria(){
+    blanks.forEach((b,i)=>{
+      const t=b.textContent.trim();
+      b.setAttribute('aria-label','Gap '+(i+1)+(t&&t!=='?'?': '+t+(b.classList.contains('correct')?' (correct)':b.classList.contains('wrong-position')?' (right word, wrong gap)':'')+'. Press to remove.':': empty. Press to place the selected word here.'));
+    });
+  }
   function armWord(word){
-    if(armedWord)armedWord.classList.remove('armed');
+    if(armedWord){armedWord.classList.remove('armed');armedWord.setAttribute('aria-pressed','false');}
     if(armedWord===word){armedWord=null;return;}
     armedWord=word;
     word.classList.add('armed');
+    word.setAttribute('aria-pressed','true');
   }
 
   function returnWordToBank(text,markWrong){
     const chip=words.find(w=>w.dataset.word===text);
     if(!chip)return;
     chip.classList.remove('used');
+    chip.removeAttribute('aria-disabled');
     chip.classList.toggle('wrong',!!markWrong);
   }
 
@@ -2261,10 +2488,13 @@ function initFillActivity(slide,container,complete){
     blank.classList.remove('correct','wrong-position');
     blank.classList.add('filled');
     word.classList.add('used');
+    word.setAttribute('aria-disabled','true');
+    word.setAttribute('aria-pressed','false');
     word.classList.remove('wrong','armed');
     armedWord=null;
     setStatus('');
     updateSubmitState();
+    syncBlankAria();
   }
 
   function clearBlank(blank){
@@ -2273,6 +2503,7 @@ function initFillActivity(slide,container,complete){
     blank.textContent='?';
     blank.classList.remove('filled','wrong-position');
     updateSubmitState();
+    syncBlankAria();
   }
 
   words.forEach(word=>{
@@ -2283,6 +2514,7 @@ function initFillActivity(slide,container,complete){
   });
 
   blanks.forEach(blank=>{
+    blank.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();blank.click();}});
     blank.addEventListener('click',()=>{
       if(blank.classList.contains('correct'))return;
       if(armedWord){
@@ -2512,20 +2744,21 @@ function initOrderActivity(slide,container,complete){
     let html='';
     for(let i=0;i<total;i++){
       if(placed[i]){
-        html+='<div class="order-slot filled" data-slot="'+i+'"><span class="order-slot-num">'+(i+1)+'</span>'+placed[i].text+'</div>';
+        html+='<div class="order-slot filled" role="button" tabindex="0" aria-label="Step '+(i+1)+': '+placed[i].text.replace(/"/g,'&quot;')+'. Press to remove." data-slot="'+i+'"><span class="order-slot-num">'+(i+1)+'</span>'+placed[i].text+'</div>';
       } else {
         html+='<div class="order-slot" data-slot="'+i+'"><span class="order-slot-num">'+(i+1)+'</span><span class="order-slot-empty">Tap a step below</span></div>';
       }
     }
     seqEl.innerHTML=html;
     seqEl.querySelectorAll('.order-slot.filled').forEach(el=>{
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}});
       el.addEventListener('click',()=>{
         const idx=parseInt(el.dataset.slot,10);
         const item=placed[idx];
         placed[idx]=null;
         renderSlots();
         const chip=chips.find(c=>c.dataset.id===item.id);
-        if(chip)chip.classList.remove('used');
+        if(chip){chip.classList.remove('used');chip.removeAttribute('aria-disabled');chip.focus();}
       });
     });
   }
@@ -2538,6 +2771,8 @@ function initOrderActivity(slide,container,complete){
       if(slotIdx>=slide.steps.length)return;
       placed[slotIdx]={id:chip.dataset.id,text:chip.textContent};
       chip.classList.add('used');
+      chip.setAttribute('aria-disabled','true');
+      { const st=container.querySelector('.activity-status'); if(st&&placed.filter(Boolean).length<slide.steps.length){st.textContent='Step '+(slotIdx+1)+' placed: '+chip.textContent+'.';st.className='activity-status';} }
       renderSlots();
       if(placed.filter(Boolean).length===slide.steps.length){
         const correctOrder=placed.every((p,i)=>p.id===slide.steps[i].id);
@@ -2550,7 +2785,7 @@ function initOrderActivity(slide,container,complete){
           setTimeout(()=>{
             seqEl.classList.remove('shake');
             placed.length=0;
-            chips.forEach(c=>c.classList.remove('used'));
+            chips.forEach(c=>{c.classList.remove('used');c.removeAttribute('aria-disabled');});
             renderSlots();
           },900);
         }
@@ -2683,6 +2918,7 @@ function renderQuizQuestion(){
   document.getElementById('slide-area').innerHTML='<div class="slide active quiz-wrap"><div class="quiz-header"><div class="quiz-title">Quiz time!</div><div class="quiz-prog-chip">Q'+(qi+1)+' of '+qs.length+'</div></div><div class="quiz-q-num">Question '+(qi+1)+'</div><div class="quiz-q-text">'+q.q+'</div><div class="quiz-opts">'+q.opts.map((o,i)=>'<button class="quiz-opt" onclick="selectAnswer('+i+')"><span class="opt-letter">'+letters[i]+'</span>'+o+'</button>').join('')+'</div><div class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></div><button class="btn-next-q" id="btn-next-q" onclick="nextQuestion()"></button></div>';
   const btn=document.getElementById('btn-next');btn.disabled=true;btn.style.display='flex';btn.textContent='Pick an answer to carry on';
   document.getElementById('btn-prev').style.display='none';
+  if(!a11yFirstRender)a11yAfterRender();
 }
 
 function selectAnswer(i){
@@ -2736,6 +2972,7 @@ function showCertificate(){applySchoolBranding();
 }
 
 function launchConfetti(){
+  try{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.hasAttribute('data-a11y-motion'))return;}catch(e){}
   const canvas=document.createElement('canvas');Object.assign(canvas.style,{position:'fixed',top:0,left:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:9999});
   canvas.width=innerWidth;canvas.height=innerHeight;document.body.appendChild(canvas);
   const ctx=canvas.getContext('2d');const colors=['#00C9B1','#F59E0B','#8B5CF6','#EC4899','#10B981','#06B6D4','#F97316','#A78BFA'];

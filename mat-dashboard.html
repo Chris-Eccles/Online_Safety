@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trust Dashboard — Online Ready</title>
 <meta name="description" content="See every teacher's classes across your trust at a glance.">
@@ -71,6 +72,16 @@ tr.clickable{cursor:pointer;}
 .status-chip.certified{background:rgba(16,185,129,.14);color:var(--green);}
 .status-chip.progress{background:rgba(245,158,11,.14);color:var(--amber);}
 .status-chip.notstarted{background:rgba(255,255,255,.06);color:var(--slate-light);}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.seat-summary{font-size:14px;color:var(--slate-light);margin:0 0 12px;}
+.seat-summary strong{color:var(--warm-white);}
+.seat-edit{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.seat-edit input{width:84px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--warm-white);padding:8px 10px;font-size:14px;font-family:inherit;min-height:40px;}
+.seat-edit button{background:var(--teal);color:#0F1B2D;border:0;border-radius:8px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;min-height:40px;font-family:inherit;}
+.seat-edit button:disabled{opacity:.5;cursor:default;}
+.seat-note{font-size:12.5px;color:var(--slate-light);width:100%;}
+.seat-note.err{color:var(--red);}
+.seat-note.ok{color:var(--green);}
 .empty-state{text-align:center;padding:60px 20px;color:var(--slate-light);}
 .empty-state-icon{font-size:32px;margin-bottom:10px;}
 
@@ -159,6 +170,7 @@ tr.clickable{cursor:pointer;}
         <button class="btn-secondary" onclick="loadTrust(true)">↻ Refresh</button>
       </div>
 
+      <p id="seatSummary" class="seat-summary" role="status" aria-live="polite"></p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -168,6 +180,7 @@ tr.clickable{cursor:pointer;}
               <th>Students</th>
               <th>Certified</th>
               <th>Avg. progress</th>
+              <th>Seats for this school</th>
             </tr>
           </thead>
           <tbody id="teacherRows"></tbody>
@@ -193,6 +206,7 @@ tr.clickable{cursor:pointer;}
               <th>Avg. score</th>
               <th>Status</th>
               <th>Certificate</th>
+              <th>PIN</th>
             </tr>
           </thead>
           <tbody id="studentRows"></tbody>
@@ -404,8 +418,55 @@ function renderTeacherTable(){
       + '<td>' + students.length + '</td>'
       + '<td>' + certified + '</td>'
       + '<td>' + avgProgress + '%</td>'
+      + '<td onclick="event.stopPropagation()">' + seatCell(t) + '</td>'
       + '</tr>';
   }).join('');
+  renderSeatSummary();
+}
+
+function allocatedTotal(){ return currentTeachers.reduce((n,t) => n + ((t.seats_allowed||0) > 0 ? t.seats_allowed : 0), 0); }
+function renderSeatSummary(){
+  const el = document.getElementById('seatSummary');
+  if(!el || !currentTrust) return;
+  const total = currentTrust.seats_allocated || 0;
+  const alloc = allocatedTotal();
+  el.innerHTML = 'Your trust has <strong>' + total + '</strong> seats. <strong>' + alloc + '</strong> are assigned to schools and <strong>' + Math.max(total - alloc, 0) + '</strong> are unassigned. Schools with no number set share the unassigned seats.';
+}
+function seatCell(t){
+  const code = escapeHtml(t.code);
+  const val = (t.seats_allowed||0) > 0 ? t.seats_allowed : '';
+  return '<div class="seat-edit">'
+    + '<label class="sr-only" for="seat-' + code + '">Seats for ' + escapeHtml(t.school_name||t.display_name||'this school') + '</label>'
+    + '<input type="number" min="0" step="1" inputmode="numeric" id="seat-' + code + '" value="' + val + '" placeholder="Unassigned">'
+    + '<button type="button" onclick="saveSeats(\'' + code.replace(/'/g,"\\'") + '\', this)">Save</button>'
+    + '<div class="seat-note" id="seatnote-' + code + '">' + (t.seats_used||0) + ' used</div>'
+    + '</div>';
+}
+async function saveSeats(code, btn){
+  const input = document.getElementById('seat-' + code);
+  const note = document.getElementById('seatnote-' + code);
+  const raw = input.value.trim();
+  const n = raw === '' ? 0 : Number(raw);
+  if(!Number.isInteger(n) || n < 0){ note.textContent = 'Enter a whole number, or leave blank to unassign.'; note.className = 'seat-note err'; return; }
+  btn.disabled = true; note.textContent = 'Saving...'; note.className = 'seat-note';
+  const t = currentTeachers.find(x => x.code === code);
+  if(currentTrust.id === DEMO_TRUST.id){
+    const other = allocatedTotal() - ((t.seats_allowed||0) > 0 ? t.seats_allowed : 0);
+    if(other + n > currentTrust.seats_allocated){ note.textContent = 'That is more seats than your trust has.'; note.className = 'seat-note err'; btn.disabled = false; return; }
+    t.seats_allowed = n; renderSeatSummary(); note.textContent = 'Saved (demo)'; note.className = 'seat-note ok'; btn.disabled = false; return;
+  }
+  try{
+    const {data, error} = await getSupabase().rpc('set_trust_school_seats', {p_token: currentToken, p_code: code, p_seats: n});
+    if(error || !data){ note.textContent = 'Could not save. Please try again.'; note.className = 'seat-note err'; }
+    else if(!data.ok){ note.textContent = data.error || 'Could not save.'; note.className = 'seat-note err'; }
+    else {
+      t.seats_allowed = n;
+      renderSeatSummary();
+      note.textContent = (n > 0 ? 'Saved: ' + n + ' seats' : 'Unassigned') + ' (' + (t.seats_used||0) + ' used)';
+      note.className = 'seat-note ok';
+    }
+  }catch(e){ note.textContent = 'Connection error. Please try again.'; note.className = 'seat-note err'; }
+  btn.disabled = false;
 }
 
 function showTrustView(){
@@ -455,8 +516,28 @@ function renderStudentTable(){
       + '<td>' + (avg === null ? '—' : avg + '%') + '</td>'
       + '<td>' + statusChip + '</td>'
       + '<td>' + certCell + '</td>'
+      + '<td><button type="button" class="btn-secondary" style="padding:6px 12px;font-size:12.5px;" onclick="resetStudentPin(studentsByCode[activeTeacherCode].find(x=>x.display_name===' + JSON.stringify(s.display_name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;') + ').display_name, this)">Reset PIN</button></td>'
       + '</tr>';
   }).join('');
+}
+
+
+async function resetStudentPin(name, btn){
+  if(!confirm('Reset the PIN for ' + name + '?\n\nTheir progress, scores and certificate are kept. The next time they sign in with their name, they will choose a new PIN. This stays open for 48 hours, so ask them to sign in soon.')) return;
+  btn.disabled = true;
+  const orig = btn.textContent; btn.textContent = 'Resetting...';
+  try{
+    if(currentTrust && currentTrust.id === DEMO_TRUST.id){ btn.textContent = 'Reset open'; return; }
+    const {data, error} = await getSupabase().rpc('reset_student_pin', {p_token: currentToken, p_name: name});
+    if(error || !data || !data.ok){
+      alert((data && data.error) || 'Could not reset the PIN just now. Please try again.');
+      btn.disabled = false; btn.textContent = orig; return;
+    }
+    btn.textContent = 'Reset open (48h)'; btn.title='The student can now sign in and choose a new PIN.';
+  }catch(e){
+    alert('Connection error. Please try again.');
+    btn.disabled = false; btn.textContent = orig;
+  }
 }
 
 function escapeHtml(str){
@@ -472,6 +553,9 @@ window.addEventListener('DOMContentLoaded', function(){
   }catch(e){}
 
   if(urlToken){
+    // Remove the secret token from the address bar straight away so it isn't left in
+    // browser history, screenshots or shared screens. (It is kept for this tab session.)
+    try{ history.replaceState(null, '', window.location.pathname); }catch(e){}
     document.getElementById('tokenInput').value = urlToken.trim();
     submitToken();
     return;

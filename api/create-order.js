@@ -159,8 +159,9 @@ function teacherLoginEmailHtml({ teacherName, schoolName, code, dashboardToken, 
       <p><a href="${courseUrl}" style="display:inline-block;background:#00C9B1;color:#0F1B2D;padding:12px 22px;border-radius:30px;text-decoration:none;font-weight:bold;">Open a ready-made student link →</a></p>
       <p style="font-size:13px;color:#718096;margin-top:4px;">Prefer to share the plain site instead and have students type in the code themselves? Use this link: <a href="${plainSiteUrl}" style="color:#00C9B1;">${plainSiteUrl}</a></p>
       <p style="margin-top:28px;"><strong>Your teacher dashboard</strong> (see your students' progress, scores, and certificates):</p>
-      <p><a href="${dashboardUrl}" style="color:#00C9B1;">${dashboardUrl}</a></p>
-      <p style="font-size:13px;color:#718096;margin-top:24px;">Keep this email safe — your dashboard link is private to you. Don't share it with students; the class code above is the only thing they need.</p>
+      <p><a href="${dashboardUrl}" style="display:inline-block;background:#0F1B2D;color:#FFFFFF;padding:12px 22px;border-radius:30px;text-decoration:none;font-weight:bold;">Open my teacher dashboard →</a></p>
+      <p style="font-size:12px;color:#718096;margin-top:4px;">This button signs you straight in. If it doesn't work, copy this link into your browser: <span style="word-break:break-all;">${dashboardUrl}</span></p>
+      <p style="font-size:13px;color:#718096;margin-top:24px;">Keep this email safe — the dashboard button is private to you. Don't forward it or share it with students; the class code above is the only thing they need.</p>
       <p style="font-size:13px;color:#718096;">Questions? Just reply to this email.</p>
     </div>
   `;
