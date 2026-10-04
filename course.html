@@ -226,6 +226,18 @@ button,.module-card[role="button"],.quiz-opt{min-height:44px;}
 button:focus-visible,a:focus-visible,.quiz-opt:focus-visible,input:focus-visible,textarea:focus-visible,.module-card:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--teal);outline-offset:2px;border-radius:6px;}
 button:focus:not(:focus-visible){outline:none;}
 body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
+
+#dsl-footer{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9000;background:var(--card-bg);border-top:1.5px solid var(--teal);padding:8px 14px;}
+body[data-screen="screen-dashboard"] #dsl-footer,body[data-screen="screen-module"] #dsl-footer,body[data-screen="screen-certificate"] #dsl-footer,body[data-screen="screen-trial-end"] #dsl-footer{display:block;}
+#dsl-footer .dsl-footer-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;min-height:44px;}
+#dsl-footer .dsl-carousel-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--teal);flex-shrink:0;}
+#dsl-footer .dsl-carousel-text{font-size:13.5px;line-height:1.4;color:var(--warm-white);flex:1;}
+#dsl-footer .dsl-carousel-dots{display:flex;gap:4px;}
+body[data-screen="screen-dashboard"],body[data-screen="screen-module"],body[data-screen="screen-certificate"],body[data-screen="screen-trial-end"]{padding-bottom:72px;}
+body[data-screen="screen-dashboard"] #a11y-toggle,body[data-screen="screen-module"] #a11y-toggle,body[data-screen="screen-certificate"] #a11y-toggle,body[data-screen="screen-trial-end"] #a11y-toggle{bottom:84px;}
+body[data-screen="screen-dashboard"] #a11y-panel,body[data-screen="screen-module"] #a11y-panel,body[data-screen="screen-certificate"] #a11y-panel,body[data-screen="screen-trial-end"] #a11y-panel{bottom:138px;max-height:calc(100vh - 160px);}
+body[data-screen] .save-toast{bottom:96px;}
+@media print{#dsl-footer{display:none !important;}}
 .screen{display:none;}.screen.active{display:flex;flex-direction:column;flex:1;}
 
 
@@ -313,6 +325,132 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
   .callout,.scenario-box p,.key-term .term,.match-item,.reveal-card-title,.tf-statement,.reveal-panel,.tf-explanation{font-size:15px;}
   .tf-statement{font-size:16.5px;}
 }
+
+/* ══ Mini-games ══ */
+.game{background:linear-gradient(160deg,rgba(var(--tint-rgb),.05),transparent 60%),var(--card-bg);border:1.5px solid var(--border);border-radius:20px;padding:18px;margin:18px 0;box-shadow:0 10px 30px rgba(0,0,0,.18);}
+.game-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.game-badge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--mod-color,var(--teal));color:var(--on-accent);border-radius:20px;padding:4px 11px;}
+.game-title{font-family:var(--font-head);font-weight:800;font-size:18px;}
+.game .score-pill{margin-left:auto;font-weight:800;font-size:13px;border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;}
+.game p.game-help{font-size:14px;color:var(--slate-light);margin:0 0 14px;line-height:1.55;}
+.game-privacy{font-size:12.5px;color:var(--slate-light);margin-top:12px;}
+.game-btn{min-height:46px;padding:10px 20px;border-radius:50px;border:2px solid var(--border);background:transparent;color:var(--warm-white);font-family:var(--font-ui);font-weight:700;font-size:14px;cursor:pointer;transition:transform .12s,border-color .12s,background .12s;}
+.game-btn:hover{border-color:var(--teal);transform:translateY(-1px);}
+.game-btn:active{transform:scale(.97);}
+.game-btn.primary{background:var(--teal);color:var(--on-accent);border-color:var(--teal);}
+.game-btn:disabled{cursor:default;transform:none;}
+.game-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+/* device / window frames */
+.dev{border:1.5px solid var(--border);border-radius:18px;overflow:hidden;background:var(--navy);box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.dev-bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:rgba(var(--tint-rgb),.07);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:700;}
+.dev-bar i{width:10px;height:10px;border-radius:50%;display:inline-block;background:#FF5F57;}
+.dev-bar i:nth-child(2){background:#FEBC2E;}.dev-bar i:nth-child(3){background:#28C840;}
+.dev-bar .url{flex:1;margin-left:8px;background:rgba(var(--tint-rgb),.08);border-radius:20px;padding:4px 12px;font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;flex-shrink:0;}
+/* inbox */
+.inbox-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);font-weight:800;}
+.inbox-top small{font-weight:600;color:var(--slate-light);}
+.mrow{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--border);padding:12px 14px;cursor:pointer;color:var(--warm-white);font-family:var(--font-ui);min-height:64px;}
+.mrow:hover{background:rgba(var(--tint-rgb),.06);}
+.mrow .mb{flex:1;min-width:0;}
+.mrow .snd{font-weight:800;font-size:14px;display:flex;justify-content:space-between;gap:8px;}
+.mrow .snd span{font-weight:600;font-size:12px;color:var(--slate-light);white-space:nowrap;}
+.mrow .sub{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mrow .pre{font-size:12.5px;color:var(--slate-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mrow.read .snd,.mrow.read .sub{font-weight:600;}
+.mrow .tag{font-size:11px;font-weight:800;border-radius:20px;padding:3px 9px;white-space:nowrap;}
+.tag.ok{background:rgba(16,185,129,.18);color:var(--green);}.tag.no{background:rgba(239,68,68,.16);color:var(--red);}
+.mview{padding:14px;}
+.mback{background:transparent;border:0;color:var(--teal);font-weight:800;font-family:var(--font-ui);font-size:14px;cursor:pointer;min-height:44px;padding:0;}
+.mhead h4{margin:6px 0 10px;font-size:17px;font-family:var(--font-head);}
+.mfrom{display:flex;gap:10px;align-items:center;margin-bottom:12px;font-size:13px;}
+.mfrom b{display:block;font-size:14px;}.mfrom code{font-size:12.5px;color:var(--slate-light);word-break:break-all;}
+.mbody{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:14.5px;line-height:1.6;}
+.mbody p{margin:0 0 10px;}
+.cta{display:inline-block;background:#2563EB;color:#fff;border:0;border-radius:8px;padding:11px 18px;font-weight:700;font-size:14px;font-family:var(--font-ui);cursor:pointer;margin-top:4px;min-height:44px;}
+.statusbar{margin-top:8px;font-size:12.5px;font-family:ui-monospace,Menlo,Consolas,monospace;background:rgba(var(--tint-rgb),.08);border-radius:6px;padding:6px 10px;min-height:30px;word-break:break-all;}
+.verdict{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.verdict .game-btn{flex:1 1 150px;}
+.verdict .game-btn.real{border-color:var(--green);}.verdict .game-btn.scam{border-color:var(--red);}
+.verdict .game-btn.right{background:rgba(16,185,129,.18);}.verdict .game-btn.wrong{background:rgba(239,68,68,.16);}
+/* phone */
+.phone{max-width:420px;margin:0 auto;border:2px solid var(--border);border-radius:28px;overflow:hidden;background:var(--navy);box-shadow:0 12px 30px rgba(0,0,0,.28);}
+.phone-bar{display:flex;gap:10px;align-items:center;padding:12px 14px;background:rgba(var(--tint-rgb),.07);border-bottom:1px solid var(--border);}
+.phone-bar b{display:block;font-size:14px;}.phone-bar small{color:var(--slate-light);font-size:12px;}
+.thread{padding:12px;display:flex;flex-direction:column;gap:8px;}
+.bub{max-width:82%;padding:10px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;animation:bubin .35s ease both;}
+.bub.in{background:rgba(var(--tint-rgb),.12);border-bottom-left-radius:6px;align-self:flex-start;}
+.bub.out{background:var(--teal);color:var(--on-accent);border-bottom-right-radius:6px;align-self:flex-end;font-weight:600;}
+.bub small{display:block;font-weight:800;font-size:11px;opacity:.75;margin-bottom:2px;}
+@keyframes bubin{from{transform:translateY(8px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.profile{display:flex;gap:12px;align-items:center;padding:14px;}
+.profile b{font-size:15px;display:block;}.profile small{color:var(--slate-light);font-size:12.5px;line-height:1.4;display:block;}
+.reqtag{margin:0 14px;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);}
+.hint{padding:8px 14px 14px;font-size:12.5px;color:var(--slate-light);text-align:center;}
+/* post composer / feed */
+.post{max-width:460px;margin:0 auto;border:1.5px solid var(--border);border-radius:18px;overflow:hidden;background:var(--navy);box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.post-top{display:flex;gap:10px;align-items:center;padding:12px 14px;font-weight:800;font-size:14px;}
+.post-top small{display:block;color:var(--slate-light);font-weight:600;font-size:12px;}
+.post-img{height:170px;display:flex;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--c1,#6366F1),var(--c2,#EC4899));position:relative;}
+.post-img .loc{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;}
+.post-cap{padding:12px 14px;font-size:14.5px;line-height:1.5;}
+.post-meta{padding:0 14px 12px;color:var(--slate-light);font-size:12.5px;display:flex;gap:14px;}
+.fakepost{max-width:460px;margin:0 auto;border:1.5px solid var(--border);border-radius:18px;background:var(--navy);box-shadow:0 8px 24px rgba(0,0,0,.22);overflow:hidden;}
+.fakepost .verified{color:#3B82F6;font-weight:800;}
+/* options + feedback */
+.gcard.in,.stage.in{animation:cardin .3s ease both;}
+@keyframes cardin{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.gopts{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;max-width:460px;margin-left:auto;margin-right:auto;}
+.gopts .game-btn{flex:1 1 140px;}
+.gopts .game-btn.right{border-color:var(--green);background:rgba(16,185,129,.16);}
+.gopts .game-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.14);}
+.gfeed{margin-top:14px;border-radius:14px;padding:13px 15px;font-size:14px;line-height:1.55;background:rgba(var(--tint-rgb),.07);border-left:4px solid var(--teal);}
+.gfeed strong.good{color:var(--green);}.gfeed strong.bad{color:var(--red);}
+.gfeed.is-good{border-left-color:var(--green);}.gfeed.is-bad{border-left-color:var(--red);}
+.gprog{display:flex;gap:6px;margin:0 0 14px;}
+.gprog span{flex:1;height:7px;border-radius:4px;background:rgba(var(--tint-rgb),.14);transition:background .3s;}
+.gprog span.done{background:var(--green);}.gprog span.miss{background:var(--amber);}
+.gscore{text-align:center;padding:14px 0;}
+.gscore .big{font-size:48px;font-weight:800;color:var(--teal);font-family:var(--font-head);line-height:1.1;}
+.gscore .stars{font-size:26px;letter-spacing:4px;margin:4px 0;}
+/* password lab */
+.login{padding:20px;max-width:440px;margin:0 auto;}
+.login h4{margin:0 0 4px;font-size:18px;font-family:var(--font-head);}
+.login p.sm{margin:0 0 14px;font-size:13px;color:var(--slate-light);}
+.login label.f{display:block;font-weight:700;font-size:13px;margin-bottom:6px;}
+.login input{width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:2px solid var(--border);background:var(--card-bg);color:var(--warm-white);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;}
+.login input:focus{border-color:var(--teal);outline:none;}
+.meter{height:12px;border-radius:10px;background:rgba(var(--tint-rgb),.12);overflow:hidden;margin:14px 0 6px;}
+.meter>span{display:block;height:100%;width:0;border-radius:10px;transition:width .35s ease,background .35s;}
+.meter-label{font-weight:800;font-size:15px;}
+.hackbox{margin-top:14px;background:#0B1220;color:#7CFFB2;border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;}
+.hackbox .dim{color:#7C8AA5;}
+.hackbox strong{color:#fff;font-size:16px;}
+.checks{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:5px;font-size:13.5px;}
+.checks li::before{content:"\25CB  ";color:var(--slate-light);}
+.checks li.ok::before{content:"\2713  ";color:var(--green);font-weight:800;}
+/* passphrase */
+.words{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;min-height:60px;perspective:600px;}
+.word-chip{background:linear-gradient(160deg,var(--teal-glow),transparent),var(--card-bg);border:2px solid var(--teal);border-radius:14px;padding:12px 16px;font-weight:800;font-size:18px;animation:wordflip .5s ease both;box-shadow:0 6px 16px rgba(0,0,0,.2);}
+@keyframes wordflip{from{transform:rotateX(90deg) scale(.8);opacity:0}to{transform:none;opacity:1}}
+.dice{display:inline-block;}
+.dice.roll{animation:diceroll .6s ease;}
+@keyframes diceroll{0%{transform:rotate(0)}50%{transform:rotate(200deg) scale(1.25)}100%{transform:rotate(360deg)}}
+/* day */
+.dayhead{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;}
+.donut{width:170px;height:170px;border-radius:50%;position:relative;flex-shrink:0;box-shadow:0 6px 20px rgba(0,0,0,.25);}
+.donut::after{content:"";position:absolute;inset:28px;border-radius:50%;background:var(--card-bg);}
+.donut-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;font-weight:800;text-align:center;line-height:1.2;}
+.donut-mid small{font-weight:600;color:var(--slate-light);font-size:12px;}
+.slices{flex:1 1 280px;}
+.slice{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:10px;margin:4px 0;font-size:14px;font-weight:700;}
+.slice label{display:flex;align-items:center;gap:8px;}
+.slice .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.slice input[type=range]{width:100%;min-height:44px;}
+.slice output{font-weight:800;text-align:right;}
+.daytotal{font-weight:800;font-size:15px;text-align:center;margin-top:8px;}
+@media (max-width:520px){.slice{grid-template-columns:1fr 40px;}.slice label{grid-column:1/-1;}}
+@media (prefers-reduced-motion:reduce){.word-chip,.bub,.gcard.in,.stage.in,.dice.roll{animation:none !important;}}
 .callout{border-left:4px solid var(--mod-color,var(--teal));background:var(--teal-glow);border-radius:0 11px 11px 0;padding:12px 16px;margin:14px 0;font-size:14px;line-height:1.65;}
 .callout.warning{border-color:var(--amber);background:rgba(245,158,11,.1);}
 .callout.danger{border-color:var(--red);background:rgba(239,68,68,.09);}
@@ -880,6 +1018,15 @@ body{font-family:var(--font-ui);background:var(--navy);color:var(--warm-white);m
 </head>
 <body>
 <button id="dev-reset" onclick="devReset()" title="DEV: Reset all progress" style="display:none;">&#x21BA; Reset</button>
+
+<!-- Safeguarding lead, shown at the bottom of every working screen -->
+<aside id="dsl-footer" aria-label="Who to talk to at your school">
+  <div id="dslCarouselFooter" class="dsl-footer-inner">
+    <img class="dsl-carousel-photo" alt="" style="display:none">
+    <div class="dsl-carousel-text"></div>
+    <div class="dsl-carousel-dots" aria-hidden="true"></div>
+  </div>
+</aside>
 
 <!-- ACCESSIBILITY -->
 <button id="a11y-toggle" onclick="toggleA11yPanel()" aria-label="Accessibility options" aria-expanded="false" aria-controls="a11y-panel" title="Accessibility options">Aa</button>
@@ -1523,6 +1670,300 @@ document.addEventListener('keydown',function(e){
   }
 });
 
+
+/* ══════════ MINI-GAMES ══════════ */
+function gEsc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function gShuffle(a){a=a.slice();const r=new Uint32Array(a.length);(window.crypto||window.msCrypto).getRandomValues(r);for(let i=a.length-1;i>0;i--){const j=r[i]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const SWIPE_GAMES={
+ upstander:{title:'Be an upstander',help:'Your year group chat has turned nasty. For each idea, decide whether it would actually help.',opts:['Helpful','Not helpful'],
+  win:'You know how to be an upstander. Small, kind actions really do change how bullying plays out.',
+  intro:{who:'Year 9 chat',sub:'24 members',msgs:[['Jordan','lol look at Alex\'s photo 😂'],['Maya','omg 💀 send it to everyone'],['Jordan','nobody tell Alex, just share it']]},
+  cards:[
+  {t:'Take screenshots of the messages and show a trusted adult.',a:0,w:'Evidence helps adults act quickly, and telling someone is never "grassing".'},
+  {t:'Reply with something even meaner to put them in their place.',a:1,w:'It usually makes things worse, and you could end up in trouble too.'},
+  {t:'Message Alex privately: "I saw that. Are you OK?"',a:0,w:'Knowing someone noticed and cares can make a huge difference.'},
+  {t:'Forward the photo on because "everyone is".',a:1,w:'Sharing it makes you part of the bullying, and the photo can spread for ever.'},
+  {t:'Report the photo to the app and block the account.',a:0,w:'Reporting is quiet, quick and often gets content taken down.'},
+  {t:'Ignore it and hope it goes away by itself.',a:1,w:'Staying silent usually lets it carry on. Telling someone you trust is a better first step.'},
+  {t:'Delete everything so you do not have to look at it.',a:1,w:'Save a screenshot first. Evidence helps, and you can block the account afterwards.'}]},
+ shareornot:{title:'Post it or keep it private?',help:'You are about to post. Think about what it gives away before you hit the button.',opts:['Post it','Keep private'],
+  win:'You are good at spotting what gives too much away. Remember that small clues add up.',
+  cards:[
+  {e:'⚽',c1:'#16A34A',c2:'#0EA5E9',cap:'Match day! Up the Reds 🔴',a:0,w:'General interests are fine to share.'},
+  {e:'🏫',c1:'#6366F1',c2:'#EC4899',cap:'First day back in my new blazer!',loc:'📍 Outside Oakfield School',a:1,w:'The uniform and the gates show where you are and when. Easy for a stranger to find you.'},
+  {e:'🏠',c1:'#F59E0B',c2:'#EF4444',cap:'We finally moved in! 12 Oak Lane, Maidstone',a:1,w:'Never post your home address. Keep it for people you know and trust in real life.'},
+  {e:'🎮',c1:'#8B5CF6',c2:'#06B6D4',cap:'New avatar for the squad. GG!',who:'ShadowFox_77',a:0,w:'A nickname and a cartoon avatar are exactly what nicknames are for.'},
+  {e:'📱',c1:'#0EA5E9',c2:'#10B981',cap:'Anyone want to chat? Text me on 07700 900123',a:1,w:'Anyone can copy a public phone number. Share numbers privately with people you know.'},
+  {e:'🗓️',c1:'#EC4899',c2:'#F59E0B',cap:'My timetable this term, so jealous of my free periods',a:1,w:'It tells a stranger exactly where you will be, and when.'},
+  {e:'🐶',c1:'#F59E0B',c2:'#84CC16',cap:'Biscuit has opinions about the sofa 😂',a:0,w:'Fine. Just check nothing in the background shows where you live.'}]},
+ redflag:{title:'Message requests',help:'Strangers can message you. Is each one a red flag, or probably fine?',opts:['Red flag','Probably fine'],
+  win:'Trust that uneasy feeling. If something seems off, tell a trusted adult or report it.',
+  cards:[
+  {who:'alex_gamer_22',meta:'Joined 2 weeks ago · 0 mutual friends',m:'hey! let\'s chat on a different private app, it\'s way better there 😉',a:0,w:'Groomers move chats somewhere less safe. Say no and tell an adult.'},
+  {who:'ella.m',meta:'In your club · 12 mutual friends',m:'Hey, saw you at club! Can I follow you?',a:1,w:'You know her in real life, which makes this very different.'},
+  {who:'joe_1999x',meta:'Joined last month · 1 mutual friend',m:'you\'re so mature for your age. our little secret ok? don\'t tell your parents',a:0,w:'Secrets are a big warning sign. Tell a trusted adult straight away.'},
+  {who:'prize_king_official',meta:'4,012 followers · 3 posts · no photo',m:'You\'ve WON a £50 gift card! Claim now: bit.ly/win-now',a:0,w:'Fake accounts and scams look like this. Do not click.'},
+  {who:'tom.b',meta:'Same football team · 20 mutual friends',m:'Great game today! Posting the team photo, ok to tag you?',a:1,w:'Fine. You know him, and he asked first.'},
+  {who:'gamegifts_pro',meta:'Joined last week · 0 mutual friends',m:'I\'ll send you 1000 coins if you send me a selfie, deal?',a:0,w:'Gifts in return for photos is a classic grooming tactic. Block, report and tell an adult.'},
+  {who:'kyle_the_lad',meta:'In your game lobby · not someone you know',m:'which school are u at? what year? where do u live roughly',a:0,w:'They are piecing together who and where you are. Do not answer.'},
+  {who:'Priya (Year 8)',meta:'In your class · 31 mutual friends',m:'Added you to the class chat for the homework 👍',a:1,w:'That is normal. Just remember the usual rules in any group.'}]},
+ fakeornot:{title:'Your feed',help:'These are all over your feed. Would you share them, or check first?',opts:['Looks reliable','Check first'],
+  win:'Checking takes thirty seconds and stops you spreading something false.',
+  cards:[
+  {src:'TheDailyShock',h:'@dailyshock',e:'😱',c1:'#EF4444',c2:'#F59E0B',t:'SHOCKING!! Doctors HATE this one trick. Number 7 will AMAZE you!',sh:'8.4k shares',a:1,w:'Shouting and clickbait are often used to get clicks, not tell the truth.'},
+  {src:'Maidstone News Online',h:'@maidstonenews',v:1,e:'🚌',c1:'#0EA5E9',c2:'#6366F1',t:'Council confirms new number 12 bus route from January. By Priya Shah, 4 Oct. Full timetable and sources linked.',sh:'312 shares',a:0,w:'Looks reliable: named reporter, date, and sources. It is still worth reading more than the headline.'},
+  {src:'celeb_fan_zone',h:'@celeb_fan_zone',e:'🌟',c1:'#EC4899',c2:'#8B5CF6',t:'OMG look what she just posted!! (screenshot, no link to the real post)',sh:'21k shares',a:1,w:'Screenshots are very easy to fake. Find the original post.'},
+  {src:'BreakingNOW',h:'@breakingnow_real',e:'🚨',c1:'#DC2626',c2:'#7C3AED',t:'SHARE before they DELETE this!!! They don\'t want you to know!!',sh:'45k shares',a:1,w:'Pressure to share quickly is a trick. Slow down.'},
+  {src:'NatureWorld',h:'@natureworld',e:'🦈',c1:'#0EA5E9',c2:'#1E3A8A',t:'A shark swimming along the motorway after the floods!',sh:'96k shares',a:1,w:'A famous fake that comes back after every flood. Search before you share.'},
+  {src:'NHS',h:'@NHSuk',v:1,e:'🏥',c1:'#005EB8',c2:'#00A9CE',t:'Struggling to sleep? Our guide to getting a better night\'s rest.',sh:'1.2k shares',a:0,w:'Looks reliable. The NHS is a trusted source for health information.'},
+  {src:'Dave Smith',h:'@dave_s_1987',e:'🗣️',c1:'#6B7280',c2:'#374151',t:'My mate\'s cousin works there and says it\'s TRUE. No source but 10,000 people shared it!',sh:'10k shares',a:1,w:'Lots of shares does not make something true.'}]}
+};
+const INBOX={
+ title:'Check your inbox',
+ help:'Six messages have just arrived. Open each one, look closely, then decide: real, or scam?',
+ win:'Scammers rely on you being in a hurry. Slow down, check the sender and the link, and go to the real site yourself.',
+ mails:[
+ {id:1,n:'SwiftParcel Delivery',addr:'noreply@swiftparcel-redeliver.co',col:'#F59E0B',time:'09:12',sub:'Parcel on hold - action required',pre:'We tried to deliver your parcel today...',body:['Hello customer,','We tried to deliver your parcel today but nobody was home. To rearrange delivery please pay a small redelivery fee of £1.99 within 24 hours or it will be returned.'],cta:'Rearrange my delivery',url:'https://swiftparcel-redeliver.co/pay-now',scam:true,w:'A fee, a 24-hour deadline, "Hello customer" instead of your name, and a web address that is not the real company. Classic parcel scam.'},
+ {id:2,n:'StreamBox Billing',addr:'billing@streambox-accounts.net',col:'#EF4444',time:'08:47',sub:'Your account will be closed in 24 hours',pre:'We could not take your last payment...',body:['Dear user,','We could not process your last payment. Your account will be CLOSED in 24 hours unless you update your payment details.'],cta:'Update payment details',url:'https://streambox-accounts.net/update',scam:true,w:'Fake deadlines are designed to stop you thinking. Go to the real app yourself instead of clicking.'},
+ {id:3,n:'Maya R',addr:'maya.r.2009@mailbox.example',col:'#EC4899',time:'Yesterday',sub:'lol is this you??',pre:'lol is this you?? 😂 bit.ly/x9z',body:['lol is this you?? 😂'],cta:'bit.ly/x9z',url:'http://bit.ly/x9z',scam:true,w:'Hijacked accounts spread links with no real message. Check with your friend in person or on another app before clicking.'},
+ {id:4,n:'PicShare Security',addr:'no-reply@picshare.example',col:'#8B5CF6',time:'Yesterday',sub:'Your PicShare login code',pre:'Your login code is 482 913...',body:['Your PicShare login code is <b>482 913</b>.','You just signed in on a new phone. Never share this code with anyone. If this was not you, change your password in the app.'],cta:null,url:null,scam:false,w:'You asked for it by logging in, and there is no link. It is real. Never read a code out to anyone who asks for it.'},
+ {id:5,n:'PicShare Copyright Team',addr:'appeals@picshare-copyright-support.com',col:'#DC2626',time:'Mon',sub:'Copyright violation: appeal within 12 hours',pre:'Your account has been reported...',body:['Your account has been reported for copyright violation.','Log in using the button below within 12 hours to appeal, or your account will be deleted for ever.'],cta:'Appeal now',url:'https://picshare-copyright-support.com/login',scam:true,w:'Real platforms do not threaten you with a stopwatch. The sender address is not picshare\'s own.'},
+ {id:6,n:'TrainersDirect Orders',addr:'orders@trainersdirect.co.uk',col:'#10B981',time:'Mon',sub:'Order #48213 confirmed',pre:'Thanks for your order of 1 x Black trainers...',body:['Hi Sam,','Thanks for your order of 1 x Black trainers, size 5. Delivery in 3 to 4 days. There is nothing you need to do.'],cta:'View my order',url:'https://trainersdirect.co.uk/orders',scam:false,w:'You ordered it, it uses your name, the address looks right, and it does not ask for anything risky. If you are unsure, go to the shop\'s own site.'}
+ ]
+};
+
+/* shared card-game engine: cfg.stage(card,idx,total) returns the framed scene */
+function gRun(el,cfg,stage,optsLabel){
+  let order,idx,score;
+  function start(){order=gShuffle(cfg.cards).map(c=>Object.assign({},c));idx=0;score=0;render();}
+  function head(){return '<div class="game-head"><span class="game-badge">Mini-game</span><span class="game-title">'+gEsc(cfg.title)+'</span><span class="score-pill" aria-live="polite">Score '+score+'</span></div>';}
+  function render(){
+    if(idx>=order.length){
+      const pct=score/order.length;const stars=pct>=0.85?'★★★':pct>=0.55?'★★☆':'★☆☆';
+      el.innerHTML='<div class="game-head"><span class="game-badge">Mini-game</span><span class="game-title">'+gEsc(cfg.title)+'</span></div><div class="gscore"><div class="stars" aria-hidden="true" style="color:var(--amber)">'+stars+'</div><div class="big">'+score+' / '+order.length+'</div><p>'+gEsc(cfg.win)+'</p></div><div class="game-row" style="justify-content:center"><button type="button" class="game-btn primary" data-act="again">Play again</button></div>';
+      el.querySelector('[data-act=again]').onclick=start;el.querySelector('[data-act=again]').focus();return;
+    }
+    const c=order[idx];
+    el.innerHTML=head()+'<p class="game-help">'+gEsc(cfg.help)+' (optional, just for fun)</p>'+
+      '<div class="gprog" aria-hidden="true">'+order.map((o,i)=>'<span class="'+(i<idx?(o._ok?'done':'miss'):'')+'"></span>').join('')+'</div>'+
+      '<div class="stage in" role="group" aria-label="Card '+(idx+1)+' of '+order.length+'">'+stage(c,idx,order.length,cfg)+'</div>'+
+      '<div class="gopts">'+cfg.opts.map((o,i)=>'<button type="button" class="game-btn" data-i="'+i+'">'+gEsc(o)+'</button>').join('')+'</div>'+
+      '<div class="gfeed" role="status" aria-live="polite" hidden></div>';
+    let answered=false;
+    el.querySelectorAll('.gopts .game-btn').forEach(b=>b.onclick=function(){
+      if(answered)return;answered=true;
+      const pick=Number(b.getAttribute('data-i'));const ok=pick===c.a;c._ok=ok;if(ok)score++;
+      el.querySelectorAll('.gopts .game-btn').forEach(x=>{x.disabled=true;const xi=Number(x.getAttribute('data-i'));if(xi===c.a)x.classList.add('right');else if(xi===pick)x.classList.add('wrong');});
+      el.querySelector('.score-pill').textContent='Score '+score;
+      const f=el.querySelector('.gfeed');f.hidden=false;f.className='gfeed '+(ok?'is-good':'is-bad');
+      f.innerHTML=(ok?'<strong class="good">Yes! </strong>':'<strong class="bad">Not quite. </strong>')+gEsc(c.w)+'<div class="game-row"><button type="button" class="game-btn primary" data-act="next">'+(idx+1>=order.length?'See my score':'Next')+'</button></div>';
+      const n=f.querySelector('[data-act=next]');n.onclick=function(){idx++;render();const first=el.querySelector('.gopts .game-btn, [data-act=again]');if(first)first.focus();};n.focus();
+    });
+  }
+  start();
+}
+const AV_COLS=['#6366F1','#EC4899','#F59E0B','#10B981','#0EA5E9','#8B5CF6','#EF4444'];
+function gAv(name,size){let h=0;for(const ch of name)h=(h*31+ch.charCodeAt(0))%AV_COLS.length;return '<span class="av" style="background:'+AV_COLS[h]+(size?';width:'+size+'px;height:'+size+'px':'')+'" aria-hidden="true">'+gEsc(name.charAt(0).toUpperCase())+'</span>';}
+const STAGES={
+ upstander:(c,i,n,cfg)=>'<div class="phone"><div class="phone-bar">'+gAv(cfg.intro.who)+'<div><b>'+gEsc(cfg.intro.who)+'</b><small>'+gEsc(cfg.intro.sub)+'</small></div></div><div class="thread">'+cfg.intro.msgs.map(m=>'<div class="bub in"><small>'+gEsc(m[0])+'</small>'+gEsc(m[1])+'</div>').join('')+'<div class="bub out"><small>What if you...</small>'+gEsc(c.t)+'</div></div></div>',
+ shareornot:(c)=>'<div class="post"><div class="post-top">'+gAv(c.who||'You')+'<div>'+gEsc(c.who||'You')+'<small>New post · Public</small></div></div><div class="post-img" style="--c1:'+c.c1+';--c2:'+c.c2+'"><span aria-hidden="true">'+c.e+'</span>'+(c.loc?'<span class="loc">'+gEsc(c.loc)+'</span>':'')+'</div><div class="post-cap">'+gEsc(c.cap)+'</div><div class="post-meta"><span>❤️ 0</span><span>💬 0</span><span>👁 Anyone can see this</span></div></div>',
+ redflag:(c)=>'<div class="phone"><div class="phone-bar"><div style="flex:1"><b>Message requests</b><small>1 new request</small></div><span aria-hidden="true">🔔</span></div><div class="profile">'+gAv(c.who,52)+'<div><b>'+gEsc(c.who)+'</b><small>'+gEsc(c.meta)+'</small></div></div><div class="thread"><div class="bub in">'+gEsc(c.m)+'</div></div><div class="hint">You have not replied. What would you do?</div></div>',
+ fakeornot:(c)=>'<div class="fakepost"><div class="post-top">'+gAv(c.src)+'<div>'+gEsc(c.src)+(c.v?' <span class="verified" aria-label="verified account">✓</span>':'')+'<small>'+gEsc(c.h)+'</small></div></div><div class="post-img" style="height:120px;font-size:56px;--c1:'+c.c1+';--c2:'+c.c2+'"><span aria-hidden="true">'+c.e+'</span></div><div class="post-cap">'+gEsc(c.t)+'</div><div class="post-meta"><span>🔁 '+gEsc(c.sh)+'</span><span>💬 Comments</span></div></div>'
+};
+function gInitSwipe(el,cfg,name){gRun(el,cfg,STAGES[name]);}
+
+/* ---- Phishing: a working inbox ---- */
+function gInitInbox(el){
+  const cfg=INBOX;let mails,verdicts,open;
+  function start(){mails=gShuffle(cfg.mails);verdicts={};open=null;render();}
+  function score(){return mails.filter(m=>verdicts[m.id]&&verdicts[m.id].ok).length;}
+  function head(){return '<div class="game-head"><span class="game-badge">Mini-game</span><span class="game-title">'+gEsc(cfg.title)+'</span><span class="score-pill" aria-live="polite">Score '+score()+'</span></div>';}
+  function render(){
+    const done=Object.keys(verdicts).length;
+    if(open===null){
+      if(done===mails.length){
+        const sc=score(),pct=sc/mails.length,stars=pct>=0.85?'★★★':pct>=0.55?'★★☆':'★☆☆';
+        el.innerHTML=head()+'<div class="gscore"><div class="stars" aria-hidden="true" style="color:var(--amber)">'+stars+'</div><div class="big">'+sc+' / '+mails.length+'</div><p>'+gEsc(cfg.win)+'</p></div><div class="game-row" style="justify-content:center"><button type="button" class="game-btn primary" data-act="again">Play again</button></div>';
+        el.querySelector('[data-act=again]').onclick=start;el.querySelector('[data-act=again]').focus();return;
+      }
+      el.innerHTML=head()+'<p class="game-help">'+gEsc(cfg.help)+' (optional, just for fun)</p>'+
+       '<div class="dev"><div class="dev-bar"><i></i><i></i><i></i><span class="url">🔒 mail.example/inbox</span></div>'+
+       '<div class="inbox-top"><span>📥 Inbox</span><small>'+(mails.length-done)+' unread</small></div>'+
+       mails.map(m=>{const v=verdicts[m.id];return '<button type="button" class="mrow'+(v?' read':'')+'" data-id="'+m.id+'">'+gAv(m.n)+'<div class="mb"><div class="snd">'+gEsc(m.n)+'<span>'+gEsc(m.time)+'</span></div><div class="sub">'+gEsc(m.sub)+'</div><div class="pre">'+gEsc(m.pre)+'</div></div>'+(v?'<span class="tag '+(v.ok?'ok':'no')+'">'+(v.ok?'Got it':'Missed')+'</span>':'')+'</button>';}).join('')+'</div>';
+      el.querySelectorAll('.mrow').forEach(b=>b.onclick=()=>{open=Number(b.getAttribute('data-id'));render();});
+      return;
+    }
+    const m=mails.find(x=>x.id===open),v=verdicts[open];
+    el.innerHTML=head()+'<div class="dev"><div class="dev-bar"><i></i><i></i><i></i><span class="url">🔒 mail.example/message/'+m.id+'</span></div><div class="mview">'+
+      '<button type="button" class="mback" data-act="back">‹ Back to inbox</button>'+
+      '<div class="mhead"><h4>'+gEsc(m.sub)+'</h4></div>'+
+      '<div class="mfrom">'+gAv(m.n)+'<div><b>'+gEsc(m.n)+'</b><code>&lt;'+gEsc(m.addr)+'&gt;</code><br><small>To: you · '+gEsc(m.time)+'</small></div></div>'+
+      '<div class="mbody">'+m.body.map(p=>'<p>'+p.replace(/&/g,'&amp;').replace(/<b>/g,'\u0001').replace(/<\/b>/g,'\u0002').replace(/</g,'&lt;').replace(/\u0001/g,'<b>').replace(/\u0002/g,'</b>')+'</p>').join('')+
+      (m.cta?'<button type="button" class="cta" data-url="'+gEsc(m.url)+'">'+gEsc(m.cta)+'</button><div class="statusbar" id="sb" aria-live="polite">Hover over or focus the button to see where the link really goes.</div>':'')+'</div>'+
+      (v?'':'<div class="verdict"><button type="button" class="game-btn real" data-v="0">✅ This is real</button><button type="button" class="game-btn scam" data-v="1">🚩 Report as scam</button></div>')+
+      '<div class="gfeed'+(v?(v.ok?' is-good':' is-bad'):'')+'" role="status" aria-live="polite"'+(v?'':' hidden')+'>'+(v?(v.ok?'<strong class="good">Yes! </strong>':'<strong class="bad">Not quite. </strong>')+gEsc(m.w)+'<div class="game-row"><button type="button" class="game-btn primary" data-act="back">Back to inbox</button></div>':'')+'</div>'+
+      '</div></div>';
+    el.querySelectorAll('[data-act=back]').forEach(b=>b.onclick=()=>{open=null;render();const f=el.querySelector('.mrow');if(f)f.focus();});
+    const cta=el.querySelector('.cta');
+    if(cta){const sb=el.querySelector('#sb');const show=()=>{sb.textContent='Link goes to: '+cta.getAttribute('data-url');};cta.addEventListener('mouseenter',show);cta.addEventListener('focus',show);cta.addEventListener('click',()=>{show();sb.textContent+='   (links are switched off in this game)';});}
+    el.querySelectorAll('.verdict .game-btn').forEach(b=>b.onclick=()=>{
+      const pickScam=b.getAttribute('data-v')==='1';const ok=pickScam===m.scam;
+      verdicts[m.id]={ok};
+      el.querySelectorAll('.verdict .game-btn').forEach(x=>{x.disabled=true;const xs=x.getAttribute('data-v')==='1';if(xs===m.scam)x.classList.add('right');else if(xs===pickScam)x.classList.add('wrong');});
+      el.querySelector('.score-pill').textContent='Score '+score();
+      const f=el.querySelector('.gfeed');f.hidden=false;f.className='gfeed '+(ok?'is-good':'is-bad');
+      f.innerHTML=(ok?'<strong class="good">Yes! </strong>':'<strong class="bad">Not quite. </strong>')+gEsc(m.w)+'<div class="game-row"><button type="button" class="game-btn primary" data-act="back2">Back to inbox</button></div>';
+      const n=f.querySelector('[data-act=back2]');n.onclick=()=>{open=null;render();const fr=el.querySelector('.mrow,[data-act=again]');if(fr)fr.focus();};n.focus();
+    });
+  }
+  start();
+}
+
+/* ---- Password strength tester (nothing typed here is ever stored or sent) ---- */
+const COMMON_PW=['password','123456','12345678','123456789','qwerty','abc123','letmein','iloveyou','admin','welcome','monkey','dragon','football','princess','sunshine','minecraft','roblox','fortnite','password1','111111','000000','1234','12345','login','master','hello','freedom','whatever','trustno1','starwars','pokemon','liverpool','arsenal','chelsea','batman','superman','school','test','qwertyuiop','zxcvbnm','asdfgh','secret','shadow','killer','ginger','cheese','chocolate','summer','london','manchester'];
+function pwAnalyse(p){
+  const lower=p.toLowerCase();
+  const hasL=/[a-z]/.test(p),hasU=/[A-Z]/.test(p),hasD=/\d/.test(p),hasS=/[^A-Za-z0-9]/.test(p);
+  let pool=(hasL?26:0)+(hasU?26:0)+(hasD?10:0)+(hasS?33:0);
+  let common=COMMON_PW.some(w=>lower===w||lower.replace(/[0-9!@#$%^&*._-]+$/,'')===w||lower.replace(/[@4]/g,'a').replace(/[3]/g,'e').replace(/[1!]/g,'i').replace(/[0]/g,'o').replace(/[5$]/g,'s')===w);
+  const seq=/(0123|1234|2345|3456|4567|5678|6789|abcd|bcde|cdef|qwer|wert|erty|asdf|sdfg|zxcv)/.test(lower);
+  const rep=/^(.)\1+$/.test(p)||/(.)\1{3,}/.test(p);
+  let bits=p.length?Math.log2(Math.max(pool,1))*p.length:0;
+  if(seq)bits-=12;if(rep)bits-=14;
+  if(/^[a-z]+\d{1,4}$/i.test(p))bits-=8;
+  bits=Math.max(0,bits);
+  if(common)bits=Math.min(bits,10);
+  const secs=Math.pow(2,bits)/1e10; // a fast attacker: 10 billion guesses a second
+  return {bits,secs,common,checks:[
+    {ok:p.length>=12,t:'At least 12 characters'},
+    {ok:hasL&&hasU,t:'A mix of capital and small letters'},
+    {ok:hasD||hasS,t:'Includes numbers or symbols'},
+    {ok:!common&&!seq&&!rep,t:'Not a common word or pattern'}]};
+}
+function pwTime(s,common){
+  if(common)return 'less than a second (it is on lists hackers try first)';
+  if(s<1)return 'less than a second';
+  if(s<60)return 'about '+Math.round(s)+' seconds';
+  if(s<3600)return 'about '+Math.round(s/60)+' minutes';
+  if(s<86400)return 'about '+Math.round(s/3600)+' hours';
+  if(s<86400*365)return 'about '+Math.round(s/86400)+' days';
+  const y=s/(86400*365);
+  if(y<1000)return 'about '+Math.round(y)+' years';
+  if(y<1e6)return 'about '+Math.round(y/1000).toLocaleString('en-GB')+' thousand years';
+  if(y<1e9)return 'about '+Math.round(y/1e6).toLocaleString('en-GB')+' million years';
+  return 'billions of years';
+}
+function gInitPwMeter(el){
+  el.innerHTML='<div class="game-head"><span class="game-badge">Try it</span><span class="game-title">Password lab</span></div>'+
+   '<p class="game-help">Type a made-up password and watch what a hacker\'s computer would need. Try <em>football1</em>, then <em>Tr0ub4dor&amp;3</em>, then four random words. <strong>Do not type a password you really use.</strong></p>'+
+   '<div class="dev"><div class="dev-bar"><i></i><i></i><i></i><span class="url">🔒 coolgame.example/sign-up</span></div><div class="login">'+
+   '<h4>Create your account</h4><p class="sm">Choose a password to protect it.</p>'+
+   '<label for="pwm-in" class="f">Password</label><input id="pwm-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a test password">'+
+   '<div class="meter" aria-hidden="true"><span id="pwm-bar"></span></div><div class="meter-label" id="pwm-label" role="status" aria-live="polite">Start typing...</div>'+
+   '<ul class="checks" id="pwm-checks"></ul>'+
+   '<div class="hackbox" aria-live="polite"><div class="dim">$ hacker.exe --guess-speed 10,000,000,000/sec</div><div id="pwm-crack">Waiting for a password...</div></div></div></div>'+
+   '<p class="game-privacy">This runs only on your device. Nothing you type here is saved or sent anywhere. The time is a rough guess for a fast computer.</p>';
+  const inp=el.querySelector('#pwm-in'),bar=el.querySelector('#pwm-bar'),lab=el.querySelector('#pwm-label'),cr=el.querySelector('#pwm-crack'),ch=el.querySelector('#pwm-checks');
+  function upd(){
+    const p=inp.value;
+    if(!p){bar.style.width='0';lab.textContent='Start typing...';lab.style.color='';cr.textContent='Waiting for a password...';ch.innerHTML='';return;}
+    const a=pwAnalyse(p);let lvl,col,w;
+    if(a.bits<28){lvl='Very weak';col='var(--red)';w=15;}
+    else if(a.bits<45){lvl='Weak';col='var(--red)';w=35;}
+    else if(a.bits<60){lvl='Okay';col='var(--amber)';w=58;}
+    else if(a.bits<80){lvl='Strong';col='var(--green)';w=82;}
+    else{lvl='Very strong';col='var(--green)';w=100;}
+    bar.style.width=w+'%';bar.style.background=col;lab.textContent=lvl;lab.style.color=col;
+    cr.innerHTML='Cracked in: <strong>'+gEsc(pwTime(a.secs,a.common))+'</strong>';
+    ch.innerHTML=a.checks.map(c=>'<li class="'+(c.ok?'ok':'')+'">'+gEsc(c.t)+'</li>').join('');
+  }
+  inp.addEventListener('input',upd);
+}
+
+/* ---- Passphrase roller ---- */
+const PP_WORDS=['purple','fence','guitar','moon','tiger','pancake','rocket','castle','banana','thunder','window','pencil','dragon','forest','marble','jelly','copper','sailor','window','tunnel','lemon','cactus','pirate','orbit','velvet','whistle','garden','bridge','pepper','comet','anchor','button','meadow','saddle','walrus','puzzle','hammer','ribbon','candle','igloo','magnet','ladder','otter','quartz','tricycle','biscuit','harbour','mitten','nickel','parrot','sketch','trumpet','umbrella','violin','wombat','yogurt','zipper','blanket','cinema','donkey','engine','feather','glacier','hedgehog','island','jigsaw','kettle','lantern'];
+function gInitPassphrase(el){
+  el.innerHTML='<div class="game-head"><span class="game-badge">Try it</span><span class="game-title">Roll a passphrase</span></div>'+
+   '<p class="game-help">Four random words are long, strong and easy to remember. Roll the dice, then picture a silly story that links the words together.</p>'+
+   '<div class="words" id="pp-words" role="status" aria-live="polite"></div>'+
+   '<div class="hackbox"><div class="dim">$ hacker.exe --guess-speed 10,000,000,000/sec</div><div id="pp-crack"></div></div>'+
+   '<div class="game-row"><button type="button" class="game-btn primary" id="pp-roll"><span class="dice" aria-hidden="true">🎲</span> Roll 4 words</button></div>'+
+   '<p class="game-privacy">These are just examples. Make up your own set rather than using one of these, and never share it.</p>';
+  const out=el.querySelector('#pp-words'),cr=el.querySelector('#pp-crack'),dice=el.querySelector('.dice');
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.hasAttribute('data-a11y-motion');
+  function roll(){
+    const n=new Uint32Array(4);window.crypto.getRandomValues(n);
+    const pick=Array.from(n).map(v=>PP_WORDS[v%PP_WORDS.length]);
+    const show=()=>{
+      out.innerHTML=pick.map((w,i)=>'<span class="word-chip" style="animation-delay:'+(i*0.14)+'s">'+gEsc(w)+'</span>').join('');
+      const a=pwAnalyse(pick.join('-'));
+      cr.innerHTML=gEsc(pick.join('-'))+'<br>Cracked in: <strong>'+gEsc(pwTime(a.secs,false))+'</strong>';
+    };
+    if(reduce){show();return;}
+    dice.classList.remove('roll');void dice.offsetWidth;dice.classList.add('roll');
+    let k=0;const t=setInterval(()=>{out.innerHTML=[0,1,2,3].map(()=>'<span class="word-chip" style="animation:none">'+gEsc(PP_WORDS[Math.floor(Math.random()*PP_WORDS.length)])+'</span>').join('');if(++k>=5){clearInterval(t);show();}},90);
+  }
+  el.querySelector('#pp-roll').onclick=roll;roll();
+}
+
+/* ---- Balance your day ---- */
+function gInitDay(el){
+  const parts=[['😴 Sleep',8,'#6366F1'],['📚 School & homework',7,'#F59E0B'],['📱 Screens for fun',3,'#EF4444'],['🚴 Moving & outside',2,'#10B981'],['💛 Friends & family',4,'#EC4899']];
+  el.innerHTML='<div class="game-head"><span class="game-badge">Try it</span><span class="game-title">Design your ideal day</span></div>'+
+   '<p class="game-help">You get 24 hours. Slide each one to plan a day that works for you. There are no wrong answers, just a few tips.</p>'+
+   '<div class="dayhead"><div class="donut" id="donut" aria-hidden="true"><div class="donut-mid"><span id="donut-n">24</span><small>hours planned</small></div></div><div class="slices">'+
+   parts.map((p,i)=>'<div class="slice"><label for="day'+i+'"><span class="dot" style="background:'+p[2]+'"></span>'+gEsc(p[0])+'</label><input type="range" id="day'+i+'" min="0" max="14" step="1" value="'+p[1]+'"><output for="day'+i+'" id="dayo'+i+'">'+p[1]+'h</output></div>').join('')+'</div></div>'+
+   '<div class="daytotal" id="daytot" role="status" aria-live="polite"></div><div class="gfeed" id="dayfeed" style="max-width:520px;margin-left:auto;margin-right:auto"></div>';
+  const ins=parts.map((_,i)=>el.querySelector('#day'+i));
+  function upd(){
+    const v=ins.map(i=>Number(i.value));const tot=v.reduce((a,b)=>a+b,0);
+    v.forEach((x,i)=>{el.querySelector('#dayo'+i).textContent=x+'h';});
+    let acc=0;const stops=[];v.forEach((x,i)=>{const a=acc/Math.max(tot,24)*360,b=(acc+x)/Math.max(tot,24)*360;stops.push(parts[i][2]+' '+a+'deg '+b+'deg');acc+=x;});
+    if(tot<24)stops.push('rgba(128,128,128,.25) '+(tot/24*360)+'deg 360deg');
+    el.querySelector('#donut').style.background='conic-gradient('+stops.join(',')+')';
+    el.querySelector('#donut-n').textContent=tot;
+    const left=24-tot;const t=el.querySelector('#daytot');
+    t.textContent=left===0?'✅ Perfect, that is all 24 hours.':(left>0?left+' hours still to plan.':Math.abs(left)+' hours too many. There are only 24 in a day!');
+    const tips=[];
+    if(v[0]<8)tips.push('😴 Most teenagers need 8 to 10 hours of sleep. Tired brains find everything harder, including feeling good.');
+    if(v[2]>=5)tips.push('📱 That is a lot of screen time for fun. Could some of it become time with friends or outside?');
+    if(v[3]<1)tips.push('🚴 Even a short walk or some fresh air can lift your mood.');
+    if(v[4]<1)tips.push('💛 Time with people you care about matters. Even a quick chat counts.');
+    if(!tips.length&&left===0)tips.push('🌟 That looks like a nicely balanced day. Nice planning!');
+    el.querySelector('#dayfeed').innerHTML=tips.map(x=>'<div style="margin:3px 0">'+gEsc(x)+'</div>').join('');
+  }
+  ins.forEach(i=>i.addEventListener('input',upd));upd();
+}
+
+function initGames(root){
+  (root||document).querySelectorAll('.game[data-game]').forEach(el=>{
+    if(el.getAttribute('data-ready'))return;el.setAttribute('data-ready','1');
+    const n=el.getAttribute('data-game');
+    if(n==='spamscam')gInitInbox(el);
+    else if(SWIPE_GAMES[n])gInitSwipe(el,SWIPE_GAMES[n],n);
+    else if(n==='pwmeter')gInitPwMeter(el);
+    else if(n==='passphrase')gInitPassphrase(el);
+    else if(n==='day')gInitDay(el);
+  });
+}
+
+/** Adds the game slides to each module (before the "quick check" slide), once. */
+function installGameSlides(){
+  if(window._gamesInstalled)return;window._gamesInstalled=true;
+  const g=(n)=>'<div class="game" data-game="'+n+'"></div>';
+  const mk=(mod,eyebrow,title,intro,game)=>({type:'content',html:'<div class="slide-eyebrow">'+mod+' · '+eyebrow+'</div><h2>'+title+'</h2><p>'+intro+'</p>'+g(game)});
+  const put=(id,slide,at)=>{const m=modules.find(x=>x.id===id);if(!m)return;const q=m.slides.findIndex(s=>s.type==='quiz');const pos=(at==null)?Math.max(0,(q<0?m.slides.length:q)-1):at;m.slides.splice(pos,0,slide);};
+  put('cyberbullying',mk('Module 1','Play','Be an upstander','Time to put it into practice. This is a quick game, and you cannot get it wrong for long.','upstander'));
+  put('passwords',mk('Module 2','Password lab','Test a password','See for yourself why length and mixing matters.','pwmeter'),2);
+  put('passwords',mk('Module 2','Password lab','Roll a passphrase','The easiest strong password to remember is a handful of random words.','passphrase'),3);
+  put('privacy',mk('Module 3','Play','Share it or keep it private?','Decide what gives too much away.','shareornot'));
+  put('socialmedia',mk('Module 4','Play','Spot the red flags','Some people are not who they say they are. Can you spot the warning signs?','redflag'));
+  put('phishing',mk('Module 5','Play','Check your inbox','Six messages have just arrived. Which ones are real?','spamscam'));
+  put('misinformation',mk('Module 6','Play','Think before you share','Can you tell what to trust and what to check first?','fakeornot'));
+  put('wellbeing',mk('Module 7','Play','Design your ideal day','Plan a day that works for you.','day'));
+}
+
 /* ── Read aloud (browser speech, nothing leaves the device) ── */
 function stopReadAloud(){
   try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
@@ -1814,7 +2255,7 @@ function buildFinalQuizCallout(){
  * =========================================================================
  * Manages UI transition flows between welcome, dashboard, module, and quiz views.
  */
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);a11yAfterRender();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.body.setAttribute('data-screen',id);window.scrollTo(0,0);a11yAfterRender();}
 
 function showAccessError(msg){
   const el=document.getElementById('access-error');
@@ -2260,6 +2701,7 @@ function renderCurrentSlide(){
     mountEmbeddedActivities(slide,area);
     initRevealCards(area);
     initChats(area);
+    initGames(area);
     checkReflectionGate();
     mountDslCarousel('dslCarouselModule1',currentDslTeamOrFallback());
   } else if(slide.type==='quiz'){
@@ -3950,6 +4392,7 @@ function currentDslTeamOrFallback(){
  * timer the moment its container disappears (e.g. the student moved to a
  * different slide), so nothing keeps ticking in the background forever. */
 const dslCarouselIntervals={};
+function dslEsc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function mountDslCarousel(containerId,dslTeam){
   if(dslCarouselIntervals[containerId]){clearInterval(dslCarouselIntervals[containerId]);delete dslCarouselIntervals[containerId];}
   const el=document.getElementById(containerId);
@@ -3970,12 +4413,12 @@ function mountDslCarousel(containerId,dslTeam){
     }
     const d=team[i];
     if(photoEl){
-      if(d.photoUrl){photoEl.src=d.photoUrl;photoEl.alt=d.name||'';photoEl.style.display='block';}
+      if(d.photoUrl&&/^https:\/\//.test(d.photoUrl)){photoEl.src=d.photoUrl;photoEl.alt=d.name||'';photoEl.style.display='block';}
       else{photoEl.style.display='none';}
     }
     if(textEl){
-      const name=d.name||'your Designated Safeguarding Lead';
-      const roomPart=d.room?(' Find them at: <strong>'+d.room+'</strong>.'):'';
+      const name=dslEsc(d.name||'your Designated Safeguarding Lead');
+      const roomPart=d.room?(' Find them at: <strong>'+dslEsc(d.room)+'</strong>.'):'';
       textEl.innerHTML='If anything online worries you, tell <strong>'+name+'</strong>, your school\'s Designated Safeguarding Lead.'+roomPart;
     }
     if(dotsEl){
@@ -4000,7 +4443,9 @@ function mountDslCarousel(containerId,dslTeam){
 
 // On load  -  if returning student, skip welcome screen
 function renderWelcomeDslCard(){
-  mountDslCarousel('dslCarouselWelcome',currentDslTeamOrFallback());
+  const team=currentDslTeamOrFallback();
+  mountDslCarousel('dslCarouselWelcome',team);
+  mountDslCarousel('dslCarouselFooter',team);
 }
 
 window.addEventListener('DOMContentLoaded', function(){
@@ -4010,6 +4455,7 @@ window.addEventListener('DOMContentLoaded', function(){
     const devBtn=document.getElementById('dev-reset');
     if(devBtn) devBtn.style.display='';
   }
+  installGameSlides();
   if(TRIAL_MODE){ startTrialPreview(); return; }
   renderWelcomeDslCard();
   // Auto-extract ?code= from URL — this always skips the code-entry screen (magic link)
