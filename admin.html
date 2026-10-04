@@ -270,7 +270,7 @@ async function toggleOrders(){
   const nextPaused = !ordersPausedState;
   btn.disabled = true; btn.textContent = 'Saving…';
   try{
-    const res = await fetch('/api/admin-toggle-orders', {
+    const res = await fetch('/api/admin-toggle-site', {
       method: 'POST',
       headers: {'Content-Type':'application/json', 'x-admin-key': key},
       body: JSON.stringify({ paused: nextPaused })

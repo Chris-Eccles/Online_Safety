@@ -1,5 +1,5 @@
 /**
- * POST /api/admin-toggle-site
+ * POST /api/admin-toggle-site  (also handles the orders on/off switch)
  * ============================================================================
  * Switches the whole marketing site "offline" - every page that loads
  * js/script.js (home, order, curriculum, privacy, security, gdpr, cookies,
@@ -30,15 +30,21 @@ module.exports = async (req, res) => {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const offline = !!body.offline;
+    // One endpoint for both switches (Vercel's free plan allows only 12 functions):
+    //   { offline: true/false } -> takes the whole site offline / back online
+    //   { paused:  true/false } -> stops / resumes taking new orders
+    const update = { updated_at: new Date().toISOString() };
+    if (typeof body.offline === 'boolean') update.site_offline = body.offline;
+    if (typeof body.paused === 'boolean') update.orders_paused = body.paused;
+    if (Object.keys(update).length === 1) {
+      res.status(400).json({ error: 'Send offline or paused as true/false.' });
+      return;
+    }
 
-    const { error } = await supabase
-      .from('site_settings')
-      .update({ site_offline: offline, updated_at: new Date().toISOString() })
-      .eq('id', true);
+    const { error } = await supabase.from('site_settings').update(update).eq('id', true);
     if (error) throw error;
 
-    res.status(200).json({ ok: true, siteOffline: offline });
+    res.status(200).json({ ok: true, siteOffline: update.site_offline, ordersPaused: update.orders_paused });
   } catch (err) {
     console.error('admin-toggle-site failed:', err);
     res.status(500).json({ error: err.message || String(err) });
