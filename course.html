@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Online Ready</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
@@ -87,6 +88,16 @@
     flag('data-a11y-motion',p.motion);
     flag('data-a11y-ruler',p.ruler);
   }
+
+  /* When this page is the demo embedded on the marketing site, nothing inside it may move the parent page
+   * (focus() and scrollIntoView() both scroll the outer page, which dropped visitors straight onto the demo). */
+  try{
+    if(window.self!==window.top){
+      var _f=HTMLElement.prototype.focus;
+      HTMLElement.prototype.focus=function(o){o=o||{};o.preventScroll=true;return _f.call(this,o);};
+      Element.prototype.scrollIntoView=function(){};
+    }
+  }catch(e){}
   window.__a11y={KEY:KEY,PRESETS:PRESETS,load:load,apply:apply,contrast:contrast,osTheme:osTheme};
   try{apply(load());}catch(e){}
 })();

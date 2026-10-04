@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /mat-dashboard
+Disallow: /course
+
+Sitemap: https://abity.co.uk/sitemap.xml
