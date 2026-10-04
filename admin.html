@@ -50,6 +50,10 @@
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #00C9B1;outline-offset:2px;}
 .link-btn{background:none;border:0;padding:6px 0;margin:0;color:inherit;font:inherit;font-weight:700;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px;min-height:32px;}
+.tree-btn{background:transparent;border:0;color:var(--teal,#00C9B1);cursor:pointer;font-size:16px;min-width:32px;min-height:32px;margin-right:2px;vertical-align:middle;}
+.tree-row td{background:rgba(255,255,255,.03);}
+.tree-cell{padding-left:28px !important;}
+.tree-line{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--text-faint,#8892a6);}
 </style>
 </head>
 <body>
@@ -367,6 +371,9 @@ function escapeHtml(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+const openTrees = {};
+function toggleTree(idx){ const o = allOrders[idx]; if(!o) return; openTrees[o.id] = !openTrees[o.id]; render(); }
+
 function render(){
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
   const statusFilter = document.getElementById('statusFilter').value;
@@ -397,7 +404,7 @@ function render(){
       : '<span style="color:var(--slate);">—</span>';
     html += '<tr>' +
       '<td class="mono">' + fmtDate(o.created_at) + '</td>' +
-      '<td class="school-cell"><strong>' + escapeHtml(o.school_name) + '</strong><div>' + escapeHtml(o.teacher_name) + ' · ' + escapeHtml(o.teacher_email) + '</div></td>' +
+      '<td class="school-cell">' + (o.trust_children && o.trust_children.length ? '<button type="button" class="tree-btn" onclick="toggleTree(' + dslIdx + ')" aria-expanded="' + (openTrees[o.id] ? 'true' : 'false') + '" aria-label="Show seats by school">' + (openTrees[o.id] ? '\u25BE' : '\u25B8') + '</button>' : '') + '<strong>' + escapeHtml(o.school_name) + '</strong><div>' + escapeHtml(o.teacher_name) + ' · ' + escapeHtml(o.teacher_email) + '</div></td>' +
       '<td>' + (o.pricing_option === 'whole-school' ? 'Whole school/trust' : 'Per student (£1)') + '</td>' +
       '<td>' + (o.seats_requested != null ? o.seats_requested : '—') + '</td>' +
       '<td>' + (o.seats_used != null ? (o.seats_used + ' / ' + (o.seats_allowed != null ? o.seats_allowed : '?')) : '—') + (o.trust_schools ? '<div style="font-size:11px;color:var(--text-faint,#8892a6);">across ' + o.trust_schools + ' schools</div>' : '') + '</td>' +
@@ -407,6 +414,19 @@ function render(){
       '<td class="mono">' + (o.payment_ref ? escapeHtml(o.payment_ref) : (o.po_number ? escapeHtml(o.po_number) : '—')) + '</td>' +
       '<td>' + dslCell + '</td>' +
       '</tr>';
+    if(o.trust_children && o.trust_children.length && openTrees[o.id]){
+      const kids = o.trust_children.slice().sort((x,y) => String(x.school_name).localeCompare(String(y.school_name)));
+      const assigned = kids.reduce((n,k) => n + (k.seats_allowed || 0), 0);
+      const unassigned = Math.max((o.seats_allowed || 0) - assigned, 0);
+      kids.forEach((k, i) => {
+        const last = i === kids.length - 1 && !unassigned;
+        html += '<tr class="tree-row"><td></td><td class="school-cell tree-cell"><span class="tree-line">' + (last ? '\u2514\u2500' : '\u251C\u2500') + '</span> <strong>' + escapeHtml(k.school_name) + '</strong><div>' + escapeHtml(k.display_name) + ' \u00B7 code <span class="mono">' + escapeHtml(k.code) + '</span></div></td><td></td><td></td>' +
+          '<td>' + (k.seats_allowed > 0 ? (k.seats_used + ' / ' + k.seats_allowed) : (k.seats_used + ' / shared pool')) + '</td><td></td><td></td><td></td></tr>';
+      });
+      if(unassigned){
+        html += '<tr class="tree-row"><td></td><td class="school-cell tree-cell"><span class="tree-line">\u2514\u2500</span> <em>Unassigned (shared by schools with no number set)</em></td><td></td><td></td><td>' + unassigned + ' seats</td><td></td><td></td><td></td></tr>';
+      }
+    }
   });
 
   html += '</tbody></table>';

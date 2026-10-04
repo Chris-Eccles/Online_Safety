@@ -351,7 +351,7 @@ module.exports = async (req, res) => {
         schoolName: V.line(body.schoolName, 'school name', { max: 150 }),
         matName: isMatIn ? V.line(body.matName, 'trust name', { max: 150 }) : '',
         financeEmail: V.email(body.financeEmail, 'finance email'),
-        schoolAddress: V.block(body.schoolAddress, 'school address', { max: 400, min: 10 }),
+        schoolAddress: V.block(body.schoolAddress, 'school address', { max: 400, min: 5 }),
         seats: V.seats(body.seats),
         po: V.line(body.po, 'PO number', { max: 50, required: false }),
         discountCode: V.line(body.discountCode, 'discount code', { max: 40, required: false }),

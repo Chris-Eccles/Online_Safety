@@ -52,14 +52,14 @@ module.exports = async (req, res) => {
       if (trustIds.length) {
         const [{ data: trusts }, { data: members }] = await Promise.all([
           supabase.from('trusts').select('id, seats_allocated').in('id', trustIds),
-          supabase.from('license_keys').select('trust_id, seats_used').in('trust_id', trustIds)
+          supabase.from('license_keys').select('trust_id, code, school_name, display_name, seats_allowed, seats_used').in('trust_id', trustIds)
         ]);
-        const allocated = {}, used = {}, schools = {};
+        const allocated = {}, used = {}, schools = {}, children = {};
         (trusts || []).forEach(t => { allocated[t.id] = t.seats_allocated; });
-        (members || []).forEach(m => { used[m.trust_id] = (used[m.trust_id] || 0) + (m.seats_used || 0); schools[m.trust_id] = (schools[m.trust_id] || 0) + 1; });
+        (members || []).forEach(m => { used[m.trust_id] = (used[m.trust_id] || 0) + (m.seats_used || 0); schools[m.trust_id] = (schools[m.trust_id] || 0) + 1; (children[m.trust_id] = children[m.trust_id] || []).push({ code: m.code, school_name: m.school_name, display_name: m.display_name, seats_allowed: m.seats_allowed || 0, seats_used: m.seats_used || 0 }); });
         Object.keys(usageByCode).forEach(c => {
           const u = usageByCode[c];
-          if (u.trust_id) { u.seats_allowed = allocated[u.trust_id]; u.seats_used = used[u.trust_id] || 0; u.trust_schools = schools[u.trust_id] || 0; }
+          if (u.trust_id) { u.seats_allowed = allocated[u.trust_id]; u.seats_used = used[u.trust_id] || 0; u.trust_schools = schools[u.trust_id] || 0; u.trust_children = children[u.trust_id] || []; }
         });
       }
     }
@@ -69,6 +69,7 @@ module.exports = async (req, res) => {
       seats_allowed: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_allowed : null,
       seats_used: usageByCode[o.license_code] ? usageByCode[o.license_code].seats_used : null,
       trust_schools: usageByCode[o.license_code] ? (usageByCode[o.license_code].trust_schools || null) : null,
+      trust_children: usageByCode[o.license_code] ? (usageByCode[o.license_code].trust_children || null) : null,
       dsl_team: usageByCode[o.license_code] ? (usageByCode[o.license_code].dsl_team || []) : []
     }));
 
