@@ -41,7 +41,17 @@ mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit;pad
 .who{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .choice p{margin:0;color:var(--muted)}
 .go{margin-top:auto;font-weight:700;color:var(--accent)}
-footer{margin-top:28px;font-size:.85rem;color:var(--muted)}
+footer{margin-top:28px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.adm{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:none;padding:6px 4px;cursor:pointer;opacity:.55}
+.adm:hover,.adm:focus-visible{opacity:1;text-decoration:underline}
+dialog{border:none;border-radius:16px;padding:24px;width:min(380px,calc(100% - 32px));background:var(--paper);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,16,26,.55)}
+dialog h3{font-family:var(--f-display);font-weight:800;font-size:1.4rem;margin:0 0 12px}
+dialog input{font:inherit;font-size:18px;width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+dialog input:focus{outline:none;border-color:var(--accent)}
+.dbtn{font:inherit;font-weight:700;display:block;width:100%;text-align:center;text-decoration:none;border-radius:10px;padding:11px 14px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;margin-top:10px}
+.dbtn.ghost{background:transparent;color:var(--ink)}
+.err{color:#b4372f;min-height:1.3em;margin:8px 0 0;font-size:.92rem}
 @media (prefers-reduced-motion:reduce){.choice{transition:none}}
 </style>
 </head>
@@ -68,7 +78,58 @@ footer{margin-top:28px;font-size:.85rem;color:var(--muted)}
     </a>
   </div>
 
-  <footer>abity.co.uk</footer>
+  <footer><span>abity.co.uk</span><button class="adm" id="admBtn" type="button">Admin</button></footer>
 </main>
+
+<dialog id="admDlg">
+  <form id="admForm" autocomplete="off">
+    <h3>Admin</h3>
+    <div id="admAsk">
+      <input id="admPw" type="password" inputmode="numeric" aria-label="Admin password" placeholder="Admin password">
+      <p class="err" id="admErr" role="alert"></p>
+      <button class="dbtn" id="admGo">Sign in</button>
+      <button class="dbtn ghost" type="button" data-close>Cancel</button>
+    </div>
+    <div id="admLinks" hidden>
+      <a class="dbtn" id="toCpd" href="https://cpd.abity.co.uk/admin">Staff CPD admin</a>
+      <a class="dbtn" id="toCs" href="https://hw.abity.co.uk/admin">CS Online admin</a>
+      <button class="dbtn ghost" type="button" data-close>Close</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+/* Admin: checks the password with the CPD server, then opens either admin page already signed in.
+   What is handed over goes after "#" in the address, which browsers never send to a server, and each
+   admin page wipes it from the address bar straight away. */
+(function(){
+  var API = "https://gnxgefgjsgtqgclyvblh.supabase.co/functions/v1/cpd-api";
+  var dlg = document.getElementById("admDlg"), pw = document.getElementById("admPw"), err = document.getElementById("admErr");
+  function reset(){
+    document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin";
+    document.getElementById("toCs").href = "https://hw.abity.co.uk/admin";
+    pw.value = ""; err.textContent = ""; document.getElementById("admAsk").hidden = false; document.getElementById("admLinks").hidden = true; }
+  document.getElementById("admBtn").onclick = function(){ reset(); dlg.showModal(); pw.focus(); };
+  dlg.addEventListener("click", function(e){ if (e.target.hasAttribute("data-close")) dlg.close(); });
+  dlg.addEventListener("close", reset);
+  document.getElementById("admForm").onsubmit = async function(e){
+    e.preventDefault();
+    var typed = pw.value.trim(); if (!typed) return;
+    var go = document.getElementById("admGo"); go.disabled = true; err.textContent = "";
+    try {
+      var res = await fetch(API + "/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: typed }) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || !data.pass) throw new Error(data.error || "That password isn't right.");
+      document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin#pass=" + encodeURIComponent(data.pass);
+      document.getElementById("toCs").href = "https://hw.abity.co.uk/admin#key=" + encodeURIComponent(typed);
+      document.getElementById("admAsk").hidden = true; document.getElementById("admLinks").hidden = false;
+      pw.value = "";
+    } catch (x) {
+      err.textContent = x.message === "Failed to fetch" ? "Couldn't reach the server. Try again." : x.message;
+    }
+    go.disabled = false;
+  };
+})();
+</script>
 </body>
 </html>
