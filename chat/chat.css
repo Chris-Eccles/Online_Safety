@@ -1,0 +1,112 @@
+/* Chat: same palette as the rest of Abity (navy ink, marigold), laid out like a messaging app */
+:root{
+  --bg:#eef2f5; --paper:#ffffff; --ink:#15233a; --muted:#56647a; --line:#d5dde7;
+  --accent:#1f5fae; --accent-soft:#e2ecf8; --hl:#ffd457; --hl-ink:#3a2c00;
+  --mine:#15233a; --mine-ink:#ffffff; --theirs:#ffffff; --theirs-ink:#15233a;
+  --bad:#b4372f; --bad-soft:#fae3e1; --amber:#a86400; --amber-soft:#fdf0d8; --good:#1d7a4c;
+  --shadow:0 1px 2px rgba(21,35,58,.06),0 6px 18px rgba(21,35,58,.06);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1622; --paper:#17212f; --ink:#e6edf6; --muted:#9aa8bb; --line:#2a3748;
+  --accent:#7fb2f0; --accent-soft:#1d2d44; --hl:#f3c94a; --hl-ink:#2a1f00;
+  --mine:#2b4f80; --mine-ink:#f2f6fb; --theirs:#1d2a3b; --theirs-ink:#e6edf6;
+  --bad:#f08a80; --bad-soft:#3d1d1b; --amber:#f0b45a; --amber-soft:#3a2a12; --good:#5fcf94;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1622; --paper:#17212f; --ink:#e6edf6; --muted:#9aa8bb; --line:#2a3748;
+  --accent:#7fb2f0; --accent-soft:#1d2d44; --hl:#f3c94a; --hl-ink:#2a1f00;
+  --mine:#2b4f80; --mine-ink:#f2f6fb; --theirs:#1d2a3b; --theirs-ink:#e6edf6;
+  --bad:#f08a80; --bad-soft:#3d1d1b; --amber:#f0b45a; --amber-soft:#3a2a12; --good:#5fcf94;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.015em;line-height:1.1;margin:0}
+
+.btn{font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border-radius:10px;padding:10px 16px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;min-height:44px;line-height:1.2}
+.btn:hover{filter:brightness(1.12)}
+.btn:focus-visible,.icon:focus-visible,.room:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--accent-soft);filter:none}
+.btn.small{padding:6px 10px;min-height:36px;font-size:.88rem;border-width:1.5px}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn.danger:hover{background:var(--bad-soft);filter:none}
+.btn:disabled{opacity:.55;cursor:default;filter:none}
+.icon{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;border:none;background:transparent;cursor:pointer;color:var(--ink);flex:none}
+.icon:hover{background:var(--accent-soft)}
+.icon svg{width:24px;height:24px}
+input,textarea{font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+/* Password boxes are plain text boxes drawn as dots, so the browser never offers to save them */
+.secret{-webkit-text-security:disc;font-family:var(--f-body);letter-spacing:.08em}
+label.f{display:block;font-weight:700;margin:0 0 6px}
+.err{color:var(--bad);min-height:1.4em;margin:8px 0 0;font-size:.92rem}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+
+/* Lock screen */
+.lock{min-height:100%;display:grid;place-items:center;padding:24px 16px}
+.lock .box{width:100%;max-width:360px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
+.lock h1{font-weight:800;font-size:2rem;margin:0 0 4px}
+.lock p{margin:0 0 18px;color:var(--muted)}
+.lock input{font-size:18px}
+.lock .btn{width:100%;margin-top:12px}
+
+/* Chat screen */
+.app{height:100%;display:flex;flex-direction:column;max-width:860px;margin:0 auto;background:var(--bg)}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;padding-top:max(8px,env(safe-area-inset-top));background:var(--paper);border-bottom:1px solid var(--line);flex:none}
+.bar .who{flex:1;min-width:0}
+.bar .who b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .who small{display:block;color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed{flex:1;overflow-y:auto;padding:12px 12px 8px;display:flex;flex-direction:column;gap:2px;overscroll-behavior:contain}
+.day{align-self:center;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:12px 0 8px}
+.msg{max-width:min(78%,520px);display:flex;flex-direction:column;position:relative}
+.msg.mine{align-self:flex-end;align-items:flex-end}
+.msg.theirs{align-self:flex-start;align-items:flex-start}
+.bubble{padding:8px 12px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:var(--shadow)}
+.mine .bubble{background:var(--mine);color:var(--mine-ink);border-bottom-right-radius:6px}
+.theirs .bubble{background:var(--theirs);color:var(--theirs-ink);border:1px solid var(--line);border-bottom-left-radius:6px}
+.msg.gap{margin-top:10px}
+.bubble a{color:inherit}
+.pic{display:block;border-radius:14px;overflow:hidden;background:var(--line);margin-bottom:2px;cursor:zoom-in;border:none;padding:0;max-width:280px}
+.pic img{display:block;width:100%;height:auto;max-height:340px;object-fit:cover}
+.stamp{font-size:.72rem;color:var(--muted);margin:2px 6px 0}
+.seen{font-size:.72rem;color:var(--muted);margin:2px 6px 6px;align-self:flex-end}
+.more{align-self:center;margin:6px 0 10px}
+.sending .bubble,.sending .pic{opacity:.6}
+.failed .stamp{color:var(--bad);font-weight:700}
+.msg .del{position:absolute;top:2px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;display:none;place-items:center;font-size:14px;line-height:1}
+.mine .del{left:-34px}.theirs .del{right:-34px}
+.msg:hover .del,.msg.pick .del{display:grid}
+.empty{color:var(--muted);text-align:center;margin:auto;padding:24px}
+
+.compose{display:flex;align-items:flex-end;gap:6px;padding:8px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--line);flex:none}
+.compose textarea{resize:none;min-height:44px;max-height:160px;border-radius:22px;padding:10px 16px;line-height:1.4}
+.compose .send{background:var(--ink);color:var(--paper);border-radius:50%}
+.compose .send:hover{background:var(--ink);filter:brightness(1.15)}
+.compose .send:disabled{opacity:.4}
+.attach{display:flex;gap:8px;padding:8px 12px 0;background:var(--paper);border-top:1px solid var(--line);flex:none;align-items:center}
+.attach img{height:64px;border-radius:10px;display:block}
+.attach + .compose{border-top:none}
+
+/* Full-screen picture */
+.viewer{position:fixed;inset:0;background:rgba(5,9,15,.92);display:grid;place-items:center;z-index:60;padding:16px}
+.viewer img{max-width:100%;max-height:100%;border-radius:6px}
+.viewer .icon{position:absolute;top:max(10px,env(safe-area-inset-top));right:10px;color:#fff;background:rgba(255,255,255,.12)}
+
+dialog{border:none;border-radius:16px;padding:22px;width:min(420px,calc(100% - 32px));background:var(--paper);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,16,26,.55)}
+dialog h3{font-weight:800;font-size:1.35rem;margin:0 0 14px}
+dialog .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+dialog .row .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:10px;font-weight:700;box-shadow:var(--shadow);z-index:70;max-width:calc(100% - 32px)}
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
