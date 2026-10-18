@@ -62,7 +62,7 @@ dialog input:focus{outline:none;border-color:var(--accent)}
   <p class="lead">Choose your area below. Each one asks for its own password, which your teacher or CPD leader will give you.</p>
 
   <div class="choices">
-    <a class="choice" href="https://hw.abity.co.uk/">
+    <a class="choice" href="https://mywork.abity.co.uk/">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span>
       <span class="who">For students</span>
       <h2>CS Online</h2>
@@ -92,7 +92,7 @@ dialog input:focus{outline:none;border-color:var(--accent)}
     </div>
     <div id="admLinks" hidden>
       <a class="dbtn" id="toCpd" href="https://cpd.abity.co.uk/admin">Staff CPD admin</a>
-      <a class="dbtn" id="toCs" href="https://hw.abity.co.uk/admin">CS Online admin</a>
+      <a class="dbtn" id="toCs" href="https://mywork.abity.co.uk/admin">CS Online admin</a>
       <button class="dbtn ghost" type="button" data-close>Close</button>
     </div>
   </form>
@@ -107,7 +107,7 @@ dialog input:focus{outline:none;border-color:var(--accent)}
   var dlg = document.getElementById("admDlg"), pw = document.getElementById("admPw"), err = document.getElementById("admErr");
   function reset(){
     document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin";
-    document.getElementById("toCs").href = "https://hw.abity.co.uk/admin";
+    document.getElementById("toCs").href = "https://mywork.abity.co.uk/admin";
     pw.value = ""; err.textContent = ""; document.getElementById("admAsk").hidden = false; document.getElementById("admLinks").hidden = true; }
   document.getElementById("admBtn").onclick = function(){ reset(); dlg.showModal(); pw.focus(); };
   dlg.addEventListener("click", function(e){ if (e.target.hasAttribute("data-close")) dlg.close(); });
@@ -121,7 +121,7 @@ dialog input:focus{outline:none;border-color:var(--accent)}
       var data = await res.json().catch(function(){ return {}; });
       if (!res.ok || !data.pass) throw new Error(data.error || "That password isn't right.");
       document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin#pass=" + encodeURIComponent(data.pass);
-      document.getElementById("toCs").href = "https://hw.abity.co.uk/admin#key=" + encodeURIComponent(typed);
+      document.getElementById("toCs").href = "https://mywork.abity.co.uk/admin#key=" + encodeURIComponent(typed);
       document.getElementById("admAsk").hidden = true; document.getElementById("admLinks").hidden = false;
       pw.value = "";
     } catch (x) {
