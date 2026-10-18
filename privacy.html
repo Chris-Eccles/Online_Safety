@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacy notice · Abity</title>
+<meta name="description" content="How the Abity sites (abity.co.uk, mywork.abity.co.uk and cpd.abity.co.uk) use personal information, in plain English.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2315233a'/%3E%3Cpath d='M16 6l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10V9z' fill='%23ffd457'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#eef2f5; --paper:#ffffff; --ink:#15233a; --muted:#56647a; --line:#d5dde7;
+  --accent:#1f5fae; --accent-soft:#e2ecf8; --hl:#ffd457; --hl-ink:#3a2c00;
+  --ok:#0d7a4f; --ok-soft:#e1f4ea; --no:#8a5a00; --no-soft:#fdf1d6;
+  --bar:#15233a; --bar-ink:#ffffff; --bar-muted:#b9c5d6;
+  --shadow:0 1px 2px rgba(21,35,58,.06),0 8px 24px rgba(21,35,58,.08);
+  --f:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1622; --paper:#17212f; --ink:#e6edf6; --muted:#9aa8bb; --line:#2a3748;
+  --accent:#7fb2f0; --accent-soft:#1d2d44; --hl:#f3c94a; --hl-ink:#2a1f00;
+  --ok:#5fd1a0; --ok-soft:#143326; --no:#f0c674; --no-soft:#3a2e12;
+  --bar:#0a1019; --bar-ink:#e6edf6; --bar-muted:#9aa8bb; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1622; --paper:#17212f; --ink:#e6edf6; --muted:#9aa8bb; --line:#2a3748;
+  --accent:#7fb2f0; --accent-soft:#1d2d44; --hl:#f3c94a; --hl-ink:#2a1f00;
+  --ok:#5fd1a0; --ok-soft:#143326; --no:#f0c674; --no-soft:#3a2e12;
+  --bar:#0a1019; --bar-ink:#e6edf6; --bar-muted:#9aa8bb; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:96px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:17px;line-height:1.65}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+
+/* ---- Fixed question bar ---- */
+.ask{position:sticky;top:0;z-index:10;background:var(--bar);color:var(--bar-ink);box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.ask-in{max-width:980px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left)) 10px max(16px,env(safe-area-inset-right))}
+.ask form{display:flex;gap:10px;align-items:center}
+.ask label.lbl{display:flex;align-items:center;font-weight:700;white-space:nowrap;font-size:.95rem}
+.ask label.lbl .ic{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--hl);color:var(--hl-ink);margin-right:8px;font-size:.9rem}
+.ask input{flex:1 1 auto;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:10px;border:2px solid transparent;background:#fff;color:#15233a}
+.ask input:focus{outline:none;border-color:var(--hl)}
+.ask button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:9px 18px;background:var(--hl);color:var(--hl-ink);cursor:pointer}
+.ask button:disabled{opacity:.6;cursor:wait}
+.ask .note{margin:4px 0 0;font-size:.8rem;color:var(--bar-muted)}
+.panel{background:var(--paper);color:var(--ink);border-top:4px solid var(--hl)}
+.panel-in{max-width:980px;margin:0 auto;padding:14px 16px 16px;max-height:min(55vh,420px);overflow:auto;position:relative}
+.panel .q{font-weight:700;margin:0 40px 6px 0;color:var(--muted);font-size:.92rem}
+.panel .a p{margin:0 0 8px}
+.panel .small{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.panel .x{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:1.1rem;cursor:pointer}
+.panel .mnote{display:none}
+.dots::after{content:"…";animation:d 1.2s steps(4) infinite}
+@keyframes d{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media (max-width:640px){
+  .ask label.lbl .txt,.ask .note{display:none}
+  .ask label.lbl .ic{margin:0}
+  .ask button{padding:9px 14px}
+  .panel .mnote{display:block}
+}
+@media (prefers-reduced-motion:reduce){.dots::after{animation:none;content:"…"}}
+
+/* ---- Page ---- */
+header.top{max-width:980px;margin:0 auto;padding:36px 16px 8px}
+.back{font-weight:700;text-decoration:none;font-size:.95rem}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:22px 0 0}
+h1{font-size:clamp(2rem,6vw,3rem);line-height:1.05;letter-spacing:-.02em;margin:6px 0 10px;font-weight:800}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 56px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;align-items:start}
+nav.toc{position:sticky;top:96px;font-size:.9rem}
+nav.toc p{font-weight:700;margin:0 0 6px;color:var(--muted);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase}
+nav.toc ol{margin:0;padding-left:20px}
+nav.toc li{margin:3px 0}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc a:hover{color:var(--accent);text-decoration:underline}
+article{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow);min-width:0}
+article h2{font-size:1.4rem;line-height:1.25;margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
+article h2:first-child{margin-top:0;padding-top:0;border-top:none}
+article h3{font-size:1.08rem;margin:22px 0 6px}
+article ul,article ol{padding-left:22px}
+article li{margin:4px 0}
+article code{font-size:.9em;background:var(--accent-soft);padding:1px 5px;border-radius:5px;word-break:break-all}
+.tw{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.93rem;line-height:1.5}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom-width:2px}
+td:first-child{font-weight:600}
+.updated{color:var(--muted);font-size:.9rem;margin-top:30px}
+
+/* diagram */
+.flow{margin:16px 0;display:flex;flex-direction:column;align-items:center;gap:0}
+.fl-start,.fl-box{display:flex;flex-direction:column;gap:2px;border-radius:14px;padding:12px 14px;border:1px solid var(--line);background:var(--bg);text-align:center;font-size:.92rem}
+.fl-start{background:var(--accent-soft);border-color:transparent;min-width:260px}
+.fl-k{font-weight:800}
+.fl-arrow{width:2px;height:22px;background:var(--muted);position:relative;margin-bottom:6px}
+.fl-arrow::after{content:"";position:absolute;bottom:-6px;left:-5px;border:6px solid transparent;border-top-color:var(--muted);border-bottom:0}
+.fl-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}
+.fl-yes{border:2px solid var(--ok)}
+.fl-tag{margin-top:6px;align-self:center;font-size:.78rem;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--ok-soft);color:var(--ok)}
+.fl-tag.no{background:var(--no-soft);color:var(--no)}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}nav.toc{position:static}}
+@media (max-width:600px){
+  article{padding:20px 18px;border-radius:16px}
+  .fl-row{grid-template-columns:1fr}
+  .fl-start{min-width:0;width:100%}
+  table,thead,tbody,tr,th,td{display:block}
+  thead{display:none}
+  tr{border-bottom:1px solid var(--line);padding:8px 0}
+  td{border:none;padding:2px 0}
+}
+@media print{.ask,nav.toc{display:none}.wrap{display:block}article{box-shadow:none;border:none}}
+</style>
+</head>
+<body>
+
+<div class="ask" id="ask">
+  <div class="ask-in">
+    <form id="askForm" autocomplete="off">
+      <label class="lbl" for="askQ"><span class="ic" aria-hidden="true">?</span><span class="txt">Ask about this notice</span></label>
+      <input id="askQ" type="text" maxlength="300" placeholder="Ask a question about this notice…" aria-describedby="askNote">
+      <button id="askBtn" type="submit">Ask</button>
+    </form>
+    <p class="note" id="askNote">Answers come from this notice only. Don't type names or personal details.</p>
+  </div>
+  <div class="panel" id="panel" hidden>
+    <div class="panel-in" role="region" aria-live="polite" aria-label="Answer">
+      <button class="x" id="panelX" type="button" aria-label="Close answer">✕</button>
+      <p class="q" id="panelQ"></p>
+      <div class="a" id="panelA"></div>
+      <p class="small mnote">Answers come from this notice only. Don't type names or personal details.</p>
+      <p class="small">This is an AI summary of the notice below. If the two ever disagree, the notice is right.</p>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <a class="back" id="back" href="/">← Back</a>
+  <p class="eyebrow">Abity · all sites</p>
+  <h1>Privacy notice</h1>
+  <p class="lead">How abity.co.uk, CS Online (mywork.abity.co.uk) and Staff CPD (cpd.abity.co.uk) use personal information, in plain English.</p>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <p>Contents</p>
+    <ol>
+<li><a href="#in-short">In short</a></li>
+<li><a href="#who-we-are-and-what-this-covers">Who we are and what this covers</a></li>
+<li><a href="#what-we-collect-and-what-we-don-t">What we collect, and what we don't</a></li>
+<li><a href="#what-happens-to-a-name-at-hand-in">What happens to a name at hand-in</a></li>
+<li><a href="#the-hashed-name-explained">The "hashed name" explained</a></li>
+<li><a href="#other-companies-involved">Other companies involved</a></li>
+<li><a href="#lawful-basis-and-the-gdpr-principles">Lawful basis and the GDPR principles</a></li>
+<li><a href="#how-long-things-are-kept">How long things are kept</a></li>
+<li><a href="#security">Security</a></li>
+<li><a href="#your-rights-and-how-to-contact-us">Your rights and how to contact us</a></li>
+<li><a href="#the-question-box-at-the-top-of-this-page">The question box at the top of this page</a></li>
+<li><a href="#more-about-cs-online">More about CS Online</a></li>
+<li><a href="#glossary">Glossary</a></li>
+    </ol>
+  </nav>
+  <article id="notice">
+<h2 id="in-short">In short</h2>
+<p>The Abity sites keep almost nothing about anyone. There are no accounts, no logins for students or staff, no adverts, no tracking and no analytics.</p>
+<ul>
+<li><strong>Students' names are never stored.</strong> A student types their name when they hand in work. It goes to their teacher in one email and is then forgotten by the site.</li>
+<li><strong>What is kept</strong> is a mark, the time of hand-in, and a scrambled code that stops the same student handing in twice. None of these can be turned back into a name.</li>
+<li><strong>The AI marker never sees a name.</strong> It only sees the question, the mark scheme and the answer.</li>
+<li><strong>Staff using the CPD site</strong> type nothing that is sent anywhere. Their course notes stay on their own device.</li>
+</ul>
+<p>This notice explains each of these points in plain English, and the glossary at the end explains every technical term.</p>
+<h2 id="who-we-are-and-what-this-covers">Who we are and what this covers</h2>
+<p>Abity is run by Chris Eccles, Computer Science teacher at Maidstone Grammar School. The sites below are used for teaching at the school, and this notice covers all of them.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Site</th>
+<th>Address</th>
+<th>Used by</th>
+<th>What it is for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home page</td>
+<td>abity.co.uk</td>
+<td>Everyone</td>
+<td>A page of links to the sites below</td>
+</tr>
+<tr>
+<td>CS Online</td>
+<td>mywork.abity.co.uk (previously hw.abity.co.uk)</td>
+<td>Students in Years 10 to 13</td>
+<td>Computer Science worksheets, homework, labs and resources, with marking and feedback</td>
+</tr>
+<tr>
+<td>Staff CPD</td>
+<td>cpd.abity.co.uk</td>
+<td>School staff</td>
+<td>Training courses and shared teaching resources</td>
+</tr>
+</tbody>
+</table></div>
+<p>Each site has its own front-page password, given out by the teacher or CPD lead. This keeps the content to the school; it does not identify anyone.</p>
+<h2 id="what-we-collect-and-what-we-don-t">What we collect, and what we don't</h2>
+<h3>CS Online (students)</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Why</th>
+<th>Where it goes</th>
+<th>How long it's kept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name, typed when handing in</td>
+<td>So the teacher knows whose work it is</td>
+<td>One email to the teacher</td>
+<td>Not kept by the site. The teacher keeps the email in their school mailbox</td>
+</tr>
+<tr>
+<td>Answers</td>
+<td>To mark the work and give feedback</td>
+<td>The AI marker (with no name) and the teacher's email</td>
+<td>Not kept by the site</td>
+</tr>
+<tr>
+<td>Mark and time handed in</td>
+<td>So the teacher can see how the class did</td>
+<td>Stored on the site, with no name</td>
+<td>Until the teacher deletes that homework or worksheet</td>
+</tr>
+<tr>
+<td>Scrambled code made from the name (a "hash")</td>
+<td>So each student can only hand in once</td>
+<td>Stored on the site</td>
+<td>Until the teacher deletes that homework or worksheet</td>
+</tr>
+<tr>
+<td>Whether the accessibility "Assistive tools" were on, and how many times text was pasted</td>
+<td>So the teacher knows if copy and paste was used</td>
+<td>The teacher's email, and stored with the mark</td>
+<td>As the mark</td>
+</tr>
+<tr>
+<td>Internet (IP) address</td>
+<td>To block anyone trying lots of wrong passwords</td>
+<td>Stored only if the limit is hit</td>
+<td>Deleted automatically after 15 minutes</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nothing else is collected. There is no class list, no email address, no date of birth, no photo and no login.</p>
+<h3>On the student's own device</h3>
+<p>The browser saves answers as the student types, so work isn't lost. This stays on that device and is not sent anywhere until the student hands in. The name is removed from the device after hand-in. A student can also save a <strong>progress file</strong> to their own OneDrive to carry on at home; that file is never sent to the site.</p>
+<h3>Staff CPD</h3>
+<p>Staff type nothing that is sent to the site. Notes typed during a course stay in that person's browser. The site stores only the courses and resource files the CPD lead uploads.</p>
+<h3>Home page</h3>
+<p>The home page collects nothing. It is a set of links.</p>
+<h2 id="what-happens-to-a-name-at-hand-in">What happens to a name at hand-in</h2>
+<figure class="flow" aria-label="What happens to a student's name at hand-in">
+  <div class="fl-start"><span class="fl-k">Student hands in</span><span>types their name and presses Hand in</span></div>
+  <div class="fl-arrow" aria-hidden="true"></div>
+  <div class="fl-row">
+    <div class="fl-box fl-yes"><span class="fl-k">Teacher's school email</span><span>Name, answers and mark</span><span class="fl-tag">The only place the name goes</span></div>
+    <div class="fl-box"><span class="fl-k">AI marker</span><span>Question, mark scheme and answer</span><span class="fl-tag no">No name</span></div>
+    <div class="fl-box"><span class="fl-k">Site storage</span><span>Mark, time and a 32-character code</span><span class="fl-tag no">No name, no answers</span></div>
+  </div>
+</figure>
+<p>The name travels one way only: into the teacher's email. The AI marker and the site's storage never receive it.</p>
+<h2 id="the-hashed-name-explained">The "hashed name" explained</h2>
+<p>The phrase "the name is hashed and stored" sounds as if the name is kept somewhere. It isn't. What is stored is a code that <strong>cannot be turned back into a name</strong>.</p>
+<p><strong>What actually happens</strong></p>
+<ol>
+<li>The site takes the name the student typed, for example <em>Sam Patel</em>, together with the homework it is for.</li>
+<li>It mixes these with a secret key that only the site knows, using a standard method called HMAC-SHA-256 (the same family of methods banks use to check transactions).</li>
+<li>The result is a string of 32 random-looking characters, such as <code>9f2c71e0a4b85d3e…</code>.</li>
+<li>Only that code is kept. The name itself is thrown away.</li>
+</ol>
+<p>Next time someone hands in the same homework, the site makes a code from their name in the same way. If the codes match, it knows that student has already handed in. That is the only thing the code is used for.</p>
+<p><strong>A useful comparison:</strong> a hash is like a fingerprint of the name. If you're given a fingerprint, you can check whether it matches a person standing in front of you, but you can't work out from the fingerprint alone who it belongs to.</p>
+<p><strong>Common worries, answered</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Worry</th>
+<th>What really happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"The name is in a database anyone can look at."</td>
+<td>The name is never written to any database. Only the 32-character code is.</td>
+</tr>
+<tr>
+<td>"A hacker could read the names."</td>
+<td>There are no names to read. Someone who stole the codes would have a list of meaningless strings. Because each code also uses a secret key and the homework it belongs to, they couldn't even guess names and check them.</td>
+</tr>
+<tr>
+<td>"It can be decoded."</td>
+<td>Hashing is one-way by design: there is no method to reverse it. It is not encryption, which is two-way.</td>
+</tr>
+<tr>
+<td>"The same code follows a student around."</td>
+<td>No. The code for Sam on Homework 1 is completely different from the code for Sam on Homework 2, so codes can't be linked to build up a record of one student.</td>
+</tr>
+<tr>
+<td>"Marks are stored against names."</td>
+<td>Marks are stored only against the code, so the site itself has no way to say whose mark is whose. Only the teacher's email links a name to a mark.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="other-companies-involved">Other companies involved</h2>
+<p>The sites use a few well-known services to run. In GDPR terms these are <strong>processors</strong>: they handle data only to provide their service, under contract, and can't use it for anything else.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Company</th>
+<th>What it does</th>
+<th>What it sees</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vercel</td>
+<td>Hosts the web pages</td>
+<td>Visitors' IP addresses in its standard server logs</td>
+<td>Worldwide network</td>
+</tr>
+<tr>
+<td>Cloudflare</td>
+<td>Checks passwords, runs the AI marker, stores marks and the scrambled codes, and answers questions typed into the box at the top of this page</td>
+<td>Answers (with no name) while marking; questions typed into the box; IP addresses</td>
+<td>Worldwide network</td>
+</tr>
+<tr>
+<td>Resend</td>
+<td>Sends the hand-in email to the teacher</td>
+<td>The email, including the student's name, answers and mark</td>
+<td>Sends from Ireland (EU); Resend is a US company</td>
+</tr>
+<tr>
+<td>Microsoft 365</td>
+<td>The teacher's school mailbox, where the email arrives</td>
+<td>The email</td>
+<td>Covered by the school's existing Microsoft agreement</td>
+</tr>
+<tr>
+<td>Supabase</td>
+<td>Stores Staff CPD courses and resource files</td>
+<td>No personal data about staff</td>
+<td>London (UK)</td>
+</tr>
+<tr>
+<td>Google Fonts</td>
+<td>Supplies the lettering on the home page and the Staff CPD site</td>
+<td>Visitors' IP addresses</td>
+<td>Worldwide</td>
+</tr>
+<tr>
+<td>YouTube</td>
+<td>Plays lesson videos, only when a student presses play</td>
+<td>Visitors' IP addresses, through its privacy-enhanced mode</td>
+<td>Worldwide</td>
+</tr>
+</tbody>
+</table></div>
+<p>The AI marker is run by Cloudflare itself (Cloudflare Workers AI). Answers are not sent to OpenAI, Google or any other AI company, and Cloudflare does not use them to train its models.</p>
+<p>Where a service may handle data outside the UK, it does so under the UK's international data transfer rules, such as the UK Extension to the EU–US Data Privacy Framework or standard contract clauses.</p>
+<h2 id="lawful-basis-and-the-gdpr-principles">Lawful basis and the GDPR principles</h2>
+<p><strong>Lawful basis.</strong> Setting, marking and giving feedback on schoolwork is part of the school's job of educating students. Under UK GDPR this is <strong>public task</strong> (Article 6(1)(e)), the same basis the school uses for its other teaching records. No <strong>special category</strong> data (health, religion, ethnicity and similar) is asked for or kept.</p>
+<p>UK GDPR has seven principles. This is how the sites meet each one.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>What it means</th>
+<th>How the sites meet it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lawfulness, fairness and transparency</td>
+<td>Have a good reason, be fair, and tell people</td>
+<td>Public task basis; this notice is linked from every page</td>
+</tr>
+<tr>
+<td>Purpose limitation</td>
+<td>Use data only for the reason you collected it</td>
+<td>Names are used only to tell the teacher whose work it is</td>
+</tr>
+<tr>
+<td>Data minimisation</td>
+<td>Collect no more than you need</td>
+<td>No accounts, no class lists, no email addresses; just a typed name at hand-in</td>
+</tr>
+<tr>
+<td>Accuracy</td>
+<td>Keep data correct</td>
+<td>Students type their own name; teachers can clear a hand-in so it can be redone</td>
+</tr>
+<tr>
+<td>Storage limitation</td>
+<td>Don't keep data longer than needed</td>
+<td>Names aren't stored at all; marks go when the teacher deletes the work; IP addresses go after 15 minutes</td>
+</tr>
+<tr>
+<td>Integrity and confidentiality</td>
+<td>Keep data secure</td>
+<td>Passwords, encrypted connections, rate limits and one-way codes (see Security)</td>
+</tr>
+<tr>
+<td>Accountability</td>
+<td>Be able to show you follow the rules</td>
+<td>This notice, the school's records, and code that can be inspected on request</td>
+</tr>
+</tbody>
+</table></div>
+<p>This is <strong>privacy by design</strong>: the sites were built so that the least possible data exists in the first place, rather than collecting it and then protecting it.</p>
+<h2 id="how-long-things-are-kept">How long things are kept</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Kept for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Student names</td>
+<td>Not kept by the site at all</td>
+</tr>
+<tr>
+<td>Answers</td>
+<td>Not kept by the site at all</td>
+</tr>
+<tr>
+<td>Hand-in emails</td>
+<td>As long as the teacher keeps them, under the school's normal email retention rules</td>
+</tr>
+<tr>
+<td>Copies of sent emails at Resend</td>
+<td>A short period set by Resend, for delivery checks</td>
+</tr>
+<tr>
+<td>Marks, hand-in times and scrambled codes</td>
+<td>Until the teacher deletes that homework or worksheet, and at the latest at the end of each school year</td>
+</tr>
+<tr>
+<td>IP addresses (only after too many wrong passwords)</td>
+<td>15 minutes, then deleted automatically</td>
+</tr>
+<tr>
+<td>Hosting logs at Vercel and Cloudflare</td>
+<td>The providers' standard short log periods</td>
+</tr>
+<tr>
+<td>Answers saved on a student's own device</td>
+<td>Until the student hands in, starts afresh, or clears their browser</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="security">Security</h2>
+<ul>
+<li><strong>Encrypted connections.</strong> Every page is served over HTTPS (the padlock in the address bar), so nothing typed can be read in transit.</li>
+<li><strong>Passwords.</strong> Each site has a front-page password, and each homework, lab and resource has its own. The admin area has a separate admin password known only to the teacher.</li>
+<li><strong>Guessing is blocked.</strong> After repeated wrong passwords from one connection, further attempts are refused for 15 minutes.</li>
+<li><strong>Nothing worth stealing.</strong> Because names and answers are never stored, a break-in would find only marks and meaningless codes.</li>
+<li><strong>Uploaded pages are sandboxed.</strong> Interactive labs run in a locked-down "sandbox", so they can't reach the site's passwords or any other page.</li>
+<li><strong>No third-party tracking.</strong> No analytics, advertising or social media code runs on CS Online, and its fonts are stored on the site itself.</li>
+<li><strong>AI is told to ignore tricks.</strong> The AI marker is instructed to treat answers as data, so a student can't instruct it to change their mark.</li>
+</ul>
+<h2 id="your-rights-and-how-to-contact-us">Your rights and how to contact us</h2>
+<p>You have the right to see the information held about you, to have it corrected or deleted, and to object to how it's used.</p>
+<p>In practice, the site holds nothing it can link to a named person. The hand-in emails sit in the teacher's school mailbox, where the school can find them in the usual way. A teacher can also clear a student's hand-in on the site if asked.</p>
+<p>To use any of these rights, or with any question or worry, speak to your Computer Science teacher or contact the school's data protection officer through the school office.</p>
+<p>If you're unhappy with how your information has been handled, you can contact the Information Commissioner's Office (ICO) at <a href="https://ico.org.uk/make-a-complaint/" rel="noopener">ico.org.uk</a>.</p>
+<h2 id="the-question-box-at-the-top-of-this-page">The question box at the top of this page</h2>
+<p>The box at the top lets you ask a question about this notice in your own words. Your question and the text of this notice are sent to Cloudflare's AI service (the same one that marks homework), which writes an answer using only this notice.</p>
+<ul>
+<li><strong>Your question isn't stored.</strong> The site doesn't save or log it, and it isn't linked to you. Only the number of questions from each connection is counted for a few minutes, to stop misuse.</li>
+<li><strong>Please don't type names or other personal details</strong> into the box.</li>
+<li><strong>The answer is a guide, not the notice itself.</strong> If the answer and the notice ever disagree, the notice is right. For anything it can't answer, speak to the school's data protection officer.</li>
+</ul>
+<h2 id="more-about-cs-online">More about CS Online</h2>
+<p><strong>Assistive tools.</strong> If a student switches on <em>Assistive tools</em> in the ♿ menu (for dictation or text-to-speech), pasting and copying are allowed. The teacher's email says it was switched on and how many times text was pasted, but not what was pasted.</p>
+<p><strong>Progress files.</strong> <em>Save progress file</em> downloads a file with the student's name and answers so far, to wherever they save it (for example their school OneDrive). <em>Load progress file</em> opens it on another computer. The file is never sent to the site or stored on a server. Delete it when it's no longer needed.</p>
+<p><strong>Site password.</strong> After the front-page password is typed, the browser keeps a code showing it has been entered, so it needn't be typed again. The code isn't the password, says nothing about who the student is, and stops working when the teacher changes the password.</p>
+<p><strong>Coding boxes.</strong> Pressing Run or Check on a worksheet compiles and runs the code (C#, Python, VB.NET, Java or SQL) inside the student's own browser. It isn't sent anywhere until they hand in.</p>
+<p><strong>Worksheet feedback.</strong> When a worksheet is handed in, the AI writes a short comment on each answer. It gives no marks and never sees the name.</p>
+<p><strong>Lesson videos.</strong> Nothing loads from YouTube until a student presses play. Videos then play in YouTube's privacy-enhanced mode, and <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a> applies to the player. Names and answers are never shared with YouTube.</p>
+<p><strong>Fonts.</strong> CS Online uses Nunito, stored on the site itself (<a href="https://mywork.abity.co.uk/fonts/Nunito-OFL.txt">SIL Open Font License</a>), so no font requests go to other companies unless a student picks a different font in the ♿ menu.</p>
+<p><strong>Open-source software.</strong> The coding and SQL boxes run these open-source projects in the browser, downloaded from CS Online itself:</p>
+<ul>
+<li>C#: <a href="https://github.com/JakeYallop/WasmSharp" rel="noopener">WasmSharp</a> (Apache 2.0) with Microsoft .NET and Roslyn (MIT)</li>
+<li>Python: <a href="https://pyodide.org" rel="noopener">Pyodide</a> (MPL 2.0) with CPython (PSF licence)</li>
+<li>VB.NET: <a href="https://github.com/live-codes/vb-wasm" rel="noopener">LiveCodes vb-wasm</a> (MIT) with Microsoft .NET and Roslyn (MIT)</li>
+<li>Java: <a href="https://www.npmjs.com/package/@tracecode/tracejvm" rel="noopener">TraceJVM 0.4.1</a> (GNU AGPL 3.0), using OpenJDK 23 (GPL 2.0 with Classpath Exception), TeaVM-javac (Apache 2.0) and b-jvm (MIT). TraceJVM is used unmodified; its complete corresponding source is published with that package. Licence texts: <a href="https://mywork.abity.co.uk/java/legal/TRACEJVM-AGPL-3.0.txt">AGPL</a>, <a href="https://mywork.abity.co.uk/java/legal/THIRD_PARTY_NOTICES.md">third-party notices</a>, <a href="https://mywork.abity.co.uk/java/legal/CORRESPONDING_SOURCE.md">corresponding source</a>.</li>
+<li>SQL: <a href="https://github.com/sql-js/sql.js" rel="noopener">sql.js 1.14.2</a> (MIT, <a href="https://mywork.abity.co.uk/sql/LICENSE.txt">licence</a>), a version of <a href="https://sqlite.org" rel="noopener">SQLite</a> (public domain)</li>
+</ul>
+<h2 id="glossary">Glossary</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain English</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Personal data</td>
+<td>Any information that identifies a living person, such as a name</td>
+</tr>
+<tr>
+<td>Controller</td>
+<td>The organisation that decides why and how personal data is used (here, the school)</td>
+</tr>
+<tr>
+<td>Processor</td>
+<td>A company that handles data on the controller's behalf, only as instructed</td>
+</tr>
+<tr>
+<td>Hash / hashing</td>
+<td>Turning text into a fixed-length code that can't be turned back. Like a fingerprint: it can be matched, not reversed</td>
+</tr>
+<tr>
+<td>HMAC</td>
+<td>A hash that also uses a secret key, so nobody without the key can make or check codes</td>
+</tr>
+<tr>
+<td>Encryption</td>
+<td>Scrambling data so it can be unscrambled with a key. Two-way, unlike hashing</td>
+</tr>
+<tr>
+<td>HTTPS</td>
+<td>The secure, encrypted connection shown by the padlock in the address bar</td>
+</tr>
+<tr>
+<td>IP address</td>
+<td>The number that identifies an internet connection, like a postal address for data. At school, all students share the school's one IP address</td>
+</tr>
+<tr>
+<td>Database / storage</td>
+<td>Where the site keeps information between visits. Here it holds homework, marks and codes, never names</td>
+</tr>
+<tr>
+<td>Browser storage</td>
+<td>Space inside a person's own web browser, on their own device. The site can't read it from elsewhere</td>
+</tr>
+<tr>
+<td>Server logs</td>
+<td>Short records hosting companies keep of which pages were requested, used for running and protecting their service</td>
+</tr>
+<tr>
+<td>Rate limit</td>
+<td>A cap on how many tries are allowed in a short time, to stop guessing</td>
+</tr>
+<tr>
+<td>Sandbox</td>
+<td>A locked box a web page runs inside, so it can't reach anything else</td>
+</tr>
+<tr>
+<td>AI marker</td>
+<td>A computer program that reads an answer and the mark scheme and suggests a mark and feedback</td>
+</tr>
+<tr>
+<td>Workers AI</td>
+<td>Cloudflare's AI service, run on Cloudflare's own computers</td>
+</tr>
+<tr>
+<td>Privacy-enhanced mode</td>
+<td>YouTube's setting that stops it setting tracking cookies until a video is played</td>
+</tr>
+</tbody>
+</table></div>
+    <p class="updated">Last updated 18 October 2026</p>
+  </article>
+</div>
+
+<script>
+(function(){
+  var API = "https://hw-api.chriseccles001.workers.dev";
+  var host = location.hostname;
+  var back = document.getElementById("back");
+  if (/^mywork\./.test(host)) back.textContent = "← Back to CS Online";
+  else if (/^cpd\./.test(host)) back.textContent = "← Back to Staff CPD";
+  else back.textContent = "← Back to abity.co.uk";
+
+  var form = document.getElementById("askForm"), q = document.getElementById("askQ"), btn = document.getElementById("askBtn");
+  var panel = document.getElementById("panel"), pq = document.getElementById("panelQ"), pa = document.getElementById("panelA");
+  function show(question, nodeOrText, busy){
+    pq.textContent = question;
+    pa.textContent = "";
+    if (busy) { var s = document.createElement("p"); s.className = "dots"; s.textContent = "Finding the answer in the notice"; pa.appendChild(s); }
+    else String(nodeOrText).split(/\n+/).filter(Boolean).forEach(function(t){ var p = document.createElement("p"); p.textContent = t; pa.appendChild(p); });
+    panel.hidden = false;
+  }
+  function close(){ panel.hidden = true; q.focus(); }
+  document.getElementById("panelX").onclick = close;
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !panel.hidden) close(); });
+
+  form.onsubmit = async function(e){
+    e.preventDefault();
+    var question = q.value.trim();
+    if (question.length < 3) { q.focus(); return; }
+    btn.disabled = true;
+    show(question, "", true);
+    try {
+      var res = await fetch(API + "/privacy/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: question }) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || !data.answer) throw new Error(data.error || "Sorry, no answer came back. Please try again.");
+      show(question, data.answer);
+      q.value = "";
+    } catch (x) {
+      show(question, x.message === "Failed to fetch" ? "Couldn't reach the question service. Check your connection and try again." : x.message);
+    }
+    btn.disabled = false;
+  };
+})();
+</script>
+</body>
+</html>

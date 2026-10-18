@@ -1,5 +1,6 @@
 {
+  "cleanUrls": true,
   "redirects": [
-    { "source": "/:path+", "destination": "/", "permanent": false }
+    { "source": "/((?!privacy$).+)", "destination": "/", "permanent": false }
   ]
 }
