@@ -1,9 +1,16 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/admin", "destination": "/index.html" }
+    {
+      "source": "/admin",
+      "destination": "/index.html"
+    }
   ],
   "redirects": [
-    { "source": "/((?!privacy$|admin$|fonts/).+)", "destination": "/", "permanent": false }
+    {
+      "source": "/((?!privacy$|admin$|fonts/|favicon\\.png$|favicon\\.ico$|apple-touch-icon\\.png$).+)",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }
