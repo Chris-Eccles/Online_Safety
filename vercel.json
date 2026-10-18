@@ -1,7 +1,6 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/:path*", "has": [{ "type": "host", "value": "www.abity.co.uk" }], "destination": "https://abity.co.uk/:path*", "permanent": true },
     { "source": "/((?!privacy$|fonts/).+)", "destination": "/", "permanent": false }
   ]
 }
