@@ -113,6 +113,8 @@ dialog input:focus{outline:none;border-color:var(--accent)}
     document.getElementById("toCs").href = "https://mywork.abity.co.uk/admin";
     pw.value = ""; err.textContent = ""; document.getElementById("admAsk").hidden = false; document.getElementById("admLinks").hidden = true; }
   document.getElementById("admBtn").onclick = function(){ reset(); dlg.showModal(); pw.focus(); };
+  // abity.co.uk/admin opens the sign-in box straight away
+  if (/^\/admin\/?$/.test(location.pathname)) { reset(); dlg.showModal(); pw.focus(); }
   dlg.addEventListener("click", function(e){ if (e.target.hasAttribute("data-close")) dlg.close(); });
   dlg.addEventListener("close", reset);
   document.getElementById("admForm").onsubmit = async function(e){

@@ -1,6 +1,9 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/admin", "destination": "/index.html" }
+  ],
   "redirects": [
-    { "source": "/((?!privacy$|fonts/).+)", "destination": "/", "permanent": false }
+    { "source": "/((?!privacy$|admin$|fonts/).+)", "destination": "/", "permanent": false }
   ]
 }
