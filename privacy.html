@@ -164,7 +164,8 @@ td:first-child{font-weight:600}
 <h2 id="in-short">In short</h2>
 <p>The Abity sites keep almost nothing about anyone. There are no accounts, no logins for students or staff, no adverts, no tracking and no analytics.</p>
 <ul>
-<li><strong>Students' names are never stored.</strong> A student types their name when they hand in work. It goes to their teacher in one email and is then forgotten by the site.</li>
+<li><strong>Students' names are not kept.</strong> A student types their name when they hand in work. It goes to their teacher in one email and is then forgotten by the site.</li>
+<li><strong>While a page is open, the teacher sees who is working.</strong> On CS Online, the teacher's Live screen shows each student's first name and surname initial, what they have open and who they are paired with. This is deleted automatically a few minutes after the page is closed.</li>
 <li><strong>What is kept</strong> is a mark, the time of hand-in, and a scrambled code that stops the same student handing in twice. None of these can be turned back into a name.</li>
 <li><strong>The AI marker never sees a name.</strong> It only sees the question, the mark scheme and the answer.</li>
 <li><strong>Staff using the CPD site</strong> type nothing that is sent anywhere. Their course notes stay on their own device.</li>
@@ -251,8 +252,15 @@ td:first-child{font-weight:600}
 <td>Stored only if the limit is hit</td>
 <td>Deleted automatically after 15 minutes</td>
 </tr>
+<tr>
+<td>First name and surname initial, which page is open, and who they are paired with</td>
+<td>So the teacher's Live screen shows who is working on what, and so students can be paired for a task</td>
+<td>Held by Cloudflare in London while the page is open</td>
+<td>Deleted automatically 3 minutes after the page is closed, or straight away when the teacher clears the Live screen</td>
+</tr>
 </tbody>
 </table></div>
+<p>Only the first name and the first letter of the surname are sent for the Live screen, even if more is typed. Pairing is done by the site, at random, between students who have the same page open; there is no class list and nothing is kept about who worked with whom.</p>
 <p>Nothing else is collected. There is no class list, no email address, no date of birth, no photo and no login.</p>
 <h3>On the student's own device</h3>
 <p>The browser saves answers as the student types, so work isn't lost. This stays on that device and is not sent anywhere until the student hands in. The name is removed from the device after hand-in. A student can also save a <strong>progress file</strong> to their own OneDrive to carry on at home; that file is never sent to the site.</p>
@@ -270,7 +278,7 @@ td:first-child{font-weight:600}
     <div class="fl-box"><span class="fl-k">Site storage</span><span>Mark, time and a 32-character code</span><span class="fl-tag no">No name, no answers</span></div>
   </div>
 </figure>
-<p>The name travels one way only: into the teacher's email. The AI marker and the site's storage never receive it.</p>
+<p>The name travels one way only: into the teacher's email. The AI marker and the site's long-term storage never receive it. (The Live screen is separate: it holds only a first name and initial, and only while the page is open.)</p>
 <h2 id="the-hashed-name-explained">The "hashed name" explained</h2>
 <p>The phrase "the name is hashed and stored" sounds as if the name is kept somewhere. It isn't. What is stored is a code that <strong>cannot be turned back into a name</strong>.</p>
 <p><strong>What actually happens</strong></p>
@@ -293,7 +301,7 @@ td:first-child{font-weight:600}
 <tbody>
 <tr>
 <td>"The name is in a database anyone can look at."</td>
-<td>The name is never written to any database. Only the 32-character code is.</td>
+<td>The name typed at hand-in is never written to any database. Only the 32-character code is. The Live screen briefly holds a first name and initial while a page is open, which only the teacher can see, and deletes it within minutes.</td>
 </tr>
 <tr>
 <td>"A hacker could read the names."</td>
@@ -333,9 +341,9 @@ td:first-child{font-weight:600}
 </tr>
 <tr>
 <td>Cloudflare</td>
-<td>Checks passwords, runs the AI marker, stores marks and the scrambled codes, and answers questions typed into the box at the top of this page</td>
-<td>Answers (with no name) while marking; questions typed into the box; IP addresses</td>
-<td>Worldwide network</td>
+<td>Checks passwords, runs the AI marker, stores marks and the scrambled codes, and holds the Live screen list</td>
+<td>Answers (with no name) while marking; IP addresses; first names and initials while a page is open</td>
+<td>Worldwide network; the Live screen list is held in London</td>
 </tr>
 <tr>
 <td>Resend</td>
@@ -391,12 +399,12 @@ td:first-child{font-weight:600}
 <tr>
 <td>Purpose limitation</td>
 <td>Use data only for the reason you collected it</td>
-<td>Names are used only to tell the teacher whose work it is</td>
+<td>Names are used only to tell the teacher whose work it is, and who is working on what during a lesson</td>
 </tr>
 <tr>
 <td>Data minimisation</td>
 <td>Collect no more than you need</td>
-<td>No accounts, no class lists, no email addresses; just a typed name at hand-in</td>
+<td>No accounts, no class lists, no email addresses; a typed name at hand-in, and only a first name and initial for the Live screen</td>
 </tr>
 <tr>
 <td>Accuracy</td>
@@ -406,7 +414,7 @@ td:first-child{font-weight:600}
 <tr>
 <td>Storage limitation</td>
 <td>Don't keep data longer than needed</td>
-<td>Names aren't stored at all; marks go when the teacher deletes the work, and automatically every August; IP addresses go after 15 minutes</td>
+<td>Hand-in names aren't stored at all; Live screen names go 3 minutes after the page closes; marks go when the teacher deletes the work; IP addresses go after 15 minutes</td>
 </tr>
 <tr>
 <td>Integrity and confidentiality</td>
@@ -431,8 +439,12 @@ td:first-child{font-weight:600}
 </thead>
 <tbody>
 <tr>
-<td>Student names</td>
+<td>Student names typed at hand-in</td>
 <td>Not kept by the site at all</td>
+</tr>
+<tr>
+<td>First names and initials on the Live screen</td>
+<td>While the page is open, then deleted automatically after 3 minutes</td>
 </tr>
 <tr>
 <td>Answers</td>
@@ -470,7 +482,7 @@ td:first-child{font-weight:600}
 <li><strong>Passwords.</strong> Each site has a front-page password, and each homework, lab and resource has its own. The admin area has a separate admin password known only to the teacher.</li>
 <li><strong>Guessing is blocked.</strong> After repeated wrong passwords from one connection, further attempts are refused for 15 minutes.</li>
 <li><strong>Emails stay in school.</strong> The site will only send hand-in emails to school mailboxes ending @mgs.kent.sch.uk. It refuses any other address, even if one is typed in by mistake.</li>
-<li><strong>Nothing worth stealing.</strong> Because names and answers are never stored, a break-in would find only marks and meaningless codes.</li>
+<li><strong>Nothing worth stealing.</strong> Because names and answers are not kept, a break-in would find only marks and meaningless codes, plus the first names and initials of anyone with a page open at that moment.</li>
 <li><strong>Uploaded pages are sandboxed.</strong> Interactive labs run in a locked-down "sandbox", so they can't reach the site's passwords or any other page.</li>
 <li><strong>No third-party tracking.</strong> No analytics, advertising or social media code runs on CS Online, and its fonts are stored on the site itself.</li>
 <li><strong>AI is told to ignore tricks.</strong> The AI marker is instructed to treat answers as data, so a student can't instruct it to change their mark.</li>
@@ -546,7 +558,7 @@ td:first-child{font-weight:600}
 </tr>
 <tr>
 <td>Database / storage</td>
-<td>Where the site keeps information between visits. Here it holds homework, marks and codes, never names</td>
+<td>Where the site keeps information between visits. Here it holds homework, marks and codes, and, for the Live screen only, first names and initials while a page is open</td>
 </tr>
 <tr>
 <td>Browser storage</td>
