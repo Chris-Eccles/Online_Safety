@@ -8,13 +8,17 @@
 <link rel="icon" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>
+@font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(/fonts/source-serif-4-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(/fonts/source-sans-3-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans 3";font-weight:700;font-display:swap;src:url(/fonts/source-sans-3-latin-700-normal.woff2) format("woff2")}
+
 :root{
-  --bg:#eef2f5; --paper:#ffffff; --ink:#15233a; --muted:#56647a; --line:#d5dde7;
-  --accent:#1f5fae; --accent-soft:#e2ecf8; --hl:#ffd457; --hl-ink:#3a2c00;
+  --bg:#F7F5F0; --paper:#ffffff; --ink:#1B2433; --muted:#5A6372; --line:#E4DFD5;
+  --accent:#1E3A5F; --accent-soft:#E9EEF4; --hl:#1E3A5F; --hl-ink:#ffffff;
   --ok:#0d7a4f; --ok-soft:#e1f4ea; --no:#8a5a00; --no-soft:#fdf1d6;
-  --bar:#15233a; --bar-ink:#ffffff; --bar-muted:#b9c5d6;
+  --bar:#1E3A5F; --bar-ink:#ffffff; --bar-muted:#C9D3DF;
   --shadow:0 1px 2px rgba(21,35,58,.06),0 8px 24px rgba(21,35,58,.08);
-  --f:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --f:"Source Sans 3","Segoe UI",Arial,sans-serif; --fh:"Source Serif 4",Georgia,serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -35,17 +39,17 @@ a{color:var(--accent)}
 :focus-visible{outline:3px solid var(--hl);outline-offset:2px}
 
 /* ---- Fixed question bar ---- */
-.ask{position:fixed;top:0;left:0;right:0;z-index:10;background:var(--bar);color:var(--bar-ink);box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.ask{position:fixed;top:0;left:0;right:0;z-index:10;background:var(--bar);color:var(--bar-ink);border-bottom:1px solid var(--line)}
 .ask-in{max-width:980px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left)) 10px max(16px,env(safe-area-inset-right))}
 .ask form{display:flex;gap:10px;align-items:center}
 .ask label.lbl{display:flex;align-items:center;font-weight:700;white-space:nowrap;font-size:.95rem}
 .ask label.lbl .ic{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--hl);color:var(--hl-ink);margin-right:8px;font-size:.9rem}
-.ask input{flex:1 1 auto;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:10px;border:2px solid transparent;background:#fff;color:#15233a}
+.ask input{flex:1 1 auto;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:8px;border:1px solid #D6D0C4;background:#fff;color:#1B2433}
 .ask input:focus{outline:none;border-color:var(--hl)}
-.ask button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:9px 18px;background:var(--hl);color:var(--hl-ink);cursor:pointer}
+.ask button{font:inherit;font-weight:700;border:none;border-radius:8px;padding:9px 18px;background:var(--hl);color:var(--hl-ink);cursor:pointer}
 .ask button:disabled{opacity:.6;cursor:wait}
 .ask .note{margin:4px 0 0;font-size:.8rem;color:var(--bar-muted)}
-.panel{background:var(--paper);color:var(--ink);border-top:4px solid var(--hl)}
+.panel{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)}
 .panel-in{max-width:980px;margin:0 auto;padding:14px 16px 16px;max-height:min(55vh,420px);overflow:auto;position:relative}
 .panel .q{font-weight:700;margin:0 40px 6px 0;color:var(--muted);font-size:.92rem}
 .panel .a p{margin:0 0 8px}
@@ -66,7 +70,7 @@ a{color:var(--accent)}
 header.top{max-width:980px;margin:0 auto;padding:36px 16px 8px}
 .back{font-weight:700;text-decoration:none;font-size:.95rem}
 .eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:22px 0 0}
-h1{font-size:clamp(2rem,6vw,3rem);line-height:1.05;letter-spacing:-.02em;margin:6px 0 10px;font-weight:800}
+h1{font-size:1.8rem;line-height:1.2;letter-spacing:-.01em;margin:6px 0 10px;font-weight:700}
 .lead{color:var(--muted);margin:0;max-width:60ch}
 .wrap{max-width:980px;margin:0 auto;padding:20px 16px 56px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;align-items:start}
 nav.toc{position:sticky;top:calc(var(--barh,90px) + 16px);font-size:.9rem}
@@ -75,7 +79,7 @@ nav.toc ol{margin:0;padding-left:20px}
 nav.toc li{margin:3px 0}
 nav.toc a{color:var(--ink);text-decoration:none}
 nav.toc a:hover{color:var(--accent);text-decoration:underline}
-article{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow);min-width:0}
+article{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 34px;box-shadow:var(--shadow);min-width:0}
 article h2{font-size:1.4rem;line-height:1.25;margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
 article h2:first-child{margin-top:0;padding-top:0;border-top:none}
 article h3{font-size:1.08rem;margin:22px 0 6px}
@@ -111,6 +115,7 @@ td:first-child{font-weight:600}
   td{border:none;padding:2px 0}
 }
 @media print{.ask,nav.toc{display:none}.wrap{display:block}article{box-shadow:none;border:none}}
+h1,h2,h3{font-family:var(--fh);font-weight:600}
 </style>
 </head>
 <body>
@@ -162,11 +167,13 @@ td:first-child{font-weight:600}
   </nav>
   <article id="notice">
 <h2 id="in-short">In short</h2>
-<p>The Abity sites keep almost nothing about anyone. There are no accounts, no logins for students or staff, no adverts, no tracking and no analytics.</p>
+<p>The Abity sites keep almost nothing about anyone. There are no student accounts, no adverts, no tracking and no analytics.</p>
 <ul>
-<li><strong>Students' names are not kept.</strong> A student types their name when they hand in work. It goes to their teacher in one email and is then forgotten by the site.</li>
+<li><strong>Students' names are not kept.</strong> A student types their name on their own device. It goes to their teacher in one email when they hand in work, and is never stored by the site.</li>
+<li><strong>Students sign in with a class code.</strong> It tells the site which class a device is in (for example 10A), not who the student is.</li>
 <li><strong>While a page is open, the teacher sees who is working.</strong> On CS Online, the teacher's Live screen shows each student's first name and surname initial, what they have open and who they are paired with. This is deleted automatically a few minutes after the page is closed.</li>
-<li><strong>What is kept</strong> is a mark, the time of hand-in, and a scrambled code that stops the same student handing in twice. None of these can be turned back into a name.</li>
+<li><strong>What is kept</strong> is the mark, the answers and feedback, the time of hand-in and the class, with no name, so the teacher can see what the class found hard. A scrambled code stops the same student handing in twice; it can't be turned back into a name. All of it is deleted every August.</li>
+<li><b>Continue codes.</b> If a student asks for a continue code to carry on on another device, their unfinished answers are kept against a random code, with no name. The code is deleted when the work is handed in, or after 14 days.</li>
 <li><strong>The AI marker never sees a name.</strong> It only sees the question, the mark scheme and the answer.</li>
 <li><strong>Staff using the CPD site</strong> type nothing that is sent anywhere. Their course notes stay on their own device.</li>
 </ul>
@@ -203,7 +210,7 @@ td:first-child{font-weight:600}
 </tr>
 </tbody>
 </table></div>
-<p>Each site has its own front-page password, given out by the teacher or CPD lead. This keeps the content to the school; it does not identify anyone.</p>
+<p>CS Online is opened with a class code from the teacher; Staff CPD has a front-page password from the CPD lead. These keep the content to the school; they do not identify anyone.</p>
 <h2 id="what-we-collect-and-what-we-don-t">What we collect, and what we don't</h2>
 <h3>CS Online (students)</h3>
 <div class="tw"><table>
@@ -223,22 +230,28 @@ td:first-child{font-weight:600}
 <td>Not kept by the site. The teacher keeps the email in their school mailbox</td>
 </tr>
 <tr>
-<td>Answers</td>
-<td>To mark the work and give feedback</td>
-<td>The AI marker (with no name) and the teacher's email</td>
-<td>Not kept by the site</td>
+<td>Answers and feedback</td>
+<td>To mark the work, give feedback, and show the teacher what the class found hard</td>
+<td>The AI marker and the teacher's email; also stored on the site with no name</td>
+<td>Until the teacher deletes it, and in any case deleted every August</td>
+</tr>
+<tr>
+<td>Class code (for example 10A)</td>
+<td>So work opens for the right class, and hand-ins are grouped by class</td>
+<td>Kept on the student's device and stored with each hand-in</td>
+<td>As the hand-in</td>
 </tr>
 <tr>
 <td>Mark and time handed in</td>
 <td>So the teacher can see how the class did</td>
 <td>Stored on the site, with no name</td>
-<td>Until the teacher deletes that homework or worksheet</td>
+<td>Until the teacher deletes it, and in any case deleted every August</td>
 </tr>
 <tr>
 <td>Scrambled code made from the name (a "hash")</td>
 <td>So each student can only hand in once</td>
 <td>Stored on the site</td>
-<td>Until the teacher deletes that homework or worksheet</td>
+<td>As the hand-in</td>
 </tr>
 <tr>
 <td>Whether the accessibility "Assistive tools" were on, and how many times text was pasted</td>
@@ -248,7 +261,7 @@ td:first-child{font-weight:600}
 </tr>
 <tr>
 <td>Internet (IP) address</td>
-<td>To block anyone trying lots of wrong passwords</td>
+<td>To block anyone trying lots of wrong class codes or passwords</td>
 <td>Stored only if the limit is hit</td>
 <td>Deleted automatically after 15 minutes</td>
 </tr>
@@ -261,21 +274,21 @@ td:first-child{font-weight:600}
 </tbody>
 </table></div>
 <p>Only the first name and the first letter of the surname are sent for the Live screen, even if more is typed. Pairing is done by the site, at random, between students who have the same page open; there is no class list and nothing is kept about who worked with whom.</p>
-<p>Nothing else is collected. There is no class list, no email address, no date of birth, no photo and no login.</p>
+<p>Nothing else is collected. There is no class list, no email address, no date of birth, no photo and no student password.</p>
 <h3>On the student's own device</h3>
-<p>The browser saves answers as the student types, so work isn't lost. This stays on that device and is not sent anywhere until the student hands in. The name is removed from the device after hand-in. A student can also save a <strong>progress file</strong> to their own OneDrive to carry on at home; that file is never sent to the site.</p>
+<p>The browser saves answers as the student types, so work isn't lost. This stays on that device and is not sent anywhere until the student hands in. The device also remembers the student's name and class code, so they needn't type them again; "Sign out" on the front page removes both. A student can also save a <strong>progress file</strong> to their own OneDrive to carry on at home; that file is never sent to the site.</p>
 <h3>Staff CPD</h3>
 <p>Staff type nothing that is sent to the site. Notes typed during a course stay in that person's browser. The site stores only the courses and resource files the CPD lead uploads, and, where the CPD lead adds it, the name of the colleague who made a resource, so other staff can see who to thank or ask (for example "by Sandra"). Ask the CPD lead if you'd like your name changed or removed.</p>
 <h3>Home page</h3>
 <p>The home page collects nothing. It is a set of links.</p>
 <h2 id="what-happens-to-a-name-at-hand-in">What happens to a name at hand-in</h2>
 <figure class="flow" aria-label="What happens to a student's name at hand-in">
-  <div class="fl-start"><span class="fl-k">Student hands in</span><span>types their name and presses Hand in</span></div>
+  <div class="fl-start"><span class="fl-k">Student hands in</span><span>with their name typed on their own device</span></div>
   <div class="fl-arrow" aria-hidden="true"></div>
   <div class="fl-row">
     <div class="fl-box fl-yes"><span class="fl-k">Teacher's school email</span><span>Name, answers and mark</span><span class="fl-tag">The only place the name goes</span></div>
     <div class="fl-box"><span class="fl-k">AI marker</span><span>Question, mark scheme and answer</span><span class="fl-tag no">No name</span></div>
-    <div class="fl-box"><span class="fl-k">Site storage</span><span>Mark, time and a 32-character code</span><span class="fl-tag no">No name, no answers</span></div>
+    <div class="fl-box"><span class="fl-k">Site storage</span><span>Class, mark, answers, time and a 32-character code</span><span class="fl-tag no">No name</span></div>
   </div>
 </figure>
 <p>The name travels one way only: into the teacher's email. The AI marker and the site's long-term storage never receive it. (The Live screen is separate: it holds only a first name and initial, and only while the page is open.)</p>
@@ -301,7 +314,7 @@ td:first-child{font-weight:600}
 <tbody>
 <tr>
 <td>"The name is in a database anyone can look at."</td>
-<td>The name typed at hand-in is never written to any database. Only the 32-character code is. The Live screen briefly holds a first name and initial while a page is open, which only the teacher can see, and deletes it within minutes.</td>
+<td>The name is never written to any database. Only the 32-character code is. The Live screen briefly holds a first name and initial while a page is open, which only the teacher can see, and deletes it within minutes.</td>
 </tr>
 <tr>
 <td>"A hacker could read the names."</td>
@@ -317,7 +330,7 @@ td:first-child{font-weight:600}
 </tr>
 <tr>
 <td>"Marks are stored against names."</td>
-<td>Marks are stored only against the code, so the site itself has no way to say whose mark is whose. Only the teacher's email links a name to a mark.</td>
+<td>Marks and answers are stored only against the code, so the site itself has no way to say whose work is whose. Only the teacher's email links a name to a piece of work.</td>
 </tr>
 </tbody>
 </table></div>
@@ -341,9 +354,9 @@ td:first-child{font-weight:600}
 </tr>
 <tr>
 <td>Cloudflare</td>
-<td>Checks passwords, runs the AI marker, stores marks and the scrambled codes, and holds the Live screen list</td>
-<td>Answers (with no name) while marking; IP addresses; first names and initials while a page is open</td>
-<td>Worldwide network; the Live screen list is held in London</td>
+<td>Checks class codes, runs the AI marker, stores hand-ins (no names) and the scrambled codes, and holds the Live screen list</td>
+<td>Answers, marks and feedback with no name; IP addresses; first names and initials while a page is open</td>
+<td>Worldwide network; hand-ins and the Live screen list are held in London</td>
 </tr>
 <tr>
 <td>Resend</td>
@@ -447,8 +460,8 @@ td:first-child{font-weight:600}
 <td>While the page is open, then deleted automatically after 3 minutes</td>
 </tr>
 <tr>
-<td>Answers</td>
-<td>Not kept by the site at all</td>
+<td>Answers and feedback (no name)</td>
+<td>Until the teacher deletes them, and in any case deleted automatically every August</td>
 </tr>
 <tr>
 <td>Hand-in emails</td>
@@ -459,8 +472,8 @@ td:first-child{font-weight:600}
 <td>A short period set by Resend, for delivery checks</td>
 </tr>
 <tr>
-<td>Marks, hand-in times and scrambled codes</td>
-<td>Until the teacher deletes that homework or worksheet, and in any case deleted automatically every August, before the new school year</td>
+<td>Marks, hand-in times, class and scrambled codes</td>
+<td>Until the teacher deletes them, and in any case deleted automatically every August, before the new school year</td>
 </tr>
 <tr>
 <td>IP addresses (only after too many wrong passwords)</td>
@@ -479,10 +492,10 @@ td:first-child{font-weight:600}
 <h2 id="security">Security</h2>
 <ul>
 <li><strong>Encrypted connections.</strong> Every page is served over HTTPS (the padlock in the address bar), so nothing typed can be read in transit.</li>
-<li><strong>Passwords.</strong> Each site has a front-page password, and each homework, lab and resource has its own. The admin area has a separate admin password known only to the teacher.</li>
-<li><strong>Guessing is blocked.</strong> After repeated wrong passwords from one connection, further attempts are refused for 15 minutes.</li>
+<li><strong>Class codes and passwords.</strong> Students open CS Online with a class code; the teacher can make a new one at any time. The admin area has a separate admin password known only to the teacher.</li>
+<li><strong>Guessing is blocked.</strong> After repeated wrong class codes or passwords from one connection, further attempts are refused for 15 minutes.</li>
 <li><strong>Emails stay in school.</strong> The site will only send hand-in emails to school mailboxes ending @mgs.kent.sch.uk. It refuses any other address, even if one is typed in by mistake.</li>
-<li><strong>Nothing worth stealing.</strong> Because names and answers are not kept, a break-in would find only marks and meaningless codes, plus the first names and initials of anyone with a page open at that moment.</li>
+<li><strong>No names to steal.</strong> Because names are not kept, a break-in would find only anonymous answers, marks and meaningless codes, plus the first names and initials of anyone with a page open at that moment.</li>
 <li><strong>Uploaded pages are sandboxed.</strong> Interactive labs run in a locked-down "sandbox", so they can't reach the site's passwords or any other page.</li>
 <li><strong>No third-party tracking.</strong> No analytics, advertising or social media code runs on CS Online, and its fonts are stored on the site itself.</li>
 <li><strong>AI is told to ignore tricks.</strong> The AI marker is instructed to treat answers as data, so a student can't instruct it to change their mark.</li>
@@ -502,7 +515,9 @@ td:first-child{font-weight:600}
 <h2 id="more-about-cs-online">More about CS Online</h2>
 <p><strong>Assistive tools.</strong> If a student switches on <em>Assistive tools</em> in the ♿ menu (for dictation or text-to-speech), pasting and copying are allowed. The teacher's email says it was switched on and how many times text was pasted, but not what was pasted.</p>
 <p><strong>Progress files.</strong> <em>Save progress file</em> downloads a file with the student's name and answers so far, to wherever they save it (for example their school OneDrive). <em>Load progress file</em> opens it on another computer. The file is never sent to the site or stored on a server. Delete it when it's no longer needed.</p>
-<p><strong>Site password.</strong> After the front-page password is typed, the browser keeps a code showing it has been entered, so it needn't be typed again. The code isn't the password, says nothing about who the student is, and stops working when the teacher changes the password.</p>
+<p><strong>Class code.</strong> After the class code is typed, the browser keeps a signed code showing which class it's in, so it needn't be typed again. It says nothing about who the student is, and stops working when the teacher makes a new class code.</p>
+<p><strong>When work opens.</strong> The teacher opens each worksheet, lab, prep task and homework for a class, straight away or at a time they choose. Homework can have a due date; late work can still be handed in and the teacher's email says it was late.</p>
+<p><strong>Class summaries.</strong> The teacher gets a summary for each class (for example, which questions the class found hard). It is worked out from the anonymous answers and contains no names. The AI that groups common mistakes sees answers only, never names.</p>
 <p><strong>Coding boxes.</strong> Pressing Run or Check on a worksheet compiles and runs the code (C#, Python, VB.NET, Java or SQL) inside the student's own browser. It isn't sent anywhere until they hand in.</p>
 <p><strong>Worksheet feedback.</strong> When a worksheet is handed in, the AI writes a short comment on each answer. It gives no marks and never sees the name.</p>
 <p><strong>Lesson videos.</strong> Nothing loads from YouTube until a student presses play. Videos then play in YouTube's privacy-enhanced mode, and <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a> applies to the player. Names and answers are never shared with YouTube.</p>
@@ -590,7 +605,7 @@ td:first-child{font-weight:600}
 </tr>
 </tbody>
 </table></div>
-    <p class="updated">Last updated 18 October 2026</p>
+    <p class="updated">Last updated 15 November 2026</p>
   </article>
 </div>
 
