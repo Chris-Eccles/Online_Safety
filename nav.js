@@ -10,6 +10,12 @@
     a.setAttribute("aria-label", "Home");
     img.parentNode.insertBefore(a, img); a.appendChild(img);
   }
+  // A Staff link (to admin) in the footer of every page
+  var foot = document.querySelector("footer .in");
+  if (foot && !/\/admin/.test(location.pathname) && !foot.querySelector('a[href="/admin"]')) {
+    var spans = foot.querySelectorAll("span"), last = spans[spans.length - 1] || foot;
+    last.insertAdjacentHTML("beforeend", (last.textContent.trim() ? " · " : "") + '<a href="/admin">Staff</a>');
+  }
   var b = document.createElement("button");
   b.type = "button"; b.className = "totop"; b.textContent = "↑ Top";
   b.setAttribute("aria-label", "Back to top of page");
