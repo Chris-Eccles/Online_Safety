@@ -1,149 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Abity</title>
-<link rel="preload" href="/fonts/atkinson-hyperlegible-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abity · Computer Science at MGS</title>
+<meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<style>
-/* Fonts are stored on this site (SIL Open Font License: /fonts/), so no request goes to Google */
-@font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(/fonts/source-serif-4-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(/fonts/source-sans-3-latin-400-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-weight:700;font-display:swap;src:url(/fonts/source-sans-3-latin-700-normal.woff2) format("woff2")}
-:root{
-  --bg:#F7F5F0; --paper:#ffffff; --ink:#1B2433; --muted:#5A6372; --line:#E4DFD5;
-  --accent:#1E3A5F; --accent-soft:#E9EEF4; --hl:#EFE6D3; --hl-ink:#4A3A17; --bar:#1E3A5F; --brass:#A07E3E;
-  --shadow:0 1px 3px rgba(27,36,51,.06);
-  --f-display:"Source Serif 4",Georgia,serif;
-  --f-body:"Source Sans 3","Segoe UI",Arial,sans-serif;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#10161F; --paper:#18202B; --ink:#E8ECF1; --muted:#9DA7B4; --line:#2A3441;
-  --accent:#A9C1E0; --accent-soft:#1E2A3A; --hl:#3A3122; --hl-ink:#EADCBE; --bar:#141C27; --brass:#C9A866; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#10161F; --paper:#18202B; --ink:#E8ECF1; --muted:#9DA7B4; --line:#2A3441;
-  --accent:#A9C1E0; --accent-soft:#1E2A3A; --hl:#3A3122; --hl-ink:#EADCBE; --bar:#141C27; --brass:#C9A866; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding:0}
-.bar{background:var(--bar);color:#fff}
-.bar-in{max-width:860px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:10px;font-weight:700}
-.badge{width:30px;height:30px;border-radius:6px;background:var(--brass);color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-size:1rem}
-main{width:100%;max-width:860px;margin:0 auto;padding:40px 16px 48px}
-.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0}
-h1{font-family:var(--f-display);font-weight:600;font-size:clamp(1.7rem,4vw,2.2rem);line-height:1.15;margin:0 0 10px}
-mark{background:none;color:inherit;padding:0}
-.lead{color:var(--muted);margin:0 0 28px;max-width:52ch}
-.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-.choice{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px;box-shadow:var(--shadow);min-height:220px;transition:transform .12s,border-color .12s}
-.choice:hover{border-color:var(--accent)}
-.choice:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.ico{width:48px;height:48px;border-radius:8px;display:grid;place-items:center;background:var(--hl);color:var(--hl-ink)}
-.ico svg{width:30px;height:30px}
-.choice h2{font-family:var(--f-display);font-weight:600;font-size:1.4rem;line-height:1.2;margin:2px 0 0}
-.who{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.choice p{margin:0;color:var(--muted)}
-.go{margin-top:auto;font-weight:700;color:var(--accent)}
-footer{margin-top:28px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-.adm{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:none;padding:6px 4px;cursor:pointer;opacity:.55}
-.adm:hover,.adm:focus-visible{opacity:1;text-decoration:underline}
-dialog{border:none;border-radius:16px;padding:24px;width:min(380px,calc(100% - 32px));background:var(--paper);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
-dialog::backdrop{background:rgba(10,16,26,.55)}
-dialog h3{font-family:var(--f-display);font-weight:600;font-size:1.4rem;margin:0 0 12px}
-dialog input{font:inherit;font-size:18px;width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
-dialog input:focus{outline:none;border-color:var(--accent)}
-.dbtn{font:inherit;font-weight:700;display:block;width:100%;text-align:center;text-decoration:none;border-radius:8px;padding:11px 14px;border:1px solid var(--bar);background:var(--bar);color:var(--paper);cursor:pointer;margin-top:10px}
-.dbtn.ghost{background:transparent;color:var(--ink)}
-.err{color:#b4372f;min-height:1.3em;margin:8px 0 0;font-size:.92rem}
-@media (prefers-reduced-motion:reduce){.choice{transition:none}}
-</style>
+<link rel="stylesheet" href="/site.css">
 </head>
 <body>
-<header class="bar"><div class="bar-in"><span class="badge" aria-hidden="true">a</span><span>Abity</span></div></header>
+<header class="bar"><div class="bar-in">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <span class="who">Computer Science</span>
+</div></header>
+
 <main>
-  <h1>Where would you like to <mark>go</mark>?</h1>
-  <p class="lead">Choose your area below. Students sign in to CS Online with the class code or link from their teacher. Staff CPD asks for a password from your CPD leader.</p>
+  <!-- 1. Site password -->
+  <section id="s-gate" class="narrow">
+    <h1 class="page-title">Welcome</h1>
+    <p class="lede">Type the site password your teacher gave you.</p>
+    <form class="card stack" id="f-gate" novalidate>
+      <label for="gate-pw">Site password</label>
+      <input id="gate-pw" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+      <p class="err" id="gate-err" role="alert"></p>
+      <button class="btn" type="submit">Enter</button>
+    </form>
+  </section>
 
-  <div class="choices">
-    <a class="choice" href="https://mywork.abity.co.uk/">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span>
-      <span class="who">For students</span>
-      <h2>CS Online</h2>
-      <p>Computer Science homework, worksheets, labs and resources.</p>
-      <span class="go">Go to CS Online →</span>
-    </a>
-    <a class="choice" href="https://cpd.abity.co.uk/">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7 12 3l10 4-10 4z"/><path d="M6 9v5c0 1.7 2.7 3 6 3s6-1.3 6-3V9"/><path d="M22 7v6"/></svg></span>
-      <span class="who">For staff</span>
-      <h2>Staff CPD</h2>
-      <p>Online CPD courses and resources to use in your lessons.</p>
-      <span class="go">Go to Staff CPD →</span>
-    </a>
-    <a class="choice" href="https://tools.abity.co.uk/">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>
-      <span class="who">For lessons</span>
-      <h2>Teach Tools</h2>
-      <p>Tools to use in lessons and to demonstrate with. No password needed.</p>
-      <span class="go">Go to Teach Tools →</span>
-    </a>
-  </div>
+  <!-- 2. Year -->
+  <section id="s-year" class="hidden">
+    <h1 class="page-title">What year are you in?</h1>
+    <h2 class="section-h">Key Stage 3</h2>
+    <div class="grid">
+      <button class="tile" type="button" data-year="7">Year 7</button>
+      <button class="tile" type="button" data-year="8">Year 8</button>
+      <button class="tile" type="button" data-year="9">Year 9</button>
+    </div>
+    <h2 class="section-h">GCSE and A Level</h2>
+    <div class="grid">
+      <button class="tile" type="button" disabled>Year 10<small>Coming soon</small></button>
+      <button class="tile" type="button" disabled>Year 11<small>Coming soon</small></button>
+      <button class="tile" type="button" disabled>Year 12<small>Coming soon</small></button>
+      <button class="tile" type="button" disabled>Year 13<small>Coming soon</small></button>
+    </div>
+  </section>
 
-  <footer><span>abity.co.uk · <a href="/privacy" style="color:inherit">Privacy notice</a></span><button class="adm" id="admBtn" type="button">Admin</button></footer>
+  <!-- 3. Group, name, group password -->
+  <section id="s-group" class="hidden">
+    <button class="back" type="button" id="to-years">← Back to years</button>
+    <h1 class="page-title" id="group-title">Pick your learning group</h1>
+    <p class="lede">Choose your group, type your name and the group password, then press Enter.</p>
+    <div class="groups" id="group-list" role="group" aria-label="Learning groups"></div>
+    <form class="card stack" id="f-join" style="margin-top:20px;max-width:520px" novalidate>
+      <label for="my-name">Your full name</label>
+      <input id="my-name" type="text" autocomplete="off" placeholder="First name and surname" maxlength="60">
+      <p class="hint">Kept on this device only. It is never sent to the website.</p>
+      <label for="group-pw" id="group-pw-label">Group password</label>
+      <input id="group-pw" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <p class="err" id="join-err" role="alert"></p>
+      <button class="btn" type="submit">Enter</button>
+    </form>
+  </section>
 </main>
 
-<dialog id="admDlg">
-  <form id="admForm" autocomplete="off">
-    <h3>Admin</h3>
-    <div id="admAsk">
-      <input id="admPw" type="password" inputmode="numeric" aria-label="Admin password" placeholder="Admin password">
-      <p class="err" id="admErr" role="alert"></p>
-      <button class="dbtn" id="admGo">Sign in</button>
-      <button class="dbtn ghost" type="button" data-close>Cancel</button>
-    </div>
-    <div id="admLinks" hidden>
-      <a class="dbtn" id="toCpd" href="https://cpd.abity.co.uk/admin">Staff CPD admin</a>
-      <a class="dbtn" id="toCs" href="https://mywork.abity.co.uk/admin">CS Online admin</a>
-      <button class="dbtn ghost" type="button" data-close>Close</button>
-    </div>
-  </form>
-</dialog>
+<footer><div class="in">
+  <span>Abity · Computer Science at Maidstone Grammar School</span>
+  <span><a href="/privacy">Privacy notice</a> · <a href="/admin">Staff</a></span>
+</div></footer>
 
+<script src="/api.js"></script>
 <script>
-/* Admin: checks the password with the CPD server, then opens either admin page already signed in.
-   What is handed over goes after "#" in the address, which browsers never send to a server, and each
-   admin page wipes it from the address bar straight away. */
-(function(){
-  var API = "https://gnxgefgjsgtqgclyvblh.supabase.co/functions/v1/cpd-api";
-  var dlg = document.getElementById("admDlg"), pw = document.getElementById("admPw"), err = document.getElementById("admErr");
-  function reset(){
-    document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin";
-    document.getElementById("toCs").href = "https://mywork.abity.co.uk/admin";
-    pw.value = ""; err.textContent = ""; document.getElementById("admAsk").hidden = false; document.getElementById("admLinks").hidden = true; }
-  document.getElementById("admBtn").onclick = function(){ reset(); dlg.showModal(); pw.focus(); };
-  // abity.co.uk/admin opens the sign-in box straight away
-  if (/^\/admin\/?$/.test(location.pathname)) { reset(); dlg.showModal(); pw.focus(); }
-  dlg.addEventListener("click", function(e){ if (e.target.hasAttribute("data-close")) dlg.close(); });
-  dlg.addEventListener("close", reset);
-  document.getElementById("admForm").onsubmit = async function(e){
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var q = new URLSearchParams(location.search);
+  var next = q.get("next") || "";
+  if (!/^\/(group|ks3\/[a-z-]+)(#[A-Za-z0-9]*)?$/.test(next)) next = "/group";
+  var year = null, group = null;
+
+  // Already signed in on this device: straight to the group page (or where they were going).
+  if (Abity.me()) { location.replace(next); return; }
+
+  function show(id) {
+    ["s-gate", "s-year", "s-group"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); });
+    var f = document.querySelector("#" + id + " input, #" + id + " button");
+    if (f) f.focus();
+  }
+  function busy(form, on) { form.querySelector("button[type=submit]").disabled = on; }
+  var NET = "We can't reach the website's server. Check your internet connection and try again.";
+  var WAIT = "Too many wrong tries. Wait 15 minutes, then try again.";
+
+  if (Abity.pass()) show("s-year"); else show("s-gate");
+
+  $("f-gate").addEventListener("submit", function (e) {
     e.preventDefault();
-    var typed = pw.value.trim(); if (!typed) return;
-    var go = document.getElementById("admGo"); go.disabled = true; err.textContent = "";
-    try {
-      var res = await fetch(API + "/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: typed }) });
-      var data = await res.json().catch(function(){ return {}; });
-      if (!res.ok || !data.pass) throw new Error(data.error || "That password isn't right.");
-      document.getElementById("toCpd").href = "https://cpd.abity.co.uk/admin#pass=" + encodeURIComponent(data.pass);
-      document.getElementById("toCs").href = "https://mywork.abity.co.uk/admin#key=" + encodeURIComponent(typed);
-      document.getElementById("admAsk").hidden = true; document.getElementById("admLinks").hidden = false;
-      pw.value = "";
-    } catch (x) {
-      err.textContent = x.message === "Failed to fetch" ? "Couldn't reach the server. Try again." : x.message;
-    }
-    go.disabled = false;
-  };
+    var pw = $("gate-pw").value.trim();
+    if (!pw) { $("gate-err").textContent = "Type the site password."; return; }
+    busy(this, true); $("gate-err").textContent = "";
+    var form = this;
+    Abity.rpc("site_gate", { p_pw: pw }).then(function (r) {
+      if (r.ok) { Abity.setPass(pw); show("s-year"); }
+      else $("gate-err").textContent = r.wait ? WAIT : "That's not the right password. Check with your teacher.";
+    }).catch(function () { $("gate-err").textContent = NET; }).then(function () { busy(form, false); });
+  });
+
+  document.querySelectorAll("[data-year]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      year = +b.dataset.year; group = null;
+      $("group-title").textContent = "Year " + year + " · Pick your learning group";
+      $("group-list").innerHTML = "";
+      $("join-err").textContent = "";
+      show("s-group");
+      Abity.rpc("site_groups", { p_pw: Abity.pass(), p_year: year }).then(function (list) {
+        if (list === null) { Abity.setPass(null); show("s-gate"); return; }
+        if (!list.length) { $("join-err").textContent = "There are no groups for Year " + year + " yet."; return; }
+        list.forEach(function (g) {
+          var btn = document.createElement("button");
+          btn.type = "button"; btn.textContent = g; btn.setAttribute("aria-pressed", "false");
+          btn.setAttribute("aria-label", "Group " + year + g);
+          btn.addEventListener("click", function () {
+            group = g;
+            $("group-list").querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === btn)); });
+            $("group-pw-label").textContent = "Password for " + year + g;
+            $("my-name").focus();
+          });
+          $("group-list").appendChild(btn);
+        });
+      }).catch(function () { $("join-err").textContent = NET; });
+    });
+  });
+  $("to-years").addEventListener("click", function () { show("s-year"); });
+
+  $("f-join").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var err = $("join-err"), name = Abity.nameCase($("my-name").value), gpw = $("group-pw").value.trim();
+    if (!group) { err.textContent = "Pick your learning group first."; return; }
+    if (name.length < 3 || name.indexOf(" ") < 0) { err.textContent = "Type your first name and surname."; $("my-name").focus(); return; }
+    if (!gpw) { err.textContent = "Type the password for " + year + group + "."; $("group-pw").focus(); return; }
+    var form = this; busy(form, true); err.textContent = "";
+    Abity.rpc("site_join", { p_pw: Abity.pass(), p_year: year, p_group: group, p_gpw: gpw }).then(function (r) {
+      if (r.ok) {
+        Abity.setMe({ token: r.token, year: r.year, group: r.group, name: name });
+        location.replace(next);
+      } else {
+        err.textContent = r.wait ? WAIT : "That's not the password for " + year + group + ". Check with your teacher.";
+        busy(form, false);
+      }
+    }).catch(function () { err.textContent = NET; busy(form, false); });
+  });
 })();
 </script>
 </body>

@@ -1,16 +1,27 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/admin",
-      "destination": "/index.html"
-    }
-  ],
   "redirects": [
     {
-      "source": "/((?!privacy$|admin$|fonts/|favicon\\.png$|favicon\\.ico$|apple-touch-icon\\.png$).+)",
+      "source": "/((?!group$|admin$|privacy$|ks3/|fonts/|brand/|site\\.css$|api\\.js$|favicon\\.png$|favicon\\.ico$|apple-touch-icon\\.png$).+)",
       "destination": "/",
       "permanent": false
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://gnxgefgjsgtqgclyvblh.supabase.co; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+        { "key": "X-Robots-Tag", "value": "noindex" }
+      ]
+    },
+    {
+      "source": "/(fonts|brand)/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }]
     }
   ]
 }

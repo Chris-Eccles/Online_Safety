@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Abity</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+<style>
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;cursor:pointer}
+.tabs button[aria-selected=true]{background:#fff;color:var(--navy);border-color:#fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.chips button{background:#fff;border:1px solid var(--field);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-width:56px;min-height:46px;font-size:16px}
+.chips button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.chips .all{border-style:dashed}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+.item h2{font-size:1.3rem}
+.item .meta{color:var(--muted);font-size:15px;margin:2px 0 14px}
+.toggles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.tog{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;min-height:104px}
+.tog b{font-size:16px}.tog small{color:var(--muted);font-size:14px;line-height:1.3}
+.tog .st{margin-top:auto;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--lock-soft);color:var(--lock)}
+.tog[aria-pressed=true]{border-color:var(--ok);background:var(--ok-soft)}
+.tog[aria-pressed=true] .st{background:var(--ok);color:#fff}
+.tog.some{border-color:var(--brass);background:var(--brass-soft)}
+.tog.some .st{background:var(--brass);color:#fff}
+.tog:disabled{opacity:.6;cursor:wait}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td input{max-width:200px;font-size:16px;padding:8px 10px}
+.small-btn{background:#fff;border:1px solid var(--field);border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
+.small-btn.danger{color:var(--bad)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.row>div{display:flex;flex-direction:column;gap:6px}
+.links{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.links a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none}
+.links a small{display:block;color:var(--muted);font-weight:400}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
+    <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
+    <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
+    <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    <button type="button" id="logout">Log out</button>
+  </nav>
+</div></header>
+
+<main>
+  <section id="login" class="narrow">
+    <h1 class="page-title">Admin</h1>
+    <p class="lede">Staff only.</p>
+    <form class="card stack" id="f-login" novalidate>
+      <label for="admin-pw">Admin password</label>
+      <input id="admin-pw" type="password" autocomplete="current-password">
+      <p class="err" id="login-err" role="alert"></p>
+      <button class="btn" type="submit">Log in</button>
+    </form>
+  </section>
+
+  <section id="p-lessons" class="hidden">
+    <h1 class="page-title">Lessons</h1>
+    <p class="lede">Pick a year and a group, then tap a lesson to switch it on or off for that group. Students see the change next time they open or refresh the page.</p>
+    <div class="chips" id="years" role="group" aria-label="Year"></div>
+    <div class="chips" id="grps" role="group" aria-label="Group"></div>
+    <div id="items"></div>
+  </section>
+
+  <section id="p-groups" class="hidden">
+    <h1 class="page-title">Groups</h1>
+    <p class="lede">Each group has its own password. Changing a password signs out every device in that group, so students will need the new one.</p>
+    <div id="group-table"></div>
+    <h2 class="section-h">Add a group</h2>
+    <form class="card row" id="f-add" novalidate>
+      <div><label for="add-year">Year</label><select id="add-year" style="font-size:17px;padding:10px;border-radius:10px;border:1px solid var(--field)">
+        <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option></select></div>
+      <div><label for="add-name">Group name</label><input id="add-name" type="text" maxlength="12" placeholder="e.g. Q or 10A" autocomplete="off"></div>
+      <div><label for="add-pw">Password</label><input id="add-pw" type="text" maxlength="40" autocomplete="off"></div>
+      <button class="btn" type="submit">Add group</button>
+      <p class="err" id="add-err" role="alert" style="flex-basis:100%"></p>
+    </form>
+  </section>
+
+  <section id="p-settings" class="hidden">
+    <h1 class="page-title">Settings</h1>
+    <h2 class="section-h">Other sites</h2>
+    <div class="links">
+      <a href="https://cpd.abity.co.uk/admin">Staff CPD admin<small>cpd.abity.co.uk</small></a>
+      <a href="https://cpd.abity.co.uk/">Staff CPD<small>Courses for staff</small></a>
+      <a href="https://tools.abity.co.uk/">Teach Tools<small>tools.abity.co.uk</small></a>
+      <a href="https://env.abity.co.uk/">Env Sci<small>env.abity.co.uk</small></a>
+    </div>
+    <h2 class="section-h">Site password</h2>
+    <form class="card row" id="f-site" novalidate>
+      <div style="flex:1;min-width:220px"><label for="site-new">New site password (all students)</label><input id="site-new" type="text" autocomplete="off" minlength="4"></div>
+      <button class="btn" type="submit">Change</button>
+      <p class="err" id="site-err" role="alert" style="flex-basis:100%"></p>
+    </form>
+    <h2 class="section-h">Admin password</h2>
+    <form class="card row" id="f-admin" novalidate>
+      <div style="flex:1;min-width:220px"><label for="admin-new">New admin password (10 or more characters)</label><input id="admin-new" type="password" autocomplete="new-password"></div>
+      <button class="btn" type="submit">Change</button>
+      <p class="err" id="admin-err" role="alert" style="flex-basis:100%"></p>
+    </form>
+  </section>
+</main>
+
+<script src="/api.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  var PW = null, D = null, year = 7, gid = "all";
+  try { PW = sessionStorage.getItem("abity-admin"); } catch (e) {}
+
+  function toast(t) { var d = document.createElement("div"); d.className = "toast"; d.setAttribute("role", "status"); d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 2200); }
+  function call(action, args) {
+    return Abity.rpc("site_admin", { p_pw: PW, p_action: action, p_args: args || {} }).then(function (r) {
+      if (r.auth === false || r.wait) { logout(r.wait ? "Too many wrong tries. Wait 15 minutes." : "Please log in again."); throw new Error("auth"); }
+      return r;
+    });
+  }
+  function load() { return call("list").then(function (r) { D = r; render(); }); }
+  function logout(msg) { PW = null; try { sessionStorage.removeItem("abity-admin"); } catch (e) {} $("tabs").classList.add("hidden"); show("login"); $("login-err").textContent = msg || ""; }
+  function show(id) { ["login", "p-lessons", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
+
+  $("f-login").addEventListener("submit", function (e) {
+    e.preventDefault(); PW = $("admin-pw").value;
+    var b = this.querySelector("button"); b.disabled = true;
+    Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) {
+      if (!r.ok) { $("login-err").textContent = r.wait ? "Too many wrong tries. Wait 15 minutes." : "That password isn't right."; PW = null; return; }
+      try { sessionStorage.setItem("abity-admin", PW); } catch (e) {}
+      $("admin-pw").value = ""; D = r; $("tabs").classList.remove("hidden"); tab("lessons");
+    }).catch(function () { $("login-err").textContent = "Can't reach the server."; }).then(function () { b.disabled = false; });
+  });
+  $("logout").addEventListener("click", function () { logout(); });
+  document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  function tab(t) {
+    document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
+    show("p-" + t); render();
+  }
+
+  function groupsOf(y) { return D.groups.filter(function (g) { return g.year === y; }); }
+  function isOn(g, item, lesson) { return D.switches.some(function (s) { return s.group_id === g && s.item === item && s.lesson === lesson; }); }
+
+  function render() {
+    if (!D) return;
+    // years that have groups or items
+    var years = [7, 8, 9, 10, 11, 12, 13].filter(function (y) { return groupsOf(y).length || D.items.some(function (i) { return i.year === y; }); });
+    if (years.indexOf(year) < 0) year = years[0] || 7;
+    $("years").innerHTML = years.map(function (y) { return '<button type="button" data-y="' + y + '" aria-pressed="' + (y === year) + '">Year ' + y + '</button>'; }).join("");
+    var gs = groupsOf(year);
+    if (gid !== "all" && !gs.some(function (g) { return g.id === gid; })) gid = "all";
+    $("grps").innerHTML = '<button type="button" class="all" data-g="all" aria-pressed="' + (gid === "all") + '">Whole year</button>' +
+      gs.map(function (g) { return '<button type="button" data-g="' + g.id + '" aria-pressed="' + (g.id === gid) + '">' + year + esc(g.name) + '</button>'; }).join("");
+
+    var items = D.items.filter(function (i) { return i.year === year; });
+    $("items").innerHTML = !items.length ? '<p class="lede">Nothing set up for Year ' + year + ' yet.</p>' : items.map(function (it) {
+      return '<div class="item"><h2>' + esc(it.title) + '</h2><p class="meta">Term ' + it.term + (gid === "all" ? " · switching here changes every Year " + year + " group" : " · group " + year + esc((gs.find(function (g) { return g.id === gid; }) || {}).name || "")) + '</p><div class="toggles">' +
+        it.lessons.map(function (l) {
+          var n = gs.filter(function (g) { return isOn(g.id, it.item, l.lesson); }).length;
+          var on = gid === "all" ? (gs.length > 0 && n === gs.length) : isOn(gid, it.item, l.lesson);
+          var some = gid === "all" && n > 0 && n < gs.length;
+          var st = gid === "all" ? (n === 0 ? "Off everywhere" : n === gs.length ? "On for all " + n : "On for " + n + " of " + gs.length) : (on ? "On" : "Off");
+          var label = l.lesson === "WS" ? "Workshop" : "Lesson " + l.lesson.slice(1);
+          return '<button type="button" class="tog' + (some ? " some" : "") + '" aria-pressed="' + on + '" data-item="' + it.item + '" data-lesson="' + l.lesson + '">' +
+            '<b>' + label + '</b><small>' + esc(l.lesson === "WS" ? "Extra quests" : l.title) + '</small><span class="st">' + st + '</span></button>';
+        }).join("") + '</div></div>';
+    }).join("");
+
+    // groups table
+    var all = D.groups.slice();
+    $("group-table").innerHTML = !all.length ? "<p>No groups yet.</p>" : '<table><thead><tr><th>Group</th><th>Password</th><th></th></tr></thead><tbody>' +
+      all.map(function (g) {
+        return '<tr><td><b>' + g.year + esc(g.name) + '</b></td><td><label class="sr" for="pw-' + g.id + '">Password for ' + g.year + esc(g.name) + '</label><input id="pw-' + g.id + '" type="text" value="' + esc(g.pw) + '" autocomplete="off"></td>' +
+          '<td style="text-align:right;white-space:nowrap"><button class="small-btn" type="button" data-save="' + g.id + '">Save password</button> <button class="small-btn danger" type="button" data-del="' + g.id + '">Delete</button></td></tr>';
+      }).join("") + '</tbody></table>';
+  }
+
+  document.addEventListener("click", function (e) {
+    var y = e.target.closest("[data-y]"); if (y) { year = +y.dataset.y; gid = "all"; render(); return; }
+    var g = e.target.closest("[data-g]"); if (g) { gid = g.dataset.g; render(); return; }
+    var t = e.target.closest(".tog");
+    if (t) {
+      var on = t.getAttribute("aria-pressed") !== "true", item = t.dataset.item, lesson = t.dataset.lesson;
+      t.disabled = true;
+      var p = gid === "all" ? call("switch_year", { year: year, item: item, lesson: lesson, on: on }) : call("switch", { group_id: gid, item: item, lesson: lesson, on: on });
+      p.then(load).then(function () { toast((on ? "Switched on: " : "Switched off: ") + (lesson === "WS" ? "Workshop" : "Lesson " + lesson.slice(1))); })
+       .catch(function (err) { if (err.message !== "auth") toast("Couldn't save. Check your connection."); render(); });
+      return;
+    }
+    var s = e.target.closest("[data-save]");
+    if (s) {
+      var pw = $("pw-" + s.dataset.save).value.trim();
+      if (pw.length < 4) { toast("Passwords need 4 or more characters."); return; }
+      if (!confirm("Change this password? Every device signed in to this group will be signed out.")) return;
+      call("group_pw", { group_id: s.dataset.save, pw: pw }).then(function (r) { toast(r.ok ? "Password changed" : (r.error || "Couldn't save")); return load(); }).catch(function () {});
+      return;
+    }
+    var d = e.target.closest("[data-del]");
+    if (d) {
+      var gr = D.groups.find(function (x) { return x.id === d.dataset.del; });
+      if (!confirm("Delete group " + gr.year + gr.name + "? Its switches go too, and its students are signed out.")) return;
+      call("group_delete", { group_id: gr.id }).then(load).then(function () { toast("Group deleted"); }).catch(function () {});
+    }
+  });
+
+  $("f-add").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("add-name").value.trim(), pw = $("add-pw").value.trim();
+    if (!name || pw.length < 4) { $("add-err").textContent = "Give the group a name and a password of 4 or more characters."; return; }
+    call("group_add", { year: +$("add-year").value, name: name, pw: pw }).then(function (r) {
+      if (!r.ok) { $("add-err").textContent = r.error || "Couldn't add the group."; return; }
+      $("add-err").textContent = ""; $("add-name").value = ""; $("add-pw").value = ""; toast("Group added"); return load();
+    }).catch(function () {});
+  });
+  function pwForm(form, input, errEl, action, min, msg) {
+    $(form).addEventListener("submit", function (e) {
+      e.preventDefault(); var v = $(input).value;
+      if (v.trim().length < min) { $(errEl).textContent = "Use " + min + " or more characters."; return; }
+      if (!confirm(msg)) return;
+      call(action, { new: v }).then(function (r) {
+        if (!r.ok) { $(errEl).textContent = "Couldn't change it."; return; }
+        $(errEl).textContent = ""; $(input).value = ""; toast("Changed");
+        if (action === "admin_pw") { PW = v; try { sessionStorage.setItem("abity-admin", v); } catch (e) {} }
+      }).catch(function () {});
+    });
+  }
+  pwForm("f-site", "site-new", "site-err", "site_pw", 4, "Change the site password? Students already signed in stay signed in; new sign-ins need the new password.");
+  pwForm("f-admin", "admin-new", "admin-err", "admin_pw", 10, "Change the admin password?");
+
+  if (PW) { Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) { if (r.ok) { D = r; $("tabs").classList.remove("hidden"); tab("lessons"); } else logout(); }).catch(function () { logout("Can't reach the server."); }); }
+  else show("login");
+})();
+</script>
+</body>
+</html>

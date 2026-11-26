@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My group · Abity</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <span class="who"><span id="who"></span><button type="button" id="signout">Sign out</button></span>
+</div></header>
+
+<main>
+  <h1 class="page-title" id="title">Loading…</h1>
+  <p class="lede" id="lede"></p>
+  <div id="terms" aria-live="polite"></div>
+</main>
+
+<footer><div class="in">
+  <span>Abity · Computer Science at Maidstone Grammar School</span>
+  <span><a href="/privacy">Privacy notice</a></span>
+</div></footer>
+
+<script src="/api.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  $("signout").addEventListener("click", function () {
+    if (confirm("Sign out of this device? You'll need the site and group passwords to come back.")) Abity.signOut();
+  });
+
+  Abity.state().then(function (st) {
+    if (!st) { location.replace("/"); return; }
+    var code = st.year + st.group;
+    $("who").innerHTML = "<b>" + esc(st.name || "") + "</b> · " + esc(code);
+    document.title = code + " · Abity";
+    $("title").textContent = code + " · Computing";
+    $("lede").textContent = "Your projects for each term. Lessons open when your teacher switches them on.";
+
+    // The current project: the latest term with something open.
+    var now = 0;
+    st.items.forEach(function (it) { if (it.lessons.some(function (l) { return l.open; })) now = Math.max(now, it.term); });
+
+    var html = "";
+    for (var t = 1; t <= 6; t++) {
+      var items = st.items.filter(function (it) { return it.term === t; });
+      if (!items.length) { html += '<section class="term empty"><span class="eyebrow">Term ' + t + '</span> · nothing here yet</section>'; continue; }
+      items.forEach(function (it) {
+        var open = it.lessons.filter(function (l) { return l.open; });
+        html += '<section class="term' + (t === now ? " now" : "") + '"><div class="term-h"><div>' +
+          '<div class="eyebrow">Term ' + t + (t === now ? " · current project" : "") + '</div>' +
+          '<h2>' + esc(it.title) + '</h2><p class="sub">' + esc(it.sub) + '</p></div>' +
+          (open.length ? '<a class="btn" href="' + esc(it.href) + '">Open ' + esc(it.title) + '</a>' : '<span class="pill">Not open yet</span>') +
+          '</div><div class="lessons">' +
+          it.lessons.map(function (l) {
+            var label = l.lesson === "WS" ? "Workshop" : "Lesson " + l.lesson.slice(1);
+            var sub = l.lesson === "WS" ? "Extra quests" : l.title;
+            return l.open
+              ? '<a class="lesson" href="' + esc(it.href) + '#' + esc(l.lesson) + '"><b>' + label + '</b><small>' + esc(sub) + '</small></a>'
+              : '<div class="lesson locked"><b>' + label + '</b><small>' + esc(sub) + '</small><span class="sr">Not open yet</span></div>';
+          }).join("") + '</div></section>';
+      });
+    }
+    $("terms").innerHTML = html;
+  }).catch(function () {
+    $("title").textContent = "Can't connect";
+    $("lede").textContent = "We can't reach the website's server. Check your internet connection, then refresh the page.";
+  });
+})();
+</script>
+</body>
+</html>
