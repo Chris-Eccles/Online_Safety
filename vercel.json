@@ -50,7 +50,7 @@
   "rewrites": [
     {
       "source": "/hw/:code",
-      "destination": "/hw.html"
+      "destination": "/hw"
     }
   ]
 }
