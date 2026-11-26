@@ -585,7 +585,7 @@ function hwHTML(L){
 function pop(n){if(window.confetti)confetti({particleCount:n,spread:60,origin:{y:.7},colors:["#ffcc33","#3ddc84","#ff6fb0","#4b7bec"],disableForReducedMotion:true,useWorker:false})}
 document.addEventListener("click",e=>{
   const op=e.target.closest("[data-opt]");if(op){const box=op.closest("[data-mcq]"),id=box.dataset.mcq,m=findMcq(id);if(!m||S.mcq[id]!==undefined)return;
-    S.mcq[id]=+op.dataset.opt;save();box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
+    S.mcq[id]=+op.dataset.opt;save();if(window.Abity)Abity.answer("levelup",id,S.mcq[id]);box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
     const [lid,kind]=id.split(":"),L=LESSONS.find(l=>l.id===lid),sc=document.querySelector(`[data-score="${lid}:${kind}"]`);if(sc)sc.outerHTML=scoreHTML(L,kind);
     if(S.mcq[id]===m[2])pop(30);return}
   const cf=e.target.closest("[data-conf]");if(cf){S.conf[cf.dataset.conf]=+cf.dataset.v;save();cf.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===cf));return}

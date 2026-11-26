@@ -584,7 +584,7 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-tab]");if(t){S.tab=t.dataset.tab;save();render();window.scrollTo({top:0,behavior:"smooth"});return}
   const c=e.target.closest("[data-wcat]");if(c){S.wcat=c.dataset.wcat;save();render();return}
   const op=e.target.closest("[data-opt]");if(op){const box=op.closest("[data-mcq]"),id=box.dataset.mcq,m=findMcq(id);if(!m||S.mcq[id]!==undefined)return;
-    S.mcq[id]=+op.dataset.opt;save();box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
+    S.mcq[id]=+op.dataset.opt;save();if(window.Abity)Abity.answer("pitchit",id,S.mcq[id]);box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
     const [lid,kind]=id.split(":"),L=LESSONS.find(l=>l.id===lid),sc=document.querySelector(`[data-score="${lid}:${kind}"]`);if(sc&&kind!=="hg")sc.outerHTML=scoreHTML(L,kind);
     if(S.mcq[id]===m[2]&&CONFETTI)CONFETTI(Object.assign({particleCount:30,spread:50,origin:{y:.7}},CONF));return}
   const cf=e.target.closest("[data-conf]");if(cf){S.conf[cf.dataset.conf]=+cf.dataset.v;save();cf.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===cf));return}

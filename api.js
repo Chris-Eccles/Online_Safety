@@ -45,6 +45,13 @@
         return s;
       });
     },
+    // A quiz answer for the anonymous class results: the question and the option picked, linked to this
+    // device's group only. The database keeps the first answer per device and ignores later ones.
+    answer: function (item, qid, choice) {
+      var me = read(localStorage, ME);
+      if (!me || !me.token) return;
+      rpc("site_answer", { p_token: me.token, p_item: item, p_qid: qid, p_choice: choice }).catch(function () {});
+    },
     signOut: function () {
       write(localStorage, ME, null);
       write(sessionStorage, PASS, null);

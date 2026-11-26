@@ -38,6 +38,21 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 .links{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 .links a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none}
 .links a small{display:block;color:var(--muted);font-weight:400}
+.rq{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.rq h3{font-family:var(--body);font-size:17px;margin:0 0 4px}
+.rq .score{font-size:14px;color:var(--muted);margin:0 0 10px}
+.rq .score b{color:var(--ink)}
+.opt{display:grid;grid-template-columns:minmax(0,1fr) 140px 44px;gap:10px;align-items:center;padding:6px 0;font-size:15px}
+.opt .meter{height:14px;background:var(--lock-soft);border-radius:7px;overflow:hidden}
+.opt .meter i{display:block;height:100%;background:var(--field)}
+.opt.right{font-weight:700;color:var(--ok)}
+.opt.right .meter i{background:var(--ok)}
+.opt.common .meter i{background:#C27C0E}
+.opt .n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px;margin-left:6px;background:#FBF3E2;color:#7A4E00;vertical-align:1px}
+.kind-h{font-family:var(--body);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+.r-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+@media (max-width:600px){.opt{grid-template-columns:minmax(0,1fr) 80px 36px}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
 </style>
 </head>
@@ -46,6 +61,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
   <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
     <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
+    <button role="tab" data-tab="results" aria-selected="false">Class results</button>
     <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
     <button type="button" id="logout">Log out</button>
@@ -70,6 +86,16 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <div class="chips" id="years" role="group" aria-label="Year"></div>
     <div class="chips" id="grps" role="group" aria-label="Group"></div>
     <div id="items"></div>
+  </section>
+
+  <section id="p-results" class="hidden">
+    <h1 class="page-title">Class results</h1>
+    <p class="lede">How the group answered each quiz question: do now, hinge and exit ticket. Anonymous: one answer per device (the first one), no names. It updates every 10 seconds while this page is open.</p>
+    <div class="chips" id="r-years" role="group" aria-label="Year"></div>
+    <div class="chips" id="r-grps" role="group" aria-label="Group"></div>
+    <div class="chips" id="r-items" role="group" aria-label="Workbook"></div>
+    <div class="chips" id="r-lessons" role="group" aria-label="Lesson"></div>
+    <div id="r-body"></div>
   </section>
 
   <section id="p-groups" class="hidden">
@@ -117,7 +143,8 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
-  var PW = null, D = null, year = 7, gid = "all";
+  var PW = null, D = null, year = 7, gid = "all", timer = null, rItem = null, rLesson = null, R = null;
+  var KINDS = { dn: "Do now", hg: "Hinge question", ex: "Exit ticket" };
   try { PW = sessionStorage.getItem("abity-admin"); } catch (e) {}
 
   function toast(t) { var d = document.createElement("div"); d.className = "toast"; d.setAttribute("role", "status"); d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 2200); }
@@ -129,7 +156,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   }
   function load() { return call("list").then(function (r) { D = r; render(); }); }
   function logout(msg) { PW = null; try { sessionStorage.removeItem("abity-admin"); } catch (e) {} $("tabs").classList.add("hidden"); show("login"); $("login-err").textContent = msg || ""; }
-  function show(id) { ["login", "p-lessons", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
+  function show(id) { ["login", "p-lessons", "p-results", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
 
   $("f-login").addEventListener("submit", function (e) {
     e.preventDefault(); PW = $("admin-pw").value;
@@ -145,6 +172,8 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   function tab(t) {
     document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
     show("p-" + t); render();
+    clearInterval(timer); timer = null;
+    if (t === "results") { results(); timer = setInterval(function () { if (!document.hidden) results(true); }, 10000); }
   }
 
   function groupsOf(y) { return D.groups.filter(function (g) { return g.year === y; }); }
@@ -184,7 +213,53 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
       }).join("") + '</tbody></table>';
   }
 
+  function results(quiet) {
+    if (!D) return;
+    var items = D.items.filter(function (i) { return i.year === year; });
+    if (!items.some(function (i) { return i.item === rItem; })) { rItem = items.length ? items[0].item : null; rLesson = null; }
+    var gs = groupsOf(year);
+    $("r-years").innerHTML = $("years").innerHTML.replace(/data-y=/g, "data-ry=");
+    $("r-grps").innerHTML = '<button type="button" class="all" data-rg="all" aria-pressed="' + (gid === "all") + '">Whole year</button>' +
+      gs.map(function (g) { return '<button type="button" data-rg="' + g.id + '" aria-pressed="' + (g.id === gid) + '">' + year + esc(g.name) + '</button>'; }).join("");
+    $("r-items").innerHTML = items.map(function (i) { return '<button type="button" data-ri="' + i.item + '" aria-pressed="' + (i.item === rItem) + '">' + esc(i.title) + '</button>'; }).join("");
+    if (!rItem) { $("r-lessons").innerHTML = ""; $("r-body").innerHTML = '<p class="lede">Nothing set up for Year ' + year + ' yet.</p>'; return; }
+    if (!quiet) $("r-body").innerHTML = '<p class="lede">Loading…</p>';
+    call("results", { year: year, group_id: gid === "all" ? "" : gid, item: rItem }).then(function (r) { R = r.questions || []; drawResults(); }).catch(function () {});
+  }
+  function drawResults() {
+    var lessons = []; R.forEach(function (q) { if (lessons.indexOf(q.lesson) < 0) lessons.push(q.lesson); });
+    if (!rLesson || lessons.indexOf(rLesson) < 0) {
+      // default: the last lesson that has any answers, else lesson 1
+      rLesson = lessons[0];
+      R.forEach(function (q) { if (q.counts.some(function (c) { return c > 0; })) rLesson = q.lesson; });
+    }
+    $("r-lessons").innerHTML = lessons.map(function (l) { return '<button type="button" data-rl="' + l + '" aria-pressed="' + (l === rLesson) + '">Lesson ' + l.slice(1) + '</button>'; }).join("");
+    var qs = R.filter(function (q) { return q.lesson === rLesson; }), html = '<div class="r-tools"><button class="small-btn" type="button" data-rrefresh>Refresh now</button><button class="small-btn danger" type="button" data-rclear>Clear Lesson ' + rLesson.slice(1) + ' results</button></div>', last = "";
+    qs.forEach(function (q) {
+      if (q.kind !== last) { html += '<h2 class="kind-h">' + KINDS[q.kind] + '</h2>'; last = q.kind; }
+      var n = q.counts.reduce(function (a, b) { return a + b; }, 0), right = q.counts[q.answer] || 0;
+      var worst = -1, wmax = 0; q.counts.forEach(function (c, i) { if (i !== q.answer && c > wmax) { wmax = c; worst = i; } });
+      html += '<div class="rq"><h3>' + esc(q.q) + '</h3><p class="score">' + (n ? '<b>' + right + ' of ' + n + '</b> correct (' + Math.round(100 * right / n) + '%)' : 'No answers yet') + '</p>' +
+        q.opts.map(function (o, i) {
+          var c = q.counts[i] || 0, pc = n ? Math.round(100 * c / n) : 0;
+          return '<div class="opt' + (i === q.answer ? " right" : "") + (i === worst ? " common" : "") + '"><span>' + "ABCD"[i] + '. ' + esc(o) + (i === q.answer ? ' ✓' : '') + (i === worst ? '<span class="tag">most common wrong answer</span>' : '') + '</span>' +
+            '<span class="meter" aria-hidden="true"><i style="width:' + pc + '%"></i></span><span class="n">' + c + '</span></div>';
+        }).join("") + '</div>';
+    });
+    $("r-body").innerHTML = html;
+  }
   document.addEventListener("click", function (e) {
+    var ry = e.target.closest("[data-ry]"); if (ry) { year = +ry.dataset.ry; gid = "all"; rItem = null; rLesson = null; render(); results(); return; }
+    var rg = e.target.closest("[data-rg]"); if (rg) { gid = rg.dataset.rg; render(); results(); return; }
+    var ri = e.target.closest("[data-ri]"); if (ri) { rItem = ri.dataset.ri; rLesson = null; results(); return; }
+    var rl = e.target.closest("[data-rl]"); if (rl) { rLesson = rl.dataset.rl; drawResults(); return; }
+    if (e.target.closest("[data-rrefresh]")) { results(true); return; }
+    if (e.target.closest("[data-rclear]")) {
+      var who = gid === "all" ? "every Year " + year + " group" : year + ((groupsOf(year).find(function (g) { return g.id === gid; }) || {}).name || "");
+      if (!confirm("Clear the Lesson " + rLesson.slice(1) + " results for " + who + "? The counts go back to zero and only answers given after this are counted.")) return;
+      call("results_clear", { year: year, group_id: gid === "all" ? "" : gid, item: rItem, lesson: rLesson }).then(function () { toast("Cleared"); results(true); }).catch(function () {});
+      return;
+    }
     var y = e.target.closest("[data-y]"); if (y) { year = +y.dataset.y; gid = "all"; render(); return; }
     var g = e.target.closest("[data-g]"); if (g) { gid = g.dataset.g; render(); return; }
     var t = e.target.closest(".tog");

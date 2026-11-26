@@ -45,16 +45,18 @@
       <tr><td>Your name</td><td>Saved in your browser on this device only, so the workbooks can show it. It is <b>never</b> sent to the website.</td></tr>
       <tr><td>Your year and learning group (for example 7Q)</td><td>Saved in your browser. The group is not you: every student in 7Q has the same group.</td></tr>
       <tr><td>A sign-in code for this device</td><td>A random code that tells the website which group this device belongs to, so it can show the right lessons. It is saved in your browser and in the website's database, linked to the group only, never to a name.</td></tr>
+      <tr><td>Quiz answers in the workbooks (do now, hinge and exit questions)</td><td>Which option you picked is sent to the website so your teacher can see how the <b>group</b> did, for example "18 of 25 got it right". It is linked to this device's sign-in code and group, never to a name, and only the first answer from each device is counted.</td></tr>
       <tr><td>Ticks, XP, links and notes in the workbooks</td><td>Saved in your browser on this device only. Your real work is saved in MakeCode or your school OneDrive.</td></tr>
     </tbody>
   </table>
-  <p>Nothing else is collected: no class lists, email addresses, dates of birth, photos, answers or marks. "Sign out" on your group page removes your name, group and sign-in code from the device.</p>
+  <p>Nothing else is collected: no class lists, email addresses, dates of birth, photos or marks, and nothing you write. "Sign out" on your group page removes your name, group and sign-in code from the device.</p>
 
   <h2>What the website's database holds</h2>
   <ul>
     <li>The learning groups (for example 7Q) and each group's password, set by the teacher.</li>
     <li>Which lessons the teacher has switched on for each group, and the keys that open those lessons in the page.</li>
     <li>The random sign-in codes described above, linked to a group only.</li>
+    <li>Quiz answers (the option picked), linked to a sign-in code. Your teacher sees only totals for a group or year.</li>
     <li>After a wrong password, a scrambled (salted and hashed) form of the device's internet address, kept for 15 minutes to block guessing. It cannot be turned back into the address.</li>
   </ul>
   <p>None of this identifies a student.</p>
@@ -64,7 +66,7 @@
     <thead><tr><th>Service</th><th>What it does</th><th>What it sees</th></tr></thead>
     <tbody>
       <tr><td>Vercel</td><td>Hosts the pages</td><td>Internet addresses in its server logs</td></tr>
-      <tr><td>Supabase (London)</td><td>The database described above</td><td>Groups, switches, sign-in codes, internet addresses in its logs</td></tr>
+      <tr><td>Supabase (London)</td><td>The database described above</td><td>Groups, switches, sign-in codes, quiz answers (no names), internet addresses in its logs</td></tr>
       <tr><td>Microsoft (MakeCode, OneDrive)</td><td>Where students build and save their work, through links in the workbooks</td><td>Covered by the school's own Microsoft agreement and Microsoft's privacy terms</td></tr>
     </tbody>
   </table>
@@ -75,6 +77,7 @@
     <thead><tr><th>What</th><th>How long</th></tr></thead>
     <tbody>
       <tr><td>Names</td><td>Never kept by the website. On your device until you sign out or clear your browser.</td></tr>
+      <tr><td>Quiz answers</td><td>Deleted with the sign-in code they belong to, and always on 1 August. Your teacher can also clear a lesson's results.</td></tr>
       <tr><td>Sign-in codes</td><td>Until the teacher changes the group password or deletes the group, and always deleted on 1 August each year</td></tr>
       <tr><td>Scrambled internet addresses after a wrong password</td><td>15 minutes</td></tr>
       <tr><td>Groups and switches</td><td>Until the teacher changes or deletes them</td></tr>
