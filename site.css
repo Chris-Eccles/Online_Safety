@@ -1,5 +1,5 @@
-/* abity.co.uk: shared look for the student pages and admin, matching env.abity.co.uk.
-   Teal accent, mint-to-white background, white rounded cards. Type: Fredoka headings, Nunito text,
+/* abity.co.uk: shared look for the student pages and admin, in the Env Sci style (fonts, cards, layout) with MGS navy.
+   Navy accent, pale-blue-to-white background, white rounded cards. Type: Fredoka headings, Nunito text,
    hosted on this site (licences in /fonts). The KS3 workbooks keep their own look. */
 @font-face{font-family:Fredoka;font-weight:500;font-display:swap;src:url(/fonts/fredoka-latin-500-normal.woff2) format("woff2")}
 @font-face{font-family:Fredoka;font-weight:600;font-display:swap;src:url(/fonts/fredoka-latin-600-normal.woff2) format("woff2")}
@@ -9,15 +9,15 @@
 @font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(/fonts/nunito-latin-700-normal.woff2) format("woff2")}
 @font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(/fonts/nunito-latin-800-normal.woff2) format("woff2")}
 :root{
-  --navy:#0f766e;--navy-dark:#115e59;--navy-soft:#f0fdfa;
-  --brass:#14b8a6;--brass-soft:#fffbeb;
+  --navy:#1E3A5F;--navy-dark:#152B47;--navy-soft:#EDF2F8;
+  --brass:#3B6FA8;--brass-soft:#fffbeb;
   --ink:#0f172a;--muted:#475569;--bg:#ffffff;--card:#FFFFFF;--line:#e2e8f0;--field:#cbd5e1;
   --ok:#15803d;--ok-soft:#f0fdf4;--bad:#dc2626;--bad-soft:#fef2f2;--lock:#64748b;--lock-soft:#f1f5f9;
   --amber:#d97706;--amber-soft:#fffbeb;
   --head:Fredoka,Nunito,sans-serif;--body:Nunito,system-ui,sans-serif;--r:14px;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:var(--body);font-size:17px;line-height:1.55;color:var(--ink);background:linear-gradient(180deg,#ecfdf5 0,#fff 420px) no-repeat,#fff;min-height:100vh;display:flex;flex-direction:column}
+body{margin:0;font-family:var(--body);font-size:17px;line-height:1.55;color:var(--ink);background:linear-gradient(180deg,#E8EEF6 0,#fff 420px) no-repeat,#fff;min-height:100vh;display:flex;flex-direction:column}
 button,input,select{font:inherit}
 h1,h2,h3{font-family:var(--head);font-weight:600;line-height:1.2;margin:0}
 a{color:var(--navy);font-weight:700}
@@ -66,7 +66,7 @@ input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--nav
 
 .term{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:14px}
 .term{border-top:5px solid #94a3b8}
-.term.now{border-color:var(--line);border-top:5px solid var(--navy);box-shadow:0 4px 18px rgba(15,118,110,.10)}
+.term.now{border-color:var(--line);border-top:5px solid var(--navy);box-shadow:0 4px 18px rgba(30,58,95,.12)}
 .term.empty{color:var(--muted);padding:16px 24px;border-top:1px solid var(--line);background:rgba(255,255,255,.7)}
 .term-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted)}

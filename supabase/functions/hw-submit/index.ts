@@ -202,12 +202,12 @@ Deno.serve(async (req) => {
       <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;white-space:nowrap;font-weight:700;color:${r.awarded === r.marks ? "#15803d" : r.awarded ? "#d97706" : "#dc2626"}">${r.awarded}/${r.marks}</td>
       <td style="padding:6px 8px;border-bottom:1px solid #e2e8f0">${esc(r.feedback)}<div style="color:#64748b;font-size:12px">${esc(r.by)}${r.pastes ? ` · pasted ${r.pastes}×` : ""}</div></td></tr>`).join("");
     const html = `<div style="font-family:Arial,sans-serif;color:#0f172a;max-width:900px">
-      <h2 style="color:#0f766e;margin:0 0 4px">${esc(hw.title)}</h2>
+      <h2 style="color:#1E3A5F;margin:0 0 4px">${esc(hw.title)}</h2>
       <p style="margin:0 0 12px"><b>${esc(name)}</b> · ${hw.year}${esc(group)} · ${esc(when)}</p>
       <p style="font-size:20px;margin:0 0 6px"><b>${score} / ${hw.data.totalMarks}</b> (${pct}%)${aiFailed ? ' <span style="color:#d97706">· some answers need checking</span>' : ""}</p>
       <p style="margin:0 0 14px;color:#475569">${Object.entries(bySection).map(([k, v]) => `${esc(k)} ${v.got}/${v.of}`).join(" · ")}<br>
       Time taken: ${minutes ?? "?"} min · Left the page ${away}× · Accessibility tools: ${assist ? "used" : "not used"}</p>
-      <table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#f0fdfa;text-align:left">
+      <table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#EDF2F8;text-align:left">
       <th style="padding:6px 8px">Q</th><th style="padding:6px 8px">Question</th><th style="padding:6px 8px">Answer</th><th style="padding:6px 8px">Mark</th><th style="padding:6px 8px">Feedback</th></tr>${rows}</table>
       <p style="color:#64748b;font-size:12px;margin-top:14px">Written answers are AI-suggested marks: your mark is the one that counts. Files attached: CSV (Excel) and JSON (dashboard).</p></div>`;
 
