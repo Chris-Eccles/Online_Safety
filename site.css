@@ -87,3 +87,20 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:14px}
 footer .in{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
 footer a{color:var(--muted);font-weight:600}
 @media (max-width:520px){main{padding:28px 16px 48px}.card{padding:20px}.bar-in{padding:10px 16px}}
+
+/* Navigation helpers */
+.bar a.home{display:block;border-radius:8px}
+.bar a.home:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.bar .navbtns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.totop{position:fixed;right:20px;bottom:20px;z-index:20;background:var(--navy);color:#fff;border:0;border-radius:999px;padding:12px 18px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 4px 14px rgba(15,23,42,.25);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s,transform .15s}
+.totop.show{opacity:1;pointer-events:auto;transform:none}
+.totop:hover{background:var(--navy-dark)}
+@media (prefers-reduced-motion:reduce){.totop{transition:none}}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.jump a,.jump button{background:#fff;border:1px solid var(--field);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;font-size:15px;color:var(--navy);text-decoration:none;cursor:pointer}
+.jump a:hover,.jump button:hover{border-color:var(--navy);background:var(--navy-soft)}
+.jump .on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.hw-progress{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(4px)}
+.hw-progress .in{max-width:860px;margin:0 auto;padding:10px 24px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:700;font-size:15px}
+.hw-progress .bar2{flex:1;min-width:120px;height:8px;background:var(--lock-soft);border-radius:4px;overflow:hidden}
+.hw-progress .bar2 i{display:block;height:100%;background:var(--navy);width:0;transition:width .2s}

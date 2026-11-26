@@ -43,6 +43,10 @@ legend{padding:0}
   <span class="who-bar">Homework</span>
 </div></header>
 
+<div class="hw-progress hidden" id="prog"><div class="in">
+  <span id="prog-txt">0 of 0 answered</span><span class="bar2" aria-hidden="true"><i id="prog-bar"></i></span>
+  <button class="btn" type="button" id="to-submit" style="min-height:40px;padding:8px 16px;font-size:15px">Go to hand in \u2193</button>
+</div></div>
 <main style="max-width:860px">
   <p id="msg" class="lede">Loading…</p>
   <div id="app" class="hidden">
@@ -142,7 +146,17 @@ legend{padding:0}
     $("msg").classList.add("hidden"); $("app").classList.remove("hidden");
     if (!S.started && !preview) { S.started = new Date().toISOString(); save(); }
     if (S.done) showResult(S.done);
+    if (!preview && !S.done) $("prog").classList.remove("hidden");
+    progress();
   }
+  function progress() {
+    if (!HW) return;
+    var all = [].concat.apply([], HW.hw.sections.map(function (s) { return s.questions; }));
+    var n = all.filter(function (x) { return String(S.answers[x.id] || "").trim(); }).length;
+    $("prog-txt").textContent = n + " of " + all.length + " answered";
+    $("prog-bar").style.width = (all.length ? 100 * n / all.length : 0) + "%";
+  }
+  $("to-submit").addEventListener("click", function () { $("submit-box").scrollIntoView({ behavior: "smooth", block: "center" }); });
 
   function pick(g) {
     group = g; S.group = g; save();
@@ -153,10 +167,10 @@ legend{padding:0}
 
   // Answers, pastes and time spent on each question (all sent with the hand-in, for your teacher)
   document.addEventListener("input", function (e) {
-    var id = e.target.dataset && e.target.dataset.q; if (id) { S.answers[id] = e.target.value; save(); }
+    var id = e.target.dataset && e.target.dataset.q; if (id) { S.answers[id] = e.target.value; save(); progress(); }
   });
   document.addEventListener("change", function (e) {
-    if (e.target.type === "radio") { S.answers[e.target.name] = e.target.value; save(); }
+    if (e.target.type === "radio") { S.answers[e.target.name] = e.target.value; save(); progress(); }
   });
   document.addEventListener("paste", function (e) {
     var id = e.target.dataset && e.target.dataset.q; if (id) { S.pastes[id] = (S.pastes[id] || 0) + 1; save(); }
@@ -196,6 +210,7 @@ legend{padding:0}
   });
 
   function showResult(r) {
+    $("prog").classList.add("hidden");
     document.querySelectorAll("#app input, #app textarea, #groups button").forEach(function (el) { el.disabled = true; });
     r.results.forEach(function (x) {
       var fb = $("fb-" + x.id); if (!fb) return;
@@ -214,5 +229,6 @@ legend{padding:0}
   }
 })();
 </script>
+<script src="/nav.js"></script>
 </body>
 </html>

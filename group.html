@@ -17,6 +17,7 @@
 <main>
   <h1 class="page-title" id="title">Loading…</h1>
   <p class="lede" id="lede"></p>
+  <nav class="jump hidden" id="jump" aria-label="Jump to"></nav>
   <div id="terms" aria-live="polite"></div>
 </main>
 
@@ -31,6 +32,10 @@
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-term]"); if (!t) return;
+    var el = document.getElementById("term-" + t.dataset.term); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   $("signout").addEventListener("click", function () {
     if (confirm("Sign out of this device? You'll need the site and group passwords to come back.")) Abity.signOut();
   });
@@ -68,11 +73,18 @@
       });
     }
     $("terms").innerHTML = html;
+    // Quick buttons: open the current project straight away, or jump to any term
+    var cur = st.items.filter(function (it) { return it.term === now; })[0];
+    var jb = (cur ? '<a class="on" href="' + esc(cur.href) + '">Continue ' + esc(cur.title) + ' \u2192</a>' : '');
+    for (var k = 1; k <= 6; k++) jb += '<button type="button" data-term="' + k + '">Term ' + k + '</button>';
+    $("jump").innerHTML = jb; $("jump").classList.remove("hidden");
+    document.querySelectorAll("#terms .term").forEach(function (el, i) { el.id = "term-" + (i + 1); });
   }).catch(function () {
     $("title").textContent = "Can't connect";
     $("lede").textContent = "We can't reach the website's server. Check your internet connection, then refresh the page.";
   });
 })();
 </script>
+<script src="/nav.js"></script>
 </body>
 </html>

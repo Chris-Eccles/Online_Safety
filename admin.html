@@ -70,13 +70,14 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 </head>
 <body>
 <header class="bar"><div class="bar-in">
-  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School" data-home="/admin">
   <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
     <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
     <button role="tab" data-tab="results" aria-selected="false">Class results</button>
     <button role="tab" data-tab="homework" aria-selected="false">Homework</button>
     <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    <a href="/" target="_blank" rel="noopener" style="color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;text-decoration:none">Student view \u2197</a>
     <button type="button" id="logout">Log out</button>
   </nav>
 </div></header>
@@ -453,5 +454,6 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   else show("login");
 })();
 </script>
+<script src="/nav.js"></script>
 </body>
 </html>
