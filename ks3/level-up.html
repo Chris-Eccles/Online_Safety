@@ -573,7 +573,11 @@ function exitSendHTML(L){
   const n=L.ped.exit.length,got=L.ped.exit.filter((m,i)=>S.mcq[`${L.id}:ex:${i}`]!==undefined).length,sent=S.done[L.id+":exsent"];
   const st="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap";
   const b=`font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 20px;cursor:pointer;background:var(--accent);color:#1b1b28`;
-  if(sent)return `<div style="${st}"><b>✓ Sent to your teacher.</b><button data-exsend="${L.id}" style="${b};opacity:.85">Send again</button><span style="font-size:14px;opacity:.8">Changed your confidence? Send again.</span></div>`;
+  if(sent){
+    const wait=Math.ceil((60000-(Date.now()-(S.done[L.id+":exsentAt"]||0)))/1000);
+    if(wait>0){clearTimeout(window["exT"+L.id]);window["exT"+L.id]=setTimeout(()=>{const bx=document.querySelector(`[data-exbox="${L.id}"]`);if(bx)bx.innerHTML=exitSendHTML(L)},wait*1000+50);}
+    return `<div style="${st}"><b>✓ Sent to your teacher.</b>${wait>0?`<span style="font-size:14px;opacity:.8">Changed your confidence? You can send again in a minute.</span>`:`<button data-exsend="${L.id}" style="${b};opacity:.85">Send again</button><span style="font-size:14px;opacity:.8">Only if you've changed your confidence.</span>`}</div>`;
+  }
   return `<div style="${st}"><button data-exsend="${L.id}" style="${b}" ${got<n?"disabled":""}>Send to my teacher</button><span style="font-size:14px;opacity:.85">${got<n?`Answer all ${n} questions first (${got}/${n} done).`:"Your answers and confidence go to your teacher without your name."}</span></div>`;
 }
 const TIERN={bronze:"Bronze",silver:"Silver",gold:"Gold",legend:"Legend"};
@@ -599,7 +603,7 @@ document.addEventListener("click",e=>{
   const cf=e.target.closest("[data-conf]");if(cf){S.conf[cf.dataset.conf]=+cf.dataset.v;save();cf.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===cf));return}
   const xs=e.target.closest("[data-exsend]");if(xs){const lid=xs.dataset.exsend,LL=LESSONS.find(l=>l.id===lid);if(!LL)return;
     const lv=LL.goals.map((g,i)=>{const v=S.conf[lid+":"+i];return v===undefined?-1:v});xs.disabled=true;xs.textContent="Sending…";
-    Abity.confidence("levelup",lid,lv).then(r=>{if(!r.ok)throw 0;S.done[lid+":exsent"]=true;save();const bx=document.querySelector(`[data-exbox="${lid}"]`);if(bx)bx.innerHTML=exitSendHTML(LL);})
+    Abity.confidence("levelup",lid,lv).then(r=>{if(!r.ok)throw 0;S.done[lid+":exsent"]=true;S.done[lid+":exsentAt"]=Date.now();save();const bx=document.querySelector(`[data-exbox="${lid}"]`);if(bx)bx.innerHTML=exitSendHTML(LL);})
       .catch(()=>{xs.disabled=false;xs.textContent="Try again";});return}
   const rs=e.target.closest("[data-reset]");if(rs){const p=rs.dataset.reset+":";if(/:ex$/.test(rs.dataset.reset))delete S.done[rs.dataset.reset.split(":")[0]+":exsent"];Object.keys(S.mcq).forEach(k=>{if(k.startsWith(p))delete S.mcq[k]});save();const y=scrollY;render();scrollTo(0,y);return}
   const jp=e.target.closest("[data-jump]");if(jp){e.preventDefault();const el=document.getElementById(jp.dataset.jump);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return}
