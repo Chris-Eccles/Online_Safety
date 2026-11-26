@@ -186,7 +186,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
-  var PW = null, D = null, year = 7, gid = "all", timer = null, rItem = null, rLesson = null, R = null;
+  var RC = [], PW = null, D = null, year = 7, gid = "all", timer = null, rItem = null, rLesson = null, R = null;
   var KINDS = { dn: "Do now", hg: "Hinge question", ex: "Exit ticket" };
   try { PW = sessionStorage.getItem("abity-admin"); } catch (e) {}
 
@@ -351,7 +351,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     $("r-items").innerHTML = items.map(function (i) { return '<button type="button" data-ri="' + i.item + '" aria-pressed="' + (i.item === rItem) + '">' + esc(i.title) + '</button>'; }).join("");
     if (!rItem) { $("r-lessons").innerHTML = ""; $("r-body").innerHTML = '<p class="lede">Nothing set up for Year ' + year + ' yet.</p>'; return; }
     if (!quiet) $("r-body").innerHTML = '<p class="lede">Loading…</p>';
-    call("results", { year: year, group_id: gid === "all" ? "" : gid, item: rItem }).then(function (r) { R = r.questions || []; drawResults(); }).catch(function () {});
+    call("results", { year: year, group_id: gid === "all" ? "" : gid, item: rItem }).then(function (r) { R = r.questions || []; RC = r.confidence || []; drawResults(); }).catch(function () {});
   }
   function drawResults() {
     var lessons = []; R.forEach(function (q) { if (lessons.indexOf(q.lesson) < 0) lessons.push(q.lesson); });
@@ -373,6 +373,17 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
             '<span class="meter" aria-hidden="true"><i style="width:' + pc + '%"></i></span><span class="n">' + c + '</span></div>';
         }).join("") + '</div>';
     });
+    var cs = RC.filter(function (c) { return c.lesson === rLesson; });
+    if (cs.length) {
+      var LBL = ["Not yet", "Getting there", "Got it"], COL = ["#dc2626", "#d97706", "#15803d"];
+      html += '<h2 class="kind-h">Exit ticket: how confident they are</h2><div class="rq">' + cs.map(function (c) {
+        var n = c.counts.reduce(function (a, b) { return a + b; }, 0);
+        return '<div style="margin:0 0 14px"><b>' + esc(c.text) + '</b> <span style="color:var(--muted);font-size:14px">' + (n ? n + " rated" : "no ratings yet") + '</span>' +
+          '<div style="display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--lock-soft);margin:6px 0 4px">' +
+          c.counts.map(function (v, i) { return n ? '<i style="width:' + (100 * v / n) + '%;background:' + COL[i] + '"></i>' : ''; }).join("") + '</div>' +
+          '<span style="font-size:14px">' + c.counts.map(function (v, i) { return '<span style="color:' + COL[i] + ';font-weight:700">' + LBL[i] + '</span> ' + v; }).join(" · ") + '</span></div>';
+      }).join("") + '</div>';
+    }
     $("r-body").innerHTML = html;
   }
   document.addEventListener("click", function (e) {

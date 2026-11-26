@@ -566,7 +566,15 @@ function exitHTML(L){
    <div class="mcqs">${P.exit.map((m,i)=>mcqHTML(`${L.id}:ex:${i}`,m,i+1)).join("")}</div>
    <div class="conf"><h3>How confident are you?</h3>${L.goals.map((g,i)=>{const k=L.id+":"+i,v=S.conf[k];
      return `<div class="crow"><span class="cg">${g}</span><span class="cbtns" role="group">${CONF_LBL.map((c,j)=>`<button data-conf="${k}" data-v="${j}" aria-pressed="${v===j}" class="c${j}">${c}</button>`).join("")}</span></div>`}).join("")}</div>
+   <div class="exsend" data-exbox="${L.id}">${exitSendHTML(L)}</div>
    <button class="reset" data-reset="${L.id}:ex">Reset exit ticket</button>`;
+}
+function exitSendHTML(L){
+  const n=L.ped.exit.length,got=L.ped.exit.filter((m,i)=>S.mcq[`${L.id}:ex:${i}`]!==undefined).length,sent=S.done[L.id+":exsent"];
+  const st="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap";
+  const b=`font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 20px;cursor:pointer;background:var(--accent);color:#1b1b28`;
+  if(sent)return `<div style="${st}"><b>✓ Sent to your teacher.</b><button data-exsend="${L.id}" style="${b};opacity:.85">Send again</button><span style="font-size:14px;opacity:.8">Changed your confidence? Send again.</span></div>`;
+  return `<div style="${st}"><button data-exsend="${L.id}" style="${b}" ${got<n?"disabled":""}>Send to my teacher</button><span style="font-size:14px;opacity:.85">${got<n?`Answer all ${n} questions first (${got}/${n} done).`:"Your answers and confidence go to your teacher without your name."}</span></div>`;
 }
 const TIERN={bronze:"Bronze",silver:"Silver",gold:"Gold",legend:"Legend"};
 function hwLabel(id){return S.done[id+":hw"]?"📝 Homework ✓ handed in":"📝 Homework"}
@@ -585,11 +593,15 @@ function hwHTML(L){
 function pop(n){if(window.confetti)confetti({particleCount:n,spread:60,origin:{y:.7},colors:["#ffcc33","#3ddc84","#ff6fb0","#4b7bec"],disableForReducedMotion:true,useWorker:false})}
 document.addEventListener("click",e=>{
   const op=e.target.closest("[data-opt]");if(op){const box=op.closest("[data-mcq]"),id=box.dataset.mcq,m=findMcq(id);if(!m||S.mcq[id]!==undefined)return;
-    S.mcq[id]=+op.dataset.opt;save();if(window.Abity)Abity.answer("levelup",id,S.mcq[id]);box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
+    S.mcq[id]=+op.dataset.opt;save();{const bx=document.querySelector(`[data-exbox="${id.split(":")[0]}"]`);const LL=LESSONS.find(l=>l.id===id.split(":")[0]);if(bx&&LL&&id.split(":")[1]==="ex")setTimeout(()=>{bx.innerHTML=exitSendHTML(LL)},0);}if(window.Abity)Abity.answer("levelup",id,S.mcq[id]);box.outerHTML=mcqHTML(id,m,box.dataset.n?+box.dataset.n:0);
     const [lid,kind]=id.split(":"),L=LESSONS.find(l=>l.id===lid),sc=document.querySelector(`[data-score="${lid}:${kind}"]`);if(sc)sc.outerHTML=scoreHTML(L,kind);
     if(S.mcq[id]===m[2])pop(30);return}
   const cf=e.target.closest("[data-conf]");if(cf){S.conf[cf.dataset.conf]=+cf.dataset.v;save();cf.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===cf));return}
-  const rs=e.target.closest("[data-reset]");if(rs){const p=rs.dataset.reset+":";Object.keys(S.mcq).forEach(k=>{if(k.startsWith(p))delete S.mcq[k]});save();const y=scrollY;render();scrollTo(0,y);return}
+  const xs=e.target.closest("[data-exsend]");if(xs){const lid=xs.dataset.exsend,LL=LESSONS.find(l=>l.id===lid);if(!LL)return;
+    const lv=LL.goals.map((g,i)=>{const v=S.conf[lid+":"+i];return v===undefined?-1:v});xs.disabled=true;xs.textContent="Sending…";
+    Abity.confidence("levelup",lid,lv).then(r=>{if(!r.ok)throw 0;S.done[lid+":exsent"]=true;save();const bx=document.querySelector(`[data-exbox="${lid}"]`);if(bx)bx.innerHTML=exitSendHTML(LL);})
+      .catch(()=>{xs.disabled=false;xs.textContent="Try again";});return}
+  const rs=e.target.closest("[data-reset]");if(rs){const p=rs.dataset.reset+":";if(/:ex$/.test(rs.dataset.reset))delete S.done[rs.dataset.reset.split(":")[0]+":exsent"];Object.keys(S.mcq).forEach(k=>{if(k.startsWith(p))delete S.mcq[k]});save();const y=scrollY;render();scrollTo(0,y);return}
   const jp=e.target.closest("[data-jump]");if(jp){e.preventDefault();const el=document.getElementById(jp.dataset.jump);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return}
   const hb=e.target.closest("[data-hw]");if(hb){const L=LESSONS.find(l=>l.id===hb.dataset.hw);const d=document.getElementById("hwDlg");d.innerHTML=hwHTML(L);d.showModal();d.scrollTop=0;return}
   if(e.target.id==="hwDlg")e.target.close();

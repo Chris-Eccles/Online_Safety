@@ -52,6 +52,12 @@
       if (!me || !me.token) return;
       rpc("site_answer", { p_token: me.token, p_item: item, p_qid: qid, p_choice: choice }).catch(function () {});
     },
+    // Exit ticket "How confident are you?" ratings (0 not yet, 1 getting there, 2 got it; -1 skipped), linked to the group only.
+    confidence: function (item, lesson, levels) {
+      var me = read(localStorage, ME);
+      if (!me || !me.token) return Promise.reject(new Error("not signed in"));
+      return rpc("site_confidence", { p_token: me.token, p_item: item, p_lesson: lesson, p_levels: levels });
+    },
     signOut: function () {
       write(localStorage, ME, null);
       write(sessionStorage, PASS, null);
