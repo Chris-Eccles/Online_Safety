@@ -77,7 +77,8 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <button role="tab" data-tab="homework" aria-selected="false">Homework</button>
     <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
-    <a href="/" target="_blank" rel="noopener" style="color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;text-decoration:none">Student view \u2197</a>
+    <button type="button" id="demo" title="Opens the student site as a demo Year 7 group with every lesson open">Demo as a student ↗</button>
+    <a href="/" target="_blank" rel="noopener" title="Opens the student site in a new tab" style="color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;text-decoration:none">Student site ↗</a>
     <button type="button" id="logout">Log out</button>
   </nav>
 </div></header>
@@ -153,6 +154,9 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 
   <section id="p-settings" class="hidden">
     <h1 class="page-title">Settings</h1>
+    <h2 class="section-h">Showing a colleague</h2>
+    <div class="card"><p style="margin:0 0 12px"><b>Demo as a student</b> (top bar) opens the student site as a hidden demo group, Year 7 "DEMO", with every Level Up and Pitch It! lesson switched on. No passwords to type, it doesn't appear in the students' group list, and its quiz answers are left out of whole-year class results. Press <b>Sign out</b> on the student page to leave the demo.</p>
+    <p style="margin:0">To show homework, use <b>Preview</b> on any homework in the Homework tab: it shows exactly what students see, with hand-in switched off.</p></div>
     <h2 class="section-h">Other sites</h2>
     <div class="links">
       <a href="https://cpd.abity.co.uk/admin">Staff CPD admin<small>cpd.abity.co.uk</small></a>
@@ -207,6 +211,15 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     }).catch(function () { $("login-err").textContent = "Can't reach the server."; }).then(function () { b.disabled = false; });
   });
   $("logout").addEventListener("click", function () { logout(); });
+  // One-click demo: signs this browser in to a hidden demo group (Year 7, every lesson open) and opens it.
+  $("demo").addEventListener("click", function () {
+    var w = window.open("about:blank", "_blank");
+    call("demo").then(function (r) {
+      if (!r.ok) { if (w) w.close(); toast("Couldn't start the demo."); return; }
+      Abity.setMe({ token: r.token, year: r.year, group: r.group, name: "Demo Student" });
+      if (w) w.location = "/group"; else location.href = "/group";
+    }).catch(function () { if (w) w.close(); });
+  });
   document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   function tab(t) {
     document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });

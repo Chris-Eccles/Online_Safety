@@ -46,7 +46,7 @@
     $("who").innerHTML = "<b>" + esc(st.name || "") + "</b> · " + esc(code);
     document.title = code + " · Abity";
     $("title").textContent = code + " · Computing";
-    $("lede").textContent = "Your projects for each term. Lessons open when your teacher switches them on.";
+    $("lede").textContent = st.group === "DEMO" ? "Demo group: every lesson is open so you can look around. Press Sign out (top right) to leave the demo." : "Your projects for each term. Lessons open when your teacher switches them on.";
 
     // The current project: the latest term with something open.
     var now = 0;
