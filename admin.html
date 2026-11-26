@@ -24,8 +24,8 @@
 .tog .st{margin-top:auto;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--lock-soft);color:var(--lock)}
 .tog[aria-pressed=true]{border-color:var(--ok);background:var(--ok-soft)}
 .tog[aria-pressed=true] .st{background:var(--ok);color:#fff}
-.tog.some{border-color:var(--brass);background:var(--brass-soft)}
-.tog.some .st{background:var(--brass);color:#fff}
+.tog.some{border-color:var(--amber);background:var(--amber-soft)}
+.tog.some .st{background:var(--amber);color:#fff}
 .tog:disabled{opacity:.6;cursor:wait}
 table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -53,6 +53,18 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 .kind-h{font-family:var(--body);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
 .r-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
 @media (max-width:600px){.opt{grid-template-columns:minmax(0,1fr) 80px 36px}}
+.hwc{background:#fff;border:1px solid var(--line);border-top:5px solid var(--navy);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.hwc.closed{border-top-color:#94a3b8}
+.hwc h3{font-family:var(--head);font-weight:600;font-size:1.25rem;margin:0}
+.hwc .m{color:var(--muted);font-size:14px;margin:2px 0 10px}
+.hwc .link{font-family:ui-monospace,monospace;font-size:15px;background:var(--navy-soft);border-radius:8px;padding:6px 10px;display:inline-block;margin:0 0 10px;word-break:break-all}
+.hwc .acts{display:flex;gap:8px;flex-wrap:wrap}
+.status{font-size:12px;font-weight:800;border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:3px}
+.status.on{background:var(--ok-soft);color:var(--ok)}.status.off{background:var(--lock-soft);color:var(--lock)}
+.pv-q{border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
+.pv-q pre{white-space:pre-wrap;font:inherit;margin:4px 0 0;color:var(--ok)}
+.badge{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:1px 8px;background:var(--lock-soft);color:var(--lock);margin-left:6px}
+.warn{background:var(--amber-soft);border-radius:10px;padding:10px 14px;color:#78350f;margin:6px 0}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
 </style>
 </head>
@@ -62,6 +74,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
     <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
     <button role="tab" data-tab="results" aria-selected="false">Class results</button>
+    <button role="tab" data-tab="homework" aria-selected="false">Homework</button>
     <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
     <button type="button" id="logout">Log out</button>
@@ -96,6 +109,30 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <div class="chips" id="r-items" role="group" aria-label="Workbook"></div>
     <div class="chips" id="r-lessons" role="group" aria-label="Lesson"></div>
     <div id="r-body"></div>
+  </section>
+
+  <section id="p-homework" class="hidden">
+    <h1 class="page-title">Homework</h1>
+    <p class="lede">Years 10 to 13. Upload a homework .txt (the hw-homework-builder format), check the preview, publish, then copy the link into Teams. Students can only reach a homework through its link. Each hand-in is marked and emailed to you with a CSV and a JSON file; nothing about the student is kept on the website.</p>
+    <div id="hw-list"></div>
+    <h2 class="section-h" id="hw-form-h">New homework</h2>
+    <div class="card stack" id="hw-form">
+      <div class="row">
+        <div><label for="hw-year">Year</label><select id="hw-year" style="font-size:17px;padding:10px;border-radius:10px;border:1px solid var(--field)"><option>10</option><option>11</option><option>12</option><option>13</option></select></div>
+        <div style="flex:1;min-width:240px"><label for="hw-file">Homework file (.txt)</label><input id="hw-file" type="file" accept=".txt,text/plain" style="font-size:16px;padding:8px 0"></div>
+      </div>
+      <label for="hw-text">Or paste the homework text</label>
+      <textarea id="hw-text" rows="10" style="width:100%;font-family:ui-monospace,monospace;font-size:14px;padding:12px;border:1px solid var(--field);border-radius:10px" placeholder="Title: …"></textarea>
+      <div class="row"><button class="btn ghost" type="button" id="hw-preview">Check and preview</button><button class="btn" type="button" id="hw-publish" disabled>Publish</button><button class="small-btn hidden" type="button" id="hw-cancel">Cancel editing</button></div>
+      <p class="err" id="hw-err" role="alert"></p>
+      <div id="hw-out"></div>
+    </div>
+    <h2 class="section-h">Where results are sent</h2>
+    <form class="card row" id="f-email" novalidate>
+      <div style="flex:1;min-width:260px"><label for="hw-email">School email address</label><input id="hw-email" type="text" autocomplete="off"></div>
+      <button class="btn" type="submit">Save</button>
+      <p class="err" id="email-err" role="alert" style="flex-basis:100%"></p>
+    </form>
   </section>
 
   <section id="p-groups" class="hidden">
@@ -138,6 +175,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 </main>
 
 <script src="/api.js"></script>
+<script type="module">import * as H from "/hw-core.js"; window.HWCore = H;</script>
 <script>
 (function () {
   "use strict";
@@ -156,7 +194,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   }
   function load() { return call("list").then(function (r) { D = r; render(); }); }
   function logout(msg) { PW = null; try { sessionStorage.removeItem("abity-admin"); } catch (e) {} $("tabs").classList.add("hidden"); show("login"); $("login-err").textContent = msg || ""; }
-  function show(id) { ["login", "p-lessons", "p-results", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
+  function show(id) { ["login", "p-lessons", "p-results", "p-homework", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
 
   $("f-login").addEventListener("submit", function (e) {
     e.preventDefault(); PW = $("admin-pw").value;
@@ -174,6 +212,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     show("p-" + t); render();
     clearInterval(timer); timer = null;
     if (t === "results") { results(); timer = setInterval(function () { if (!document.hidden) results(true); }, 10000); }
+    if (t === "homework") hwLoad();
   }
 
   function groupsOf(y) { return D.groups.filter(function (g) { return g.year === y; }); }
@@ -213,6 +252,80 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
       }).join("") + '</tbody></table>';
   }
 
+  // ---- Homework ----
+  var HWL = null, hwEditId = null, hwParsed = null;
+  var SITE = location.origin;
+  function hwLoad() {
+    call("hw_list").then(function (r) { HWL = r; $("hw-email").value = r.email || ""; hwDraw(); }).catch(function () {});
+  }
+  function hwDraw() {
+    var list = HWL.homeworks;
+    $("hw-list").innerHTML = !list.length ? '<p class="lede">No homework yet. Add one below.</p>' : list.map(function (h) {
+      var link = SITE + "/hw/" + h.code;
+      return '<div class="hwc' + (h.open ? "" : " closed") + '"><h3>' + esc(h.title) + '<span class="status ' + (h.open ? "on" : "off") + '">' + (h.open ? "Open" : "Closed") + '</span></h3>' +
+        '<p class="m">Year ' + h.year + (h.spec ? " · " + esc(h.spec) : "") + ' · ' + h.total + ' marks · ' + h.submitted + ' handed in · added ' + new Date(h.created_at).toLocaleDateString("en-GB") + '</p>' +
+        '<div class="link">' + esc(link) + '</div><div class="acts">' +
+        '<button class="small-btn" type="button" data-hcopy="' + esc(link) + '">Copy link for Teams</button>' +
+        '<a class="small-btn" style="text-decoration:none;color:var(--ink)" href="' + esc(link) + '?preview=1" target="_blank" rel="noopener">Preview</a>' +
+        '<button class="small-btn" type="button" data-hopen="' + h.id + '" data-on="' + (!h.open) + '">' + (h.open ? "Close" : "Open") + '</button>' +
+        '<button class="small-btn" type="button" data-hedit="' + h.id + '">Edit</button>' +
+        '<button class="small-btn" type="button" data-hreset="' + h.id + '">Allow redo</button>' +
+        '<button class="small-btn danger" type="button" data-hdel="' + h.id + '">Delete</button></div></div>';
+    }).join("");
+  }
+  function hwCheck() {
+    var text = $("hw-text").value;
+    hwParsed = null; $("hw-publish").disabled = true; $("hw-err").textContent = "";
+    if (!window.HWCore) { $("hw-err").textContent = "The checker is still loading. Try again in a second."; return; }
+    if (!text.trim()) { $("hw-err").textContent = "Choose a file or paste the homework text."; return; }
+    var p = window.HWCore.parseHomework(text), hw = p.homework, qs = [].concat.apply([], hw.sections.map(function (s) { return s.questions; }));
+    var counts = {}; qs.forEach(function (q) { var t = q.type === "long" || q.type === "short" ? "written" : q.type; counts[t] = (counts[t] || 0) + 1; });
+    var names = { mcq: "multiple choice", tf: "true/false", quick: "quick", written: "written (AI-marked)" };
+    var html = '<h3 style="margin:10px 0 4px;font-family:var(--head);font-weight:600">' + esc(hw.title || "(no title)") + '</h3><p class="m" style="color:var(--muted);margin:0 0 8px">' +
+      qs.length + ' questions · ' + hw.totalMarks + ' marks · ' + Object.keys(counts).map(function (k) { return counts[k] + " " + names[k]; }).join(", ") + '</p>' +
+      p.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join("");
+    hw.sections.forEach(function (s) {
+      if (s.name) html += '<h4 class="kind-h">' + esc(s.name) + '</h4>';
+      s.questions.forEach(function (q) {
+        var t = q.type === "long" || q.type === "short" ? "written" : q.type;
+        var ans = q.type === "mcq" ? (q.correct ? "Answer: " + q.correct : "") : q.type === "quick" ? "Accepts: " + (q.accepted || []).join(" | ") : q.answer;
+        html += '<div class="pv-q"><b>' + q.num + '.</b> ' + esc(q.text) + ' <span class="badge">' + names[t] + '</span><span class="badge">' + q.marks + ' mark' + (q.marks > 1 ? "s" : "") + '</span>' +
+          (q.options.length ? '<div>' + q.options.map(function (o) { return esc(o.key + ") " + o.text); }).join("<br>") + '</div>' : '') + (ans ? '<pre>' + esc(ans) + '</pre>' : '') + '</div>';
+      });
+    });
+    $("hw-out").innerHTML = html;
+    if (!qs.length || !hw.title) { $("hw-err").textContent = "Fix the problems above before publishing."; return; }
+    hwParsed = { hw: hw, text: text }; $("hw-publish").disabled = false;
+  }
+  function hwResetForm() {
+    hwEditId = null; hwParsed = null; $("hw-text").value = ""; $("hw-file").value = ""; $("hw-out").innerHTML = ""; $("hw-err").textContent = "";
+    $("hw-publish").disabled = true; $("hw-publish").textContent = "Publish"; $("hw-form-h").textContent = "New homework"; $("hw-cancel").classList.add("hidden");
+  }
+  $("hw-file").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    if (f.size > 60000) { $("hw-err").textContent = "That file is too big (over 60 KB)."; return; }
+    f.text().then(function (t) { $("hw-text").value = t; hwCheck(); });
+  });
+  $("hw-text").addEventListener("input", function () { hwParsed = null; $("hw-publish").disabled = true; });
+  $("hw-preview").addEventListener("click", hwCheck);
+  $("hw-cancel").addEventListener("click", hwResetForm);
+  $("hw-publish").addEventListener("click", function () {
+    if (!hwParsed) return;
+    var hw = hwParsed.hw, b = this; b.disabled = true;
+    call("hw_save", { id: hwEditId || "", year: +$("hw-year").value, title: hw.title, spec: hw.spec || "", source: hwParsed.text,
+      data: hw, student: window.HWCore.studentView(hw), total: hw.totalMarks }).then(function (r) {
+      if (!r.ok) { $("hw-err").textContent = r.error || "Couldn't save."; b.disabled = false; return; }
+      toast(hwEditId ? "Homework updated" : "Published. Copy the link below.");
+      hwResetForm(); hwLoad(); window.scrollTo({ top: 0, behavior: "smooth" });
+    }).catch(function () { b.disabled = false; });
+  });
+  $("f-email").addEventListener("submit", function (e) {
+    e.preventDefault();
+    call("teacher_email", { email: $("hw-email").value.trim() }).then(function (r) {
+      $("email-err").textContent = r.ok ? "" : (r.error || "Couldn't save."); if (r.ok) toast("Saved");
+    }).catch(function () {});
+  });
+
   function results(quiet) {
     if (!D) return;
     var items = D.items.filter(function (i) { return i.year === year; });
@@ -249,6 +362,31 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     $("r-body").innerHTML = html;
   }
   document.addEventListener("click", function (e) {
+    var hc = e.target.closest("[data-hcopy]");
+    if (hc) { navigator.clipboard.writeText(hc.dataset.hcopy).then(function () { toast("Link copied"); }, function () { prompt("Copy this link:", hc.dataset.hcopy); }); return; }
+    var ho = e.target.closest("[data-hopen]");
+    if (ho) { call("hw_open", { id: ho.dataset.hopen, on: ho.dataset.on === "true" }).then(function () { toast(ho.dataset.on === "true" ? "Opened" : "Closed"); hwLoad(); }).catch(function () {}); return; }
+    var he = e.target.closest("[data-hedit]");
+    if (he) {
+      call("hw_get", { id: he.dataset.hedit }).then(function (r) {
+        var h = r.homework; hwEditId = h.id; $("hw-text").value = h.source; $("hw-year").value = String(h.year);
+        $("hw-form-h").textContent = "Editing: " + h.title; $("hw-publish").textContent = "Save changes"; $("hw-cancel").classList.remove("hidden");
+        hwCheck(); $("hw-form-h").scrollIntoView({ behavior: "smooth" });
+      }).catch(function () {});
+      return;
+    }
+    var hr = e.target.closest("[data-hreset]");
+    if (hr) {
+      if (!confirm("Let everyone hand this homework in again? Use this if a student needs a redo. Hand-ins already emailed to you are not affected.")) return;
+      call("hw_reset", { id: hr.dataset.hreset }).then(function () { toast("Students can hand in again"); hwLoad(); }).catch(function () {});
+      return;
+    }
+    var hd = e.target.closest("[data-hdel]");
+    if (hd) {
+      if (!confirm("Delete this homework? Its link stops working. Emails you already have are not affected.")) return;
+      call("hw_delete", { id: hd.dataset.hdel }).then(function () { toast("Deleted"); hwLoad(); }).catch(function () {});
+      return;
+    }
     var ry = e.target.closest("[data-ry]"); if (ry) { year = +ry.dataset.ry; gid = "all"; rItem = null; rLesson = null; render(); results(); return; }
     var rg = e.target.closest("[data-rg]"); if (rg) { gid = rg.dataset.rg; render(); results(); return; }
     var ri = e.target.closest("[data-ri]"); if (ri) { rItem = ri.dataset.ri; rLesson = null; results(); return; }

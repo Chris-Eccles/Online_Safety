@@ -31,7 +31,7 @@
   <p class="lede">Last updated 26 November 2026</p>
 
   <div class="summary">
-    <p><b>In short:</b> abity.co.uk keeps almost nothing about anyone. There are no accounts, adverts, tracking or analytics. Your name stays on your own device and is never sent to the website.</p>
+    <p><b>In short:</b> abity.co.uk keeps almost nothing about anyone. There are no accounts, adverts, tracking or analytics. On the main site your name stays on your own device. When you hand in a homework, your name goes only into an email to your teacher and is not kept by the website.</p>
   </div>
 
   <h2>Who runs this site</h2>
@@ -51,12 +51,23 @@
   </table>
   <p>Nothing else is collected: no class lists, email addresses, dates of birth, photos or marks, and nothing you write. "Sign out" on your group page removes your name, group and sign-in code from the device.</p>
 
+  <h2>Homework (Years 10 to 13)</h2>
+  <p>Homework is opened from a link your teacher shares in Teams. When you hand it in, these are sent once to the marking service and then emailed to your teacher's school mailbox (an address ending @mgs.kent.sch.uk), with two files attached (a spreadsheet and a data file):</p>
+  <ul>
+    <li>your full name and group (for example 10A);</li>
+    <li>your answers, and the marks and feedback for each one;</li>
+    <li>when you started and handed in, how long you spent on each question, how many times you pasted into each answer, and how many times you left the page.</li>
+  </ul>
+  <p>The website does <b>not</b> keep your name or answers after the email is sent. It keeps only a scrambled code made from your name, group and the homework, which cannot be turned back into your name. It is used only to stop the same homework being handed in twice, and it is deleted every 1 August. Your answers are saved in your browser while you work, so you can come back to them.</p>
+  <p>Written answers are marked by an AI (Cloudflare Workers AI), which receives only the question, the mark scheme and your answer, never your name. The AI's marks are suggestions: your teacher's mark is the one that counts. Multiple-choice, true/false and short "quick" answers are marked automatically without AI.</p>
+
   <h2>What the website's database holds</h2>
   <ul>
     <li>The learning groups (for example 7Q) and each group's password, set by the teacher.</li>
     <li>Which lessons the teacher has switched on for each group, and the keys that open those lessons in the page.</li>
     <li>The random sign-in codes described above, linked to a group only.</li>
     <li>Quiz answers (the option picked), linked to a sign-in code. Your teacher sees only totals for a group or year.</li>
+    <li>The homework questions and mark schemes, and the scrambled hand-in codes described above.</li>
     <li>After a wrong password, a scrambled (salted and hashed) form of the device's internet address, kept for 15 minutes to block guessing. It cannot be turned back into the address.</li>
   </ul>
   <p>None of this identifies a student.</p>
@@ -66,17 +77,21 @@
     <thead><tr><th>Service</th><th>What it does</th><th>What it sees</th></tr></thead>
     <tbody>
       <tr><td>Vercel</td><td>Hosts the pages</td><td>Internet addresses in its server logs</td></tr>
+      <tr><td>Cloudflare Workers AI</td><td>Suggests marks and feedback for written homework answers</td><td>The question, mark scheme and answer only (no name). Not used for training.</td></tr>
+      <tr><td>Resend (sends from Ireland; a US company)</td><td>Sends homework results to the teacher's school mailbox</td><td>Your name, group and answers, kept briefly for delivery checks</td></tr>
       <tr><td>Supabase (London)</td><td>The database described above</td><td>Groups, switches, sign-in codes, quiz answers (no names), internet addresses in its logs</td></tr>
       <tr><td>Microsoft (MakeCode, OneDrive)</td><td>Where students build and save their work, through links in the workbooks</td><td>Covered by the school's own Microsoft agreement and Microsoft's privacy terms</td></tr>
     </tbody>
   </table>
-  <p>All fonts are hosted on this site, so no request goes to Google. These providers act only under contract. Any transfer outside the UK relies on the UK's transfer rules. There is no AI on this part of the site, and it sends no emails.</p>
+  <p>All fonts are hosted on this site, so no request goes to Google. These providers act only under contract. Any transfer outside the UK relies on the UK's transfer rules. The KS3 pages use no AI and send no emails.</p>
 
   <h2>How long things are kept</h2>
   <table>
     <thead><tr><th>What</th><th>How long</th></tr></thead>
     <tbody>
       <tr><td>Names</td><td>Never kept by the website. On your device until you sign out or clear your browser.</td></tr>
+      <tr><td>Homework hand-ins (name, answers, marks)</td><td>Not kept by the website. The email to your teacher is kept under the school's email rules.</td></tr>
+      <tr><td>Scrambled homework hand-in codes</td><td>Until 1 August each year, or sooner if your teacher allows a redo or deletes the homework</td></tr>
       <tr><td>Quiz answers</td><td>Deleted with the sign-in code they belong to, and always on 1 August. Your teacher can also clear a lesson's results.</td></tr>
       <tr><td>Sign-in codes</td><td>Until the teacher changes the group password or deletes the group, and always deleted on 1 August each year</td></tr>
       <tr><td>Scrambled internet addresses after a wrong password</td><td>15 minutes</td></tr>
@@ -105,7 +120,9 @@
 
   <h2>Our promises</h2>
   <ul>
-    <li>Names are never sent to or stored by the website.</li>
+    <li>Names are never stored by the website. A homework name goes only to your teacher's school email.</li>
+    <li>Results emails go only to school addresses ending @mgs.kent.sch.uk.</li>
+    <li>AI suggests marks for written answers but never sees names, and your teacher has the final say.</li>
     <li>Sign-in codes are deleted every August.</li>
     <li>No analytics, advertising or tracking.</li>
     <li>No student data is used to train AI.</li>
@@ -113,7 +130,7 @@
   </ul>
 
   <h2>Open-source parts</h2>
-  <p>Fonts: Source Serif 4, Source Sans 3, Atkinson Hyperlegible, Pixelify Sans, JetBrains Mono, Caveat and Patrick Hand, all under the SIL Open Font Licence (texts in <a href="/fonts/SourceSans3-OFL.txt">/fonts</a>). Celebrations use canvas-confetti (ISC licence, <a href="/ks3/vendor/canvas-confetti-LICENSE.txt">licence text</a>).</p>
+  <p>Fonts: Fredoka, Nunito, Atkinson Hyperlegible, Pixelify Sans, JetBrains Mono, Caveat and Patrick Hand, all under the SIL Open Font Licence (texts in <a href="/fonts/Nunito-OFL.txt">/fonts</a>). Celebrations use canvas-confetti (ISC licence, <a href="/ks3/vendor/canvas-confetti-LICENSE.txt">licence text</a>).</p>
 </main>
 
 <footer><div class="in">

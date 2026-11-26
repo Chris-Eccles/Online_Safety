@@ -1,30 +1,32 @@
-/* abity.co.uk: shared look for the student pages and admin.
-   Navy and brass, warm paper background, thin borders, no gradients.
-   Type: Source Serif 4 headings, Source Sans 3 text, hosted on this site (licences in /fonts). */
-@font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(/fonts/source-serif-4-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Serif 4";font-weight:700;font-display:swap;src:url(/fonts/source-serif-4-latin-700-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(/fonts/source-sans-3-latin-400-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-style:italic;font-weight:400;font-display:swap;src:url(/fonts/source-sans-3-latin-400-italic.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-weight:600;font-display:swap;src:url(/fonts/source-sans-3-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Source Sans 3";font-weight:700;font-display:swap;src:url(/fonts/source-sans-3-latin-700-normal.woff2) format("woff2")}
+/* abity.co.uk: shared look for the student pages and admin, matching env.abity.co.uk.
+   Teal accent, mint-to-white background, white rounded cards. Type: Fredoka headings, Nunito text,
+   hosted on this site (licences in /fonts). The KS3 workbooks keep their own look. */
+@font-face{font-family:Fredoka;font-weight:500;font-display:swap;src:url(/fonts/fredoka-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Fredoka;font-weight:600;font-display:swap;src:url(/fonts/fredoka-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Fredoka;font-weight:700;font-display:swap;src:url(/fonts/fredoka-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:Nunito;font-weight:400;font-display:swap;src:url(/fonts/nunito-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(/fonts/nunito-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(/fonts/nunito-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(/fonts/nunito-latin-800-normal.woff2) format("woff2")}
 :root{
-  --navy:#1E3A5F;--navy-dark:#152B47;--navy-soft:#E9EEF4;
-  --brass:#A07E3E;--brass-soft:#F4EEE2;
-  --ink:#1B2433;--muted:#5A6372;--bg:#F7F5F0;--card:#FFFFFF;--line:#E4DFD5;--field:#B9B3A7;
-  --ok:#2D6A4F;--ok-soft:#E8F3EE;--bad:#A3311F;--bad-soft:#FBEFEC;--lock:#4B5563;--lock-soft:#ECEAE5;
-  --head:"Source Serif 4",Georgia,serif;--body:"Source Sans 3","Segoe UI",Arial,sans-serif;--r:10px;
+  --navy:#0f766e;--navy-dark:#115e59;--navy-soft:#f0fdfa;
+  --brass:#14b8a6;--brass-soft:#fffbeb;
+  --ink:#0f172a;--muted:#475569;--bg:#ffffff;--card:#FFFFFF;--line:#e2e8f0;--field:#cbd5e1;
+  --ok:#15803d;--ok-soft:#f0fdf4;--bad:#dc2626;--bad-soft:#fef2f2;--lock:#64748b;--lock-soft:#f1f5f9;
+  --amber:#d97706;--amber-soft:#fffbeb;
+  --head:Fredoka,Nunito,sans-serif;--body:Nunito,system-ui,sans-serif;--r:14px;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:var(--body);font-size:17px;line-height:1.55;color:var(--ink);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+body{margin:0;font-family:var(--body);font-size:17px;line-height:1.55;color:var(--ink);background:linear-gradient(180deg,#ecfdf5 0,#fff 420px) no-repeat,#fff;min-height:100vh;display:flex;flex-direction:column}
 button,input,select{font:inherit}
-h1,h2,h3{font-family:var(--head);font-weight:700;line-height:1.2;margin:0}
+h1,h2,h3{font-family:var(--head);font-weight:600;line-height:1.2;margin:0}
 a{color:var(--navy);font-weight:700}
 a:hover{color:var(--navy-dark)}
-:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 .hidden{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.bar{background:var(--navy);color:#fff;border-bottom:3px solid var(--brass)}
+.bar{background:var(--navy);color:#fff}
 .bar-in{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .bar img{height:40px;width:auto;display:block}
 .bar .who{font-size:15px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -35,7 +37,7 @@ a:hover{color:var(--navy-dark)}
 
 main{flex:1;width:100%;max-width:1080px;margin:0 auto;padding:40px 24px 56px}
 .narrow{max-width:520px}
-.page-title{font-size:2rem;margin-bottom:8px}
+.page-title{font-size:2.2rem;margin-bottom:8px;color:var(--navy)}
 .lede{color:var(--muted);margin:0 0 28px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px}
 .stack{display:flex;flex-direction:column;gap:14px}
@@ -53,23 +55,24 @@ input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--nav
 
 .section-h{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--body);font-weight:700;margin:28px 0 10px}
 .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.tile{display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;font-family:var(--head);font-size:1.5rem;font-weight:700;color:var(--ink);cursor:pointer;text-align:left;min-height:96px}
+.tile{font-weight:600;display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:22px;font-family:var(--head);font-size:1.5rem;color:var(--ink);cursor:pointer;text-align:left;min-height:96px}
 .tile:hover{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy-soft)}
 .tile small{font-family:var(--body);font-size:14px;font-weight:600;color:var(--muted)}
 .tile:disabled{cursor:default;color:var(--lock);background:var(--lock-soft);border-color:var(--lock-soft);box-shadow:none}
 .groups{display:grid;gap:10px;grid-template-columns:repeat(7,minmax(0,1fr))}
-.groups button{background:#fff;border:1px solid var(--field);border-radius:12px;padding:16px 0;font-family:var(--head);font-size:1.6rem;font-weight:700;cursor:pointer;color:var(--ink)}
+.groups button{background:#fff;border:2px solid var(--line);border-radius:12px;padding:16px 0;font-family:var(--head);font-size:1.6rem;font-weight:600;cursor:pointer;color:var(--ink)}
 .groups button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
 @media (max-width:560px){.groups{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
 .term{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:14px}
-.term.now{border:2px solid var(--navy)}
-.term.empty{color:var(--muted);padding:16px 24px}
+.term{border-top:5px solid #94a3b8}
+.term.now{border-color:var(--line);border-top:5px solid var(--navy);box-shadow:0 4px 18px rgba(15,118,110,.10)}
+.term.empty{color:var(--muted);padding:16px 24px;border-top:1px solid var(--line);background:rgba(255,255,255,.7)}
 .term-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted)}
 .term h2{font-size:1.45rem;margin-top:2px}
 .term .sub{color:var(--muted);margin:2px 0 0}
-.pill{display:inline-block;background:var(--brass-soft);color:#6B5224;border:1px solid #E2D3B4;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+.pill{display:inline-block;background:var(--lock-soft);color:var(--lock);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
 .lessons{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-top:16px}
 .lesson{display:flex;flex-direction:column;gap:2px;border-radius:10px;padding:12px 14px;text-decoration:none;font-weight:700;font-size:15px;min-height:64px}
 .lesson small{font-weight:400;font-size:14px}

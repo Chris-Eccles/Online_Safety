@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homework · Abity</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+<style>
+.hw-head{border-top:5px solid var(--navy)}
+.hw-head h1{font-size:2rem;color:var(--navy);margin-bottom:4px}
+.meta{color:var(--muted);margin:0 0 6px}
+.intro{margin:12px 0 0;white-space:pre-line}
+.sec-h{font-family:var(--head);font-weight:600;font-size:1.4rem;color:var(--navy);margin:30px 0 10px}
+.q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+.q-top{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.q-text{white-space:pre-wrap;font-weight:600;margin:0}
+.q-num{font-family:var(--head);color:var(--navy);margin-right:6px}
+.marks{flex:0 0 auto;font-size:13px;font-weight:800;color:var(--muted);background:var(--lock-soft);border-radius:999px;padding:3px 10px}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600}
+.opt:has(input:checked){border-color:var(--navy);background:var(--navy-soft)}
+.opt input{margin-top:4px;accent-color:var(--navy);width:18px;height:18px;flex:0 0 auto}
+.q input[type=text]{margin-top:12px;max-width:420px;font-family:"JetBrains Mono",ui-monospace,monospace}
+.q textarea{display:block;width:100%;margin-top:12px;font:inherit;font-size:17px;padding:12px 14px;border:1px solid var(--field);border-radius:10px;resize:vertical;min-height:90px}
+.q textarea:focus,.q input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
+.fb{margin-top:12px;border-radius:10px;padding:10px 14px;font-size:15px}
+.fb.full{background:var(--ok-soft);color:#14532d}.fb.part{background:var(--amber-soft);color:#78350f}.fb.none{background:var(--bad-soft);color:#7f1d1d}
+.who{margin-top:24px}
+.groups{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+.groups button{font-size:1.3rem}
+.result{border-top:5px solid var(--ok);text-align:left}
+.result .big{font-family:var(--head);font-size:2.6rem;color:var(--navy);margin:4px 0}
+.saved{font-size:14px;color:var(--muted);margin:8px 0 0}
+fieldset{border:0;padding:0;margin:0}
+legend{padding:0}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <span class="who-bar">Homework</span>
+</div></header>
+
+<main style="max-width:860px">
+  <p id="msg" class="lede">Loading…</p>
+  <div id="app" class="hidden">
+    <section class="card hw-head">
+      <h1 id="title"></h1>
+      <p class="meta" id="meta"></p>
+      <p class="intro" id="intro"></p>
+    </section>
+
+    <section class="card who" id="who">
+      <div class="stack">
+        <label for="name">Your full name</label>
+        <input id="name" type="text" autocomplete="off" maxlength="60" placeholder="First name and surname">
+        <p class="hint">Only sent to your teacher with your answers. It is not stored on the website.</p>
+        <span style="font-weight:700;font-size:15px" id="group-label">Your group</span>
+        <div class="groups" id="groups" role="group" aria-labelledby="group-label"></div>
+      </div>
+    </section>
+
+    <div id="questions"></div>
+
+    <section class="card stack" id="submit-box" style="margin-top:20px">
+      <p class="err" id="err" role="alert"></p>
+      <button class="btn" type="button" id="submit">Hand in homework</button>
+      <p class="saved" id="saved">Your answers save on this device as you type, so you can come back to them.</p>
+    </section>
+  </div>
+</main>
+
+<footer><div class="in">
+  <span>Abity · Computer Science at Maidstone Grammar School</span>
+  <span><a href="/privacy">Privacy notice</a></span>
+</div></footer>
+
+<script src="/api.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  var FN = "https://gnxgefgjsgtqgclyvblh.supabase.co/functions/v1/hw-submit";
+  var KEY = "sb_publishable_D5eUj-rOFB4cBzLX67hMfA_HlzSIHlu";
+  var q = new URLSearchParams(location.search);
+  var code = (location.pathname.match(/^\/hw\/([a-z0-9]{6,12})$/) || [])[1] || q.get("c") || "";
+  var preview = q.get("preview") === "1";
+  var store = "abity-hw-" + code, S = {}, group = null, HW = null, curQ = null, curT = 0;
+  try { S = JSON.parse(localStorage.getItem(store) || "{}") || {}; } catch (e) {}
+  S.answers = S.answers || {}; S.pastes = S.pastes || {}; S.seconds = S.seconds || {}; S.away = S.away || 0;
+  function save() { if (preview) return; try { localStorage.setItem(store, JSON.stringify(S)); } catch (e) {} }
+
+  if (!code) { $("msg").textContent = "This homework link isn't complete. Check the link your teacher shared."; return; }
+
+  Abity.rpc("site_hw", { p_code: code }).then(function (r) {
+    if (!r.ok) {
+      $("msg").textContent = r.closed ? "“" + r.title + "” is closed. Speak to your teacher if you still need to hand it in." : "This homework link isn't valid. Check the link your teacher shared.";
+      return;
+    }
+    HW = r; render(r);
+  }).catch(function () { $("msg").textContent = "We can't reach the website's server. Check your internet connection, then refresh the page."; });
+
+  function render(r) {
+    var hw = r.hw;
+    document.title = hw.title + " · Homework";
+    $("title").textContent = hw.title;
+    $("meta").textContent = [hw.spec, "Year " + r.year, hw.totalMarks + " marks"].filter(Boolean).join(" · ");
+    $("intro").textContent = hw.intro || "";
+    if (preview) { $("who").classList.add("hidden"); $("submit-box").innerHTML = '<p class="lede" style="margin:0"><b>Preview:</b> this is what students see. Hand-in is switched off here.</p>'; }
+
+    $("groups").innerHTML = r.groups.map(function (g) {
+      return '<button type="button" data-g="' + esc(g) + '" aria-pressed="false">' + r.year + esc(g) + '</button>';
+    }).join("") || '<p class="hint">No groups set up for this year yet. Tell your teacher.</p>';
+    if (S.name) $("name").value = S.name;
+    if (S.group && r.groups.indexOf(S.group) >= 0) pick(S.group);
+
+    var html = "";
+    hw.sections.forEach(function (s) {
+      if (s.name) html += '<h2 class="sec-h">' + esc(s.name) + '</h2>';
+      s.questions.forEach(function (qq) {
+        var a = S.answers[qq.id] || "", box;
+        if (qq.type === "mcq") {
+          box = '<fieldset class="opts"><legend class="sr">Options</legend>' + qq.options.map(function (o) {
+            return '<label class="opt"><input type="radio" name="' + qq.id + '" value="' + o.key + '"' + (a === o.key ? " checked" : "") + '><span>' + o.key + ') ' + esc(o.text) + '</span></label>';
+          }).join("") + '</fieldset>';
+        } else if (qq.type === "tf") {
+          box = '<fieldset class="opts"><legend class="sr">True or false</legend>' + ["true", "false"].map(function (v) {
+            return '<label class="opt"><input type="radio" name="' + qq.id + '" value="' + v + '"' + (a === v ? " checked" : "") + '><span>' + (v === "true" ? "True" : "False") + '</span></label>';
+          }).join("") + '</fieldset>';
+        } else if (qq.type === "quick" || qq.type === "short") {
+          box = '<label class="sr" for="in-' + qq.id + '">Answer to question ' + qq.num + '</label><input type="text" id="in-' + qq.id + '" data-q="' + qq.id + '" autocomplete="off" spellcheck="false" value="' + esc(a) + '">';
+        } else {
+          box = '<label class="sr" for="in-' + qq.id + '">Answer to question ' + qq.num + '</label><textarea id="in-' + qq.id + '" data-q="' + qq.id + '" rows="' + Math.min(14, 3 + qq.marks * 2) + '">' + esc(a) + '</textarea>';
+        }
+        html += '<div class="q" id="box-' + qq.id + '" data-qbox="' + qq.id + '"><div class="q-top"><p class="q-text"><span class="q-num">' + qq.num + '.</span>' + esc(qq.text) + '</p><span class="marks">' + qq.marks + (qq.marks === 1 ? " mark" : " marks") + '</span></div>' + box + '<div class="fb hidden" id="fb-' + qq.id + '"></div></div>';
+      });
+    });
+    $("questions").innerHTML = html;
+    $("msg").classList.add("hidden"); $("app").classList.remove("hidden");
+    if (!S.started && !preview) { S.started = new Date().toISOString(); save(); }
+    if (S.done) showResult(S.done);
+  }
+
+  function pick(g) {
+    group = g; S.group = g; save();
+    $("groups").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.g === g)); });
+  }
+  $("groups").addEventListener("click", function (e) { var b = e.target.closest("[data-g]"); if (b && !S.done) pick(b.dataset.g); });
+  $("name").addEventListener("input", function () { S.name = this.value; save(); });
+
+  // Answers, pastes and time spent on each question (all sent with the hand-in, for your teacher)
+  document.addEventListener("input", function (e) {
+    var id = e.target.dataset && e.target.dataset.q; if (id) { S.answers[id] = e.target.value; save(); }
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.type === "radio") { S.answers[e.target.name] = e.target.value; save(); }
+  });
+  document.addEventListener("paste", function (e) {
+    var id = e.target.dataset && e.target.dataset.q; if (id) { S.pastes[id] = (S.pastes[id] || 0) + 1; save(); }
+  });
+  function stopTimer() { if (curQ) { S.seconds[curQ] = (S.seconds[curQ] || 0) + (Date.now() - curT) / 1000; curQ = null; save(); } }
+  document.addEventListener("focusin", function (e) {
+    var box = e.target.closest && e.target.closest("[data-qbox]");
+    var id = box && box.dataset.qbox;
+    if (id === curQ) return;
+    stopTimer(); if (id) { curQ = id; curT = Date.now(); }
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { stopTimer(); if (!S.done && !preview && HW) { S.away = (S.away || 0) + 1; save(); } }
+  });
+
+  $("submit").addEventListener("click", function () {
+    if (!HW || preview) return;
+    var err = $("err"), name = Abity.nameCase($("name").value);
+    if (name.length < 3 || name.indexOf(" ") < 0) { err.textContent = "Type your first name and surname at the top."; $("name").focus(); return; }
+    if (!group) { err.textContent = "Pick your group at the top."; return; }
+    var all = [].concat.apply([], HW.hw.sections.map(function (s) { return s.questions; }));
+    var blank = all.filter(function (x) { return !String(S.answers[x.id] || "").trim(); }).length;
+    if (!confirm((blank ? "You have " + blank + " unanswered question" + (blank > 1 ? "s" : "") + ". " : "") + "Hand in now? You can only hand in once.")) return;
+    stopTimer();
+    var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
+    fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
+      body: JSON.stringify({ code: code, name: name, group: group, answers: S.answers,
+        meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: false } }) })
+      .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
+      .then(function (x) {
+        if (x.body && x.body.ok) { S.done = x.body; save(); showResult(x.body); return; }
+        err.textContent = (x.body && x.body.error) || "Something went wrong. Try again.";
+        btn.disabled = false; btn.textContent = "Hand in homework";
+        if (x.body && x.body.already) { btn.classList.add("hidden"); }
+      })
+      .catch(function () { err.textContent = "We can't reach the server. Your answers are saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Hand in homework"; });
+  });
+
+  function showResult(r) {
+    document.querySelectorAll("#app input, #app textarea, #groups button").forEach(function (el) { el.disabled = true; });
+    r.results.forEach(function (x) {
+      var fb = $("fb-" + x.id); if (!fb) return;
+      fb.className = "fb " + (x.awarded === x.marks ? "full" : x.awarded ? "part" : "none");
+      fb.innerHTML = "<b>" + x.awarded + "/" + x.marks + "</b> · " + esc(x.feedback) + (x.by === "AI-suggested" ? " <i>(AI-suggested mark)</i>" : "");
+    });
+    $("submit-box").className = "card result";
+    $("submit-box").innerHTML = '<div class="eyebrow">Handed in</div><div class="big">' + r.score + ' / ' + r.total + '</div><p style="margin:0">' + r.percent + '%. Your teacher has your answers. ' +
+      (r.needsChecking ? "Some answers will be checked by your teacher. " : "") + 'Feedback is under each question. Written answers have AI-suggested marks: your teacher has the final say.</p>' +
+      '<p class="saved"><button class="back" type="button" id="again">Start again</button> (only works if your teacher has allowed a redo)</p>';
+    $("again").addEventListener("click", function () {
+      if (!confirm("Clear your answers on this device and start again?")) return;
+      try { localStorage.removeItem(store); } catch (e) {} location.reload();
+    });
+    $("submit-box").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+})();
+</script>
+</body>
+</html>
