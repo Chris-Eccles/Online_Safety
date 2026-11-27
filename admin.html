@@ -143,6 +143,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <p class="lede">Years 10 to 13. Upload a homework .txt (the hw-homework-builder format), check the preview, publish, then copy the link into Teams. Students can only reach a homework through its link. Each hand-in is marked by three AI markers and emailed to you as a student card with a CSV and a JSON file; nothing about the student is kept on the website.</p>
     <p style="margin:-14px 0 22px"><a class="btn ghost" href="/dashboard" download="abity-homework-dashboard.html" style="min-height:40px;padding:8px 16px;font-size:15px">Download the offline dashboard</a>
       <span class="hint" style="margin-left:8px">Save it once, open it on your computer, and drop the JSON files from the emails onto it.</span></p>
+    <div class="card" id="hw-ai" style="margin:0 0 18px;padding:14px 18px"></div>
     <div id="hw-list"></div>
     <h2 class="section-h" id="hw-form-h">New homework</h2>
     <div class="card stack" id="hw-form">
@@ -347,7 +348,17 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   var HWL = null, hwEditId = null, hwParsed = null;
   var SITE = location.origin;
   function hwLoad() {
-    call("hw_list").then(function (r) { HWL = r; $("hw-email").value = r.email || ""; hwDraw(); }).catch(function () {});
+    call("hw_list").then(function (r) { HWL = r; $("hw-email").value = r.email || ""; hwDraw(); aiDraw(r.ai); }).catch(function () {});
+  }
+  // AI marking used today against this site's daily budget (Cloudflare's free allowance is 10,000 a day for the account)
+  function aiDraw(ai) {
+    if (!ai) return;
+    var BUDGET = 8000, t = ai.today || 0, pct = Math.min(100, Math.round(100 * t / BUDGET)), wk = (ai.days || []).slice(0, 7);
+    $("hw-ai").innerHTML = '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><b>AI marking today</b>' +
+      '<span class="hint">' + t.toLocaleString() + ' of ' + BUDGET.toLocaleString() + ' units · resets at midnight UTC · about 70 per worksheet</span></div>' +
+      '<div style="height:10px;background:var(--lock-soft);border-radius:999px;overflow:hidden;margin:8px 0"><i style="display:block;height:100%;width:' + pct + '%;background:' + (pct >= 90 ? "var(--bad)" : pct >= 70 ? "#d97706" : "var(--navy)") + '"></i></div>' +
+      '<p class="hint" style="margin:0">' + (pct >= 100 ? "Limit reached: written answers handed in today go to you to mark. Everything else is still marked automatically." : "If the limit is reached, written answers go to you to mark instead, so nothing is charged and nothing fails.") +
+      (wk.length ? ' Last 7 days: ' + wk.map(function (d) { return new Date(d.day).toLocaleDateString("en-GB", { weekday: "short" }) + " " + d.neurons; }).join(", ") + '.' : '') + '</p>';
   }
   function hwDraw() {
     var list = HWL.homeworks;

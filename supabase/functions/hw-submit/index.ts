@@ -10,8 +10,19 @@ import { norm, quickMatch } from "./hw-core.js";
 
 // Three independent markers from different model families (Science department rule): if the first two agree the mark
 // stands; if not, the third marks it and the mark two of them agree on stands; if all three differ, the teacher moderates.
-const MARKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/mistralai/mistral-small-3.1-24b-instruct", "@cf/qwen/qwen3.8-27b"];
+// Chosen to fit Cloudflare's free 10,000 neurons a day: marker 1 also writes the feedback; markers 2 and 3 return marks only,
+// and marker 3 only sees the answers the first two disagree on.
+const MARKERS = ["@cf/meta/llama-3.1-8b-instruct-fp8-fast", "@cf/ibm-granite/granite-4.0-h-micro", "@cf/mistralai/mistral-small-3.1-24b-instruct"];
 const AI_MODEL = MARKERS[0];
+// Neurons per million tokens [input, output] (Cloudflare price list, Nov 2026)
+const RATES: Record<string, [number, number]> = {
+  "@cf/meta/llama-3.1-8b-instruct-fp8-fast": [4119, 34868],
+  "@cf/ibm-granite/granite-4.0-h-micro": [1542, 10158],
+  "@cf/mistralai/mistral-small-3.1-24b-instruct": [31876, 50488],
+};
+// Daily cap for this site's own marking (the free allowance is 10,000 for the whole Cloudflare account, which other
+// Workers share). Past it, written answers are flagged for the teacher instead of failing.
+const DAILY_BUDGET = 8000;
 const MAX_ANSWER = 3000, MAX_TOTAL = 20000;
 const ORIGINS = [/^https:\/\/(www\.)?abity\.co\.uk$/, /^https:\/\/abity-home-[a-z0-9-]+-chris-eccles-projects\.vercel\.app$/];
 
@@ -67,28 +78,41 @@ function extractJSON(x: any) {
   for (let i = t.lastIndexOf("{"); i >= 0; i = t.lastIndexOf("{", i - 1)) { try { return JSON.parse(t.slice(i, b + 1)); } catch (_e) { /* keep looking */ } }
   throw new Error("no JSON in reply");
 }
-// One Workers AI call that returns JSON. Retries once without the JSON schema if the model rejects it.
-async function aiJSON(system: string, user: string, schema: any, example: string, model = AI_MODEL) {
+// Usage for one request is collected on the homework object (hw._usage) and added to the daily total at the end.
+function addUsage(hw: any, model: string, inTok: number, outTok: number, retry = false) {
+  const u = hw._usage = hw._usage || { neurons: 0, calls: 0, retries: 0, tokens_in: 0, tokens_out: 0 };
+  const r = RATES[model] || [30000, 60000];
+  u.neurons += (inTok * r[0] + outTok * r[1]) / 1e6; u.calls++; if (retry) u.retries++;
+  u.tokens_in += inTok; u.tokens_out += outTok;
+}
+// One Workers AI call that returns JSON. If the model rejects the JSON schema it retries once without it.
+// Network errors and timeouts are not retried (a retry would cost the full call again).
+async function aiJSON(hw: any, system: string, user: string, schema: any, example: string, model = AI_MODEL, maxTokens = 600) {
+  if (hw._aiOff) throw new Error("daily AI budget reached");
   const body: any = {
     messages: [{ role: "system", content: system }, { role: "user", content: user }],
-    response_format: { type: "json_schema", json_schema: schema }, temperature: 0, max_tokens: model.includes("qwen") ? 6000 : 2048,
+    response_format: { type: "json_schema", json_schema: schema }, temperature: 0, max_tokens: maxTokens,
   };
   const url = `https://api.cloudflare.com/client/v4/accounts/${Deno.env.get("CF_ACCOUNT_ID")}/ai/run/${model}`;
-  const run = async () => {
-    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 60000);
+  const run = async (retry: boolean) => {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 45000);
     try {
       const res = await fetch(url, { method: "POST", signal: ctl.signal, headers: { Authorization: `Bearer ${Deno.env.get("CF_AI_TOKEN")}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      if (!res.ok) throw new Error("AI " + res.status + " " + (await res.text()).slice(0, 200));
+      if (!res.ok) { const t = (await res.text()).slice(0, 200); const e: any = new Error("AI " + res.status + " " + t); e.schema = res.status < 500 && /json|schema|format/i.test(t); throw e; }
       const j = (await res.json()).result;
       const out = j && j.response !== undefined ? j.response : j && j.choices ? j.choices[0]?.message?.content : j;
-      return extractJSON(out);
+      const inTok = Number(j?.usage?.prompt_tokens) || Math.ceil((system.length + user.length) / 4);
+      const outTok = Number(j?.usage?.completion_tokens) || Math.ceil(JSON.stringify(out ?? "").length / 4);
+      addUsage(hw, model, inTok, outTok, retry);
+      try { return extractJSON(out); } catch (e: any) { e.schema = true; throw e; }
     } finally { clearTimeout(timer); }
   };
-  try { return await run(); }
-  catch (_e) {
+  try { return await run(false); }
+  catch (e: any) {
+    if (!e.schema) throw e;
     delete body.response_format;
     body.messages[0].content += " Reply with JSON only, no other text. Format: " + example;
-    return await run();
+    return await run(true);
   }
 }
 const courseOf = (hw: any) => hw.year >= 12 ? "A Level Computer Science (AQA 7517)" : "GCSE Computer Science (OCR J277)";
@@ -98,20 +122,26 @@ type Item = { id: string; question: string; max_marks: number; mark_scheme: stri
 type Verdict = { marks: number; feedback: string; by: string; markers: { model: string; marks: number | null }[]; decision: string };
 const short = (m: string) => m.split("/").pop()!;
 
-// One marker's marks for a batch of answers
-async function markerRun(model: string, hw: any, items: Item[]) {
-  const system =
+// One marker's marks for a batch of answers. Only the marker writing feedback returns it: marks alone cost far less.
+async function markerRun(model: string, hw: any, items: Item[], withFeedback: boolean) {
+  const system = withFeedback ?
     `You are an experienced, fair ${courseOf(hw)} examiner marking a student's work. ` +
     "For each item award whole marks from 0 to max_marks using the mark scheme. Give credit for answers that are " +
     "correct but worded differently from the mark scheme. Do not award marks for vague answers that only repeat the question. " +
     "For 'explain' questions the reason must be linked, not just stated. For code, judge whether it would work and meets the task; " +
     "the context field may say how it did against automatic checks. " + DATA_NOTE +
     "Feedback: one or two short sentences in British English to the student saying what earned credit and one specific thing " +
-    "to add or improve. Never state the full correct answer or quote the mark scheme. Reply with JSON only.";
-  const schema = { type: "object", properties: { results: { type: "array", items: { type: "object",
-    properties: { id: { type: "string" }, marks: { type: "integer" }, feedback: { type: "string" } }, required: ["id", "marks", "feedback"] } } }, required: ["results"] };
-  const data = await aiJSON(system, `Work: ${hw.title}\nMark these answers:\n${JSON.stringify(items, null, 2)}`, schema,
-    '{"results":[{"id":"q1","marks":0,"feedback":"..."}]}', model);
+    "to add or improve, in under 30 words. Don't state the mark, the full correct answer or the mark scheme. Reply with JSON only."
+    : `You are an experienced, fair ${courseOf(hw)} examiner. For each item award whole marks from 0 to max_marks using the mark scheme, ` +
+      "crediting correct answers worded differently and not crediting vague answers that only repeat the question. " + DATA_NOTE + "Reply with JSON only: marks, no feedback.";
+  const schema = withFeedback
+    ? { type: "object", properties: { results: { type: "array", items: { type: "object",
+        properties: { id: { type: "string" }, marks: { type: "integer" }, feedback: { type: "string" } }, required: ["id", "marks", "feedback"] } } }, required: ["results"] }
+    : { type: "object", properties: { results: { type: "array", items: { type: "object",
+        properties: { id: { type: "string" }, marks: { type: "integer" } }, required: ["id", "marks"] } } }, required: ["results"] };
+  const maxTokens = Math.min(1500, withFeedback ? 60 + 70 * items.length : 30 + 16 * items.length);
+  const data = await aiJSON(hw, system, `Work: ${hw.title}\nMark these answers:\n${JSON.stringify(items)}`, schema,
+    withFeedback ? '{"results":[{"id":"q1","marks":0,"feedback":"..."}]}' : '{"results":[{"id":"q1","marks":0}]}', model, maxTokens);
   const list = Array.isArray(data) ? data : (data && data.results) || [];
   const byId: Record<string, { marks: number; feedback: string }> = {};
   for (const it of list) {
@@ -127,31 +157,35 @@ async function moderate(hw: any, items: Item[]): Promise<Record<string, Verdict>
   const out: Record<string, Verdict> = {};
   if (!items.length) return out;
   const runs: { model: string; res: Record<string, { marks: number; feedback: string }> }[] = [];
-  const tryRun = async (model: string) => { try { runs.push({ model, res: await markerRun(model, hw, items) }); return true; } catch (e) { console.error("marker failed", model, String(e).slice(0, 200)); return false; } };
-  const first = await Promise.allSettled([markerRun(MARKERS[0], hw, items), markerRun(MARKERS[1], hw, items)]);
+  const first = await Promise.allSettled([markerRun(MARKERS[0], hw, items, true), markerRun(MARKERS[1], hw, items, false)]);
   first.forEach((r, i) => { if (r.status === "fulfilled") runs.push({ model: MARKERS[i], res: r.value }); else console.error("marker failed", MARKERS[i], String(r.reason).slice(0, 200)); });
+  // a marker is down: the third stands in for it (writing the feedback if marker 1 was the one that failed)
   let thirdUsed = false;
-  if (runs.length < 2) { thirdUsed = true; await tryRun(MARKERS[2]); }
+  if (runs.length < 2 && !hw._aiOff) {
+    thirdUsed = true;
+    try { const res = await markerRun(MARKERS[2], hw, items, !runs.some(r => r.model === MARKERS[0])); runs.push({ model: MARKERS[2], res }); }
+    catch (e) { console.error("marker failed", MARKERS[2], String(e).slice(0, 200)); }
+  }
   // the third marker only looks at the answers the first two disagree on
   const disputed = items.filter(it => runs.length >= 2 && runs[0].res[it.id] && runs[1].res[it.id] && runs[0].res[it.id].marks !== runs[1].res[it.id].marks);
   let third: Record<string, { marks: number; feedback: string }> = {};
-  if (disputed.length && !thirdUsed) { try { third = await markerRun(MARKERS[2], hw, disputed); } catch (e) { console.error("third marker failed", String(e).slice(0, 200)); } }
+  if (disputed.length && !thirdUsed) { try { third = await markerRun(MARKERS[2], hw, disputed, false); } catch (e) { console.error("third marker failed", String(e).slice(0, 200)); } }
+  const feedbackFor = (id: string) => (runs.find(r => r.res[id]?.feedback) || { res: {} as any }).res[id]?.feedback || "";
   for (const it of items) {
     const got = runs.map(r => ({ model: r.model, v: r.res[it.id] })).filter(x => x.v);
     if (third[it.id]) got.push({ model: MARKERS[2], v: third[it.id] });
     const markers = got.map(g => ({ model: short(g.model), marks: g.v.marks }));
-    if (!got.length) { out[it.id] = { marks: 0, feedback: "This one wasn't marked automatically. Your teacher will check it.", by: "needs checking", markers, decision: "no marker available" }; continue; }
-    if (got.length === 1) { out[it.id] = { marks: got[0].v.marks, feedback: got[0].v.feedback, by: "needs checking", markers, decision: "only one marker available" }; continue; }
+    const fb = feedbackFor(it.id);
+    if (!got.length) { out[it.id] = { marks: 0, feedback: "This one wasn't marked automatically. Your teacher will check it.", by: "needs checking", markers, decision: hw._aiOff ? "daily AI limit reached" : "no marker available" }; continue; }
+    if (got.length === 1) { out[it.id] = { marks: got[0].v.marks, feedback: fb || "Your teacher will check this mark.", by: "needs checking", markers, decision: "only one marker available" }; continue; }
     const [a, b] = got;
-    if (a.v.marks === b.v.marks) { out[it.id] = { marks: a.v.marks, feedback: a.v.feedback, by: "AI (2 agreed)", markers, decision: "first two markers agreed" }; continue; }
+    if (a.v.marks === b.v.marks) { out[it.id] = { marks: a.v.marks, feedback: fb, by: "AI (2 agreed)", markers, decision: "first two markers agreed" }; continue; }
     const c = got[2];
     if (c && (c.v.marks === a.v.marks || c.v.marks === b.v.marks)) {
-      const win = c.v.marks === a.v.marks ? a : b;
-      out[it.id] = { marks: win.v.marks, feedback: win.v.feedback, by: "AI (2 of 3)", markers, decision: "third marker settled it" }; continue;
+      out[it.id] = { marks: c.v.marks, feedback: fb, by: "AI (2 of 3)", markers, decision: "third marker settled it" }; continue;
     }
     const sorted = got.map(g => g.v.marks).sort((x, y) => x - y), mid = sorted[Math.floor((sorted.length - 1) / 2)];
-    const pick = got.find(g => g.v.marks === mid)!;
-    out[it.id] = { marks: mid, feedback: pick.v.feedback, by: "needs moderation", markers, decision: c ? "all three markers differ" : "markers differ and no third marker" };
+    out[it.id] = { marks: mid, feedback: fb, by: "needs moderation", markers, decision: c ? "all three markers differ" : "markers differ and no third marker" };
   }
   return out;
 }
@@ -178,6 +212,7 @@ async function planFollowUp(hw: any, results: R[], stretch: boolean): Promise<FU
           marks: 2, scheme: `Correct answer: ${r.expected}. Credit correct working (1) and a clear reason the first answer was wrong (1).` }
       : { ...base, source: "standard", prompt: `Look again at question ${r.num}. ${r.feedback} Write an improved answer that earns the marks you missed.`,
           marks: Math.min(4, Math.max(1, lost)), scheme: q.answer || r.expected || "" };
+  if (bank.length === 1) return fallback();          // one follow-up written by the teacher: use it, no AI needed
   try {
     const system =
       `You are an experienced ${courseOf(hw)} teacher setting ONE short follow-up task after marking a student's homework. ` +
@@ -189,10 +224,10 @@ async function planFollowUp(hw: any, results: R[], stretch: boolean): Promise<FU
       DATA_NOTE + "Reply with JSON only.";
     const user = JSON.stringify({ homework: hw.title, question_number: r.num, question: q.text, max_marks: r.marks, awarded: r.awarded,
       mark_scheme: q.answer || r.expected || "(none given)", student_answer: r.answer || "(blank)", feedback_given: r.feedback,
-      teacher_followups: bank.map((f, i) => ({ number: i + 1, task: f.text, marks: f.marks })) }, null, 2);
+      teacher_followups: bank.map((f, i) => ({ number: i + 1, task: f.text, marks: f.marks })) });
     const schema = { type: "object", properties: { choice: { type: "integer" }, lead: { type: "string" }, prompt: { type: "string" },
       marks: { type: "integer" }, mark_scheme: { type: "string" } }, required: ["choice"] };
-    const d = await aiJSON(system, user, schema, '{"choice":0,"lead":"","prompt":"...","marks":2,"mark_scheme":"..."}');
+    const d = await aiJSON(hw, system, user, schema, '{"choice":0,"lead":"","prompt":"...","marks":2,"mark_scheme":"..."}', AI_MODEL, 350);
     const c = Number(d?.choice) || 0;
     if (c >= 1 && c <= bank.length) {
       const f = bank[c - 1], lead = clip(d.lead, 300).trim();
@@ -216,9 +251,9 @@ async function planStretch(hw: any, results: R[], qs: Record<string, any>): Prom
       `You are an experienced ${courseOf(hw)} teacher. The student got full marks. Set ONE stretch question that takes the topic further, ` +
       "in the style of the exam board's harder questions, answerable in under 5 minutes, worth 2 to 4 marks, with a short mark scheme. " +
       "Stay within the specification. Address the student directly, British English. Reply with JSON only.";
-    const d = await aiJSON(system, JSON.stringify({ homework: hw.title, spec: hw.spec, hardest_question: q.text }), {
+    const d = await aiJSON(hw, system, JSON.stringify({ homework: hw.title, spec: hw.spec, hardest_question: q.text }), {
       type: "object", properties: { prompt: { type: "string" }, marks: { type: "integer" }, mark_scheme: { type: "string" } }, required: ["prompt", "marks", "mark_scheme"] },
-      '{"prompt":"...","marks":3,"mark_scheme":"..."}');
+      '{"prompt":"...","marks":3,"mark_scheme":"..."}', AI_MODEL, 400);
     const prompt = clip(d?.prompt, 800).trim();
     if (!prompt) return null;
     return { qid: top.id, num: top.num, kind: "stretch", source: "AI", prompt, question: q.text, original: top.answer,
@@ -271,8 +306,8 @@ async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix
       continue;
     }
     const checks = q.type === "code" ? clip(meta?.code?.[key], 300) : "";
-    forAI.push({ id: key, question: q.text + (q.type === "code" && q.starter ? `\n(Starting code given:\n${q.starter})` : ""), max_marks: q.marks,
-      mark_scheme: q.answer || "(no mark scheme given: use accurate subject knowledge)", student_answer: given, context: checks ? "Automatic checks: " + checks : undefined });
+    forAI.push({ id: key, question: clip(q.text, 800) + (q.type === "code" && q.starter ? `\n(Starting code given:\n${clip(q.starter, 600)})` : ""), max_marks: q.marks,
+      mark_scheme: clip(q.answer || "(no mark scheme given: use accurate subject knowledge)", 1200), student_answer: clip(given, 2000), context: checks ? "Automatic checks: " + checks : undefined });
   }
   const verdicts = await moderate(hw, forAI);
   let aiFailed = false, moderation = false;
@@ -318,7 +353,7 @@ async function summarise(hw: any, p: Pending, fuDone: any) {
     return { summary: `${pct}% overall.`, strengths: strong.slice(0, 3), weaknesses: weak.slice(0, 3), next_step: weak.length ? `Revisit ${secs.sort((x, y) => x.r - y.r)[0].k.toLowerCase()} questions.` : "Keep going: try harder exam questions on this topic.", by: "calculated" };
   };
   try {
-    const d = await aiJSON(
+    const d = await aiJSON(hw,
       `You are an experienced ${courseOf(hw)} teacher writing a quick note to a colleague about one student's homework. ` +
       "Use the questions, marks and feedback given. Name specific skills or knowledge (not question numbers). British English, plain and specific, no praise words like 'excellent'. " +
       "summary: one sentence. strengths and weaknesses: up to 3 short items each (empty if none). next_step: one sentence the teacher could act on. Reply with JSON only.",
@@ -326,7 +361,7 @@ async function summarise(hw: any, p: Pending, fuDone: any) {
         questions: p.results.map(r => ({ q: r.question.slice(0, 300), section: r.section, marks: `${r.awarded}/${r.marks}`, feedback: r.feedback })),
         follow_up: p.fu && fuDone ? { task: p.fu.prompt, marks: `${fuDone.awarded}/${p.fu.marks}`, gap_closed: fuDone.closed } : null }),
       { type: "object", properties: { summary: { type: "string" }, strengths: { type: "array", items: { type: "string" } }, weaknesses: { type: "array", items: { type: "string" } }, next_step: { type: "string" } }, required: ["summary", "strengths", "weaknesses", "next_step"] },
-      '{"summary":"...","strengths":["..."],"weaknesses":["..."],"next_step":"..."}');
+      '{"summary":"...","strengths":["..."],"weaknesses":["..."],"next_step":"..."}', AI_MODEL, 300);
     const list = (x: any) => (Array.isArray(x) ? x : []).map((t: any) => clip(t, 160)).filter(Boolean).slice(0, 3);
     return { summary: clip(d.summary, 300), strengths: list(d.strengths), weaknesses: list(d.weaknesses), next_step: clip(d.next_step, 300), by: "AI" };
   } catch (e) { console.error("summary failed", String(e).slice(0, 200)); return fallback(); }
@@ -365,7 +400,8 @@ async function finalise(hw: any, name: string, group: string, p: Pending, fuDone
     left_page_count: p.away, accessibility_tools_used: p.assist, pastes_total: pastes,
     score, percent: pct, needs_checking: needs, needs_moderation: toModerate.length > 0, sections: bySection,
     summary: card,
-    marking: { method: "Three AI markers: two independent marks, a third where they differ, teacher moderation if all three differ", models: MARKERS.map(short) },
+    marking: { method: "Three AI markers: two independent marks, a third where they differ, teacher moderation if all three differ", models: MARKERS.map(short),
+      neurons_this_request: Math.round(hw._usage?.neurons || 0), ai_limit_reached: !!hw._aiOff },
     questions: results.map(r => ({ number: r.num, id: r.id, section: r.section, type: r.type, question: r.question, max_marks: r.marks,
       awarded: r.awarded, marked_by: r.by, markers: r.markers || [], decision: r.decision || "", student_answer: r.answer, expected: r.expected,
       feedback: r.feedback, pastes: r.pastes, seconds_on_question: r.seconds })),
@@ -430,7 +466,7 @@ async function finalise(hw: any, name: string, group: string, p: Pending, fuDone
 
 const randomSecret = () => [...crypto.getRandomValues(new Uint8Array(24))].map(b => b.toString(16).padStart(2, "0")).join("");
 
-Deno.serve(async (req) => {
+async function handle(req: Request, box: any): Promise<Response> {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
   if (req.method !== "POST") return reply(req, { error: "Use POST." }, 405);
   const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "none";
@@ -449,6 +485,12 @@ Deno.serve(async (req) => {
   if (name.length < 3 || !name.includes(" ")) return reply(req, { error: "Type your first name and surname." }, 400);
   if (!hw.groups.includes(group)) return reply(req, { error: "Pick your group." }, 400);
   const hash = await hmac(hw.salt, `${norm(name)}|${group}|${hw.id}`);
+  box.hw = hw;
+  if (b.action !== "query") {
+    // Over today's AI budget: written answers go to the teacher instead (nothing fails, nothing is charged)
+    const { data: used } = await db.rpc("site_ai_usage", { p_add: 0 });
+    hw._aiOff = Number(used?.today) >= DAILY_BUDGET;
+  }
 
   // A student queries a mark after handing in: a short note goes to the teacher. Only for someone who has handed in.
   if (b.action === "query") {
@@ -536,4 +578,14 @@ Deno.serve(async (req) => {
     await db.rpc("site_hw_receipt", { p_hw: hw.id, p_hash: hash, p_add: false });   // let them try again
     return reply(req, { error: "Your homework couldn't be handed in just now. Nothing was lost: try again in a minute." }, 502);
   }
+}
+
+Deno.serve(async (req) => {
+  const box: any = {};
+  try { return await handle(req, box); }
+  finally {
+    const n = box.hw?._usage?.neurons;
+    if (n) { try { await db.rpc("site_ai_usage", { p_add: Math.round(n * 100) / 100 }); } catch (e) { console.error("usage not recorded", e); } }
+  }
 });
+
