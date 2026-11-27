@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/((?!group$|draft-y10$|draft-prep$|draft-worksheet$|draft-homework$|admin$|privacy$|badges$|answers\\.js$|a11y\\.js$|codebox\\.js$|py/|run/|dashboard$|hw$|hw/|ks3/|fonts/|brand/|site\\.css$|api\\.js$|nav\\.js$|hw-core\\.js$|favicon\\.png$|favicon\\.ico$|apple-touch-icon\\.png$).+)",
+      "source": "/((?!group$|admin$|privacy$|badges$|answers\\.js$|a11y\\.js$|codebox\\.js$|py/|run/|dashboard$|hw$|hw/|ks3/|fonts/|brand/|site\\.css$|api\\.js$|nav\\.js$|hw-core\\.js$|favicon\\.png$|favicon\\.ico$|apple-touch-icon\\.png$).+)",
       "destination": "/",
       "permanent": false
     }
