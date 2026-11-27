@@ -66,6 +66,8 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 .badge{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:1px 8px;background:var(--lock-soft);color:var(--lock);margin-left:6px}
 .warn{background:var(--amber-soft);border-radius:10px;padding:10px 14px;color:#78350f;margin:6px 0}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
+.pv-fu{margin:8px 0 0 18px;padding:6px 10px;border-left:3px solid var(--navy);background:var(--navy-soft);border-radius:6px;font-size:14px}
+.pv-fu pre{margin:4px 0 0}
 </style>
 </head>
 <body>
@@ -277,7 +279,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     $("hw-list").innerHTML = !list.length ? '<p class="lede">No homework yet. Add one below.</p>' : list.map(function (h) {
       var link = SITE + "/hw/" + h.code;
       return '<div class="hwc' + (h.open ? "" : " closed") + '"><h3>' + esc(h.title) + '<span class="status ' + (h.open ? "on" : "off") + '">' + (h.open ? "Open" : "Closed") + '</span></h3>' +
-        '<p class="m">Year ' + h.year + (h.spec ? " · " + esc(h.spec) : "") + ' · ' + h.total + ' marks · ' + h.submitted + ' handed in · added ' + new Date(h.created_at).toLocaleDateString("en-GB") + '</p>' +
+        '<p class="m">Year ' + h.year + (h.spec ? " · " + esc(h.spec) : "") + ' · ' + h.total + ' marks · ' + h.submitted + ' handed in' + (h.awaiting ? ' · ' + h.awaiting + ' awaiting follow-up' : '') + ' · added ' + new Date(h.created_at).toLocaleDateString("en-GB") + '</p>' +
         '<div class="link">' + esc(link) + '</div><div class="acts">' +
         '<button class="small-btn" type="button" data-hcopy="' + esc(link) + '">Copy link for Teams</button>' +
         '<a class="small-btn" style="text-decoration:none;color:var(--ink)" href="' + esc(link) + '?preview=1" target="_blank" rel="noopener">Preview</a>' +
@@ -304,7 +306,8 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
         var t = q.type === "long" || q.type === "short" ? "written" : q.type;
         var ans = q.type === "mcq" ? (q.correct ? "Answer: " + q.correct : "") : q.type === "quick" ? "Accepts: " + (q.accepted || []).join(" | ") : q.answer;
         html += '<div class="pv-q"><b>' + q.num + '.</b> ' + esc(q.text) + ' <span class="badge">' + names[t] + '</span><span class="badge">' + q.marks + ' mark' + (q.marks > 1 ? "s" : "") + '</span>' +
-          (q.options.length ? '<div>' + q.options.map(function (o) { return esc(o.key + ") " + o.text); }).join("<br>") + '</div>' : '') + (ans ? '<pre>' + esc(ans) + '</pre>' : '') + '</div>';
+          (q.options.length ? '<div>' + q.options.map(function (o) { return esc(o.key + ") " + o.text); }).join("<br>") + '</div>' : '') + (ans ? '<pre>' + esc(ans) + '</pre>' : '') +
+          (q.followups || []).map(function (f) { return '<div class="pv-fu"><b>Follow-up</b> [' + f.marks + '] ' + esc(f.text) + (f.answer ? '<pre>' + esc(f.answer) + '</pre>' : '') + '</div>'; }).join("") + '</div>';
       });
     });
     $("hw-out").innerHTML = html;
@@ -402,7 +405,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     }
     var hr = e.target.closest("[data-hreset]");
     if (hr) {
-      if (!confirm("Let everyone hand this homework in again? Use this if a student needs a redo. Hand-ins already emailed to you are not affected.")) return;
+      if (!confirm("Let everyone hand this homework in again? Use this if a student needs a redo. Hand-ins already emailed to you are not affected. Anyone still on a follow-up task will need to start again.")) return;
       call("hw_reset", { id: hr.dataset.hreset }).then(function () { toast("Students can hand in again"); hwLoad(); }).catch(function () {});
       return;
     }

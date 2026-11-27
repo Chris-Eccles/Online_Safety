@@ -31,16 +31,16 @@ function parseHomework(text) {
   const lines = String(text || "").replace(/\r/g, "").replace(/\u00a0/g, " ").replace(/\t/g, "    ").split("\n");
   const hw = { title: "", spec: "", intro: "", sections: [] };
   const warnings = [];
-  let section = null, q = null, inAnswer = false, prevBlank = true, lastNum = 0, afterRule = false;
+  let section = null, q = null, fu = null, fuMode = "", inAnswer = false, prevBlank = true, lastNum = 0, afterRule = false;
 
   const isRule = l => /^[─━—–\-=_*~·•.┄┈═]{3,}$/.test(l.replace(/\s/g, ""));
   const newSection = name => { section = { name: name || "", questions: [] }; hw.sections.push(section); };
-  const finishQ = () => { q = null; inAnswer = false; };
+  const finishQ = () => { q = null; fu = null; fuMode = ""; inAnswer = false; };
   const addLine = (str, line) => str + (str && !str.endsWith("\n") ? "\n" : "") + line;
 
   for (const raw of lines) {
     const line = raw.trim();
-    if (!line) { prevBlank = true; if (q && !inAnswer && q.text) q.text += "\n"; else if (inAnswer && q) q.answer += "\n"; continue; }
+    if (!line) { prevBlank = true; if (fu) { if (fuMode === "answer") fu.answer += "\n"; else fu.text += "\n"; } else if (q && !inAnswer && q.text) q.text += "\n"; else if (inAnswer && q) q.answer += "\n"; continue; }
     const afterBlank = prevBlank; prevBlank = false;
     let m;
 
@@ -80,6 +80,16 @@ function parseHomework(text) {
 
     // Question type tag: "Type: quick" (marked right or wrong) or "Type: written" (AI feedback)
     if ((m = line.match(/^(?:type|marking)\s*:\s*(quick|written)\b/i))) { q.tag = m[1].toLowerCase(); continue; }
+
+    // Follow-up task, set after hand-in if the student drops marks on this question:
+    // "Follow-up: Explain why... [2]" then "Follow-up answer: ..." (a question can have more than one)
+    if ((m = line.match(/^follow[\s-]*up\s*(answer|mark\s*scheme|ms)?\s*:\s*(.*)$/i))) {
+      inAnswer = true;
+      if (m[1]) { if (fu) { fuMode = "answer"; fu.answer = addLine(fu.answer, m[2]); } }
+      else { fu = { text: m[2], answer: "", marks: 0 }; (q.followups = q.followups || []).push(fu); fuMode = "text"; }
+      continue;
+    }
+    if (fu) { if (fuMode === "answer") fu.answer = addLine(fu.answer, line); else fu.text = addLine(fu.text, line); continue; }
 
     // Answer / mark scheme
     if ((m = line.match(/^(?:answer|answers|mark\s*scheme|ms|model answer)\s*:\s*(.*)$/i))) {
@@ -137,6 +147,13 @@ function parseHomework(text) {
       q.type = (!essay && !noMarks.includes(q.num) && q.marks === 1 && !q.text.includes("\n")) ? "short" : "long";
     }
     if (!q.answer && q.type !== "mcq") noAnswer.push(q.num);
+    q.followups = (q.followups || []).map(f => {
+      let t = f.text.replace(/\n{3,}/g, "\n\n").trim(), marks = 2;
+      const fm = t.match(/\s*\[\s*(\d{1,2})\s*(?:marks?)?\s*\]/i);
+      if (fm) { marks = Number(fm[1]); t = (t.slice(0, fm.index) + t.slice(fm.index + fm[0].length)).trim(); }
+      if (!f.answer.trim()) warnings.push(`Question ${q.num}: a follow-up has no "Follow-up answer:", so the AI will mark it from its own knowledge.`);
+      return { text: t, answer: f.answer.replace(/\n{3,}/g, "\n\n").trim(), marks };
+    }).filter(f => f.text);
     if (!q.text) warnings.push(`Question ${q.num}: the question text is empty.`);
   }
   hw.sections = hw.sections.filter(s => s.questions.length);

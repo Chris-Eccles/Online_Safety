@@ -33,6 +33,12 @@
 .result{border-top:5px solid var(--ok);text-align:left}
 .result .big{font-family:var(--head);font-size:2.6rem;color:var(--navy);margin:4px 0}
 .saved{font-size:14px;color:var(--muted);margin:8px 0 0}
+.fu{border-top:5px solid var(--navy);text-align:left}
+.fu .task{white-space:pre-wrap;font-weight:600;font-size:1.1rem;margin:10px 0 0;padding:14px 16px;background:var(--navy-soft);border-radius:10px}
+.fu textarea{display:block;width:100%;margin-top:12px;font:inherit;font-size:17px;padding:12px 14px;border:1px solid var(--field);border-radius:10px;resize:vertical;min-height:130px}
+.fu textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
+.q.fu-target{border:2px solid var(--navy);box-shadow:0 0 0 4px var(--navy-soft)}
+.fu-res{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--navy-soft)}
 fieldset{border:0;padding:0;margin:0}
 legend{padding:0}
 </style>
@@ -146,7 +152,8 @@ legend{padding:0}
     $("msg").classList.add("hidden"); $("app").classList.remove("hidden");
     if (!S.started && !preview) { S.started = new Date().toISOString(); save(); }
     if (S.done) showResult(S.done);
-    if (!preview && !S.done) $("prog").classList.remove("hidden");
+    else if (S.pending) showFollowUp(S.pending);
+    if (!preview && !S.done && !S.pending) $("prog").classList.remove("hidden");
     progress();
   }
   function progress() {
@@ -201,6 +208,7 @@ legend{padding:0}
         meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: false } }) })
       .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
       .then(function (x) {
+        if (x.body && x.body.ok && x.body.stage === "followup") { S.pending = x.body; save(); showFollowUp(x.body); return; }
         if (x.body && x.body.ok) { S.done = x.body; save(); showResult(x.body); return; }
         err.textContent = (x.body && x.body.error) || "Something went wrong. Try again.";
         btn.disabled = false; btn.textContent = "Hand in homework";
@@ -209,17 +217,67 @@ legend{padding:0}
       .catch(function () { err.textContent = "We can't reach the server. Your answers are saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Hand in homework"; });
   });
 
-  function showResult(r) {
+  function lockAndMark(r) {
     $("prog").classList.add("hidden");
-    document.querySelectorAll("#app input, #app textarea, #groups button").forEach(function (el) { el.disabled = true; });
+    document.querySelectorAll("#questions input, #questions textarea, #name, #groups button").forEach(function (el) { el.disabled = true; });
     r.results.forEach(function (x) {
       var fb = $("fb-" + x.id); if (!fb) return;
       fb.className = "fb " + (x.awarded === x.marks ? "full" : x.awarded ? "part" : "none");
       fb.innerHTML = "<b>" + x.awarded + "/" + x.marks + "</b> · " + esc(x.feedback) + (x.by === "AI-suggested" ? " <i>(AI-suggested mark)</i>" : "");
     });
+  }
+  function fuTitle(f) { return f.kind === "stretch" ? "Stretch question" : "Follow-up on question " + f.num; }
+
+  // Feedback that leads to a task: the homework only reaches your teacher once this is done
+  function showFollowUp(r) {
+    lockAndMark(r);
+    var f = r.followup, box = $("submit-box"), fuStart = 0;
+    if (f.kind !== "stretch") r.results.forEach(function (x) { if (x.num === f.num && $("box-" + x.id)) $("box-" + x.id).classList.add("fu-target"); });
+    box.className = "card fu stack";
+    box.innerHTML = '<div class="eyebrow">One more step</div>' +
+      '<p style="margin:0">Your score so far: <b>' + r.score + ' / ' + r.total + '</b> (' + r.percent + '%). Feedback is under each question.</p>' +
+      '<p style="margin:0">' + (f.kind === "stretch" ? "Full marks. Try this harder question" : "Now use your feedback on this task") +
+      '. <b>Your homework goes to your teacher when you send it.</b></p>' +
+      '<label for="fu-in" style="font-weight:700;margin-top:6px">' + esc(fuTitle(f)) + ' <span class="marks">' + f.marks + (f.marks === 1 ? " mark" : " marks") + '</span></label>' +
+      '<p class="task" id="fu-task">' + esc(f.prompt) + '</p>' +
+      '<textarea id="fu-in" rows="6">' + esc(S.fuAnswer || "") + '</textarea>' +
+      '<p class="err" id="fu-err" role="alert"></p>' +
+      '<button class="btn" type="button" id="fu-send">Send to my teacher</button>' +
+      '<p class="saved">Your answer saves on this device as you type. Come back to this page on the same device if you need to finish later.</p>';
+    var inp = $("fu-in");
+    inp.addEventListener("input", function () { S.fuAnswer = this.value; save(); });
+    inp.addEventListener("paste", function () { S.fuPastes = (S.fuPastes || 0) + 1; save(); });
+    inp.addEventListener("focus", function () { fuStart = Date.now(); });
+    inp.addEventListener("blur", function () { if (fuStart) { S.fuSeconds = (S.fuSeconds || 0) + (Date.now() - fuStart) / 1000; fuStart = 0; save(); } });
+    $("fu-send").addEventListener("click", function () {
+      var err = $("fu-err"), ans = inp.value;
+      if (!ans.trim()) { err.textContent = "Write your answer to the task first."; inp.focus(); return; }
+      if (fuStart) { S.fuSeconds = (S.fuSeconds || 0) + (Date.now() - fuStart) / 1000; fuStart = Date.now(); save(); }
+      var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
+      fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
+        body: JSON.stringify({ action: "followup", code: code, name: Abity.nameCase(S.name || ""), group: S.group, pending: r.pending, secret: r.secret,
+          answer: ans, meta: { seconds: S.fuSeconds || 0, pastes: S.fuPastes || 0 } }) })
+        .then(function (res) { return res.json().then(function (b) { return { status: res.status, body: b }; }); })
+        .then(function (x) {
+          if (x.body && x.body.ok) { S.done = x.body; delete S.pending; save(); showResult(x.body); return; }
+          err.textContent = (x.body && x.body.error) || "Something went wrong. Try again.";
+          btn.disabled = false; btn.textContent = "Send to my teacher";
+          if (x.body && x.body.expired) btn.classList.add("hidden");
+        })
+        .catch(function () { err.textContent = "We can't reach the server. Your answer is saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Send to my teacher"; });
+    });
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function showResult(r) {
+    lockAndMark(r);
+    var f = r.followup;
     $("submit-box").className = "card result";
-    $("submit-box").innerHTML = '<div class="eyebrow">Handed in</div><div class="big">' + r.score + ' / ' + r.total + '</div><p style="margin:0">' + r.percent + '%. Your teacher has your answers. ' +
+    $("submit-box").innerHTML = '<div class="eyebrow">Handed in</div><div class="big">' + r.score + ' / ' + r.total + '</div>' +
+      (f ? '<p style="margin:0 0 8px;font-weight:700">' + esc(fuTitle(f)) + ': ' + f.awarded + ' / ' + f.marks + '</p>' : '') +
+      '<p style="margin:0">' + r.percent + '%. Your teacher has your answers. ' +
       (r.needsChecking ? "Some answers will be checked by your teacher. " : "") + 'Feedback is under each question. Written answers have AI-suggested marks: your teacher has the final say.</p>' +
+      (f ? '<div class="fu-res"><b>' + esc(fuTitle(f)) + '</b><p style="margin:6px 0;white-space:pre-wrap">' + esc(f.prompt) + '</p><p style="margin:0">' + esc(f.feedback) + (f.by === "AI-suggested" ? " <i>(AI-suggested mark)</i>" : "") + '</p></div>' : '') +
       '<p class="saved"><button class="back" type="button" id="again">Start again</button> (only works if your teacher has allowed a redo)</p>';
     $("again").addEventListener("click", function () {
       if (!confirm("Clear your answers on this device and start again?")) return;
