@@ -130,8 +130,9 @@ async function markerRun(model: string, hw: any, items: Item[], withFeedback: bo
     "correct but worded differently from the mark scheme. Do not award marks for vague answers that only repeat the question. " +
     "For 'explain' questions the reason must be linked, not just stated. For code, judge whether it would work and meets the task; " +
     "the context field may say how it did against automatic checks. " + DATA_NOTE +
-    "Feedback: one or two short sentences in British English to the student saying what earned credit and one specific thing " +
-    "to add or improve, in under 30 words. Don't state the mark, the full correct answer or the mark scheme. Reply with JSON only."
+    "Feedback: under 30 words of British English to the student: what earned credit, then the specific point that was missing or wrong, " +
+    "named in your own words (for example 'you didn't say why it is faster'). Never write vague advice like 'add more detail' or 'be more specific'. " +
+    "Don't state the mark or copy the mark scheme. Reply with JSON only."
     : `You are an experienced, fair ${courseOf(hw)} examiner. For each item award whole marks from 0 to max_marks using the mark scheme, ` +
       "crediting correct answers worded differently and not crediting vague answers that only repeat the question. " + DATA_NOTE + "Reply with JSON only: marks, no feedback.";
   const schema = withFeedback
@@ -213,6 +214,9 @@ async function planFollowUp(hw: any, results: R[], stretch: boolean): Promise<FU
       : { ...base, source: "standard", prompt: `Look again at question ${r.num}. ${r.feedback} Write an improved answer that earns the marks you missed.`,
           marks: Math.min(4, Math.max(1, lost)), scheme: q.answer || r.expected || "" };
   if (bank.length === 1) return fallback();          // one follow-up written by the teacher: use it, no AI needed
+  if (!bank.length && q.type === "examiner")          // be-the-examiner: improve the candidate's answer to full marks
+    return { ...base, source: "standard", prompt: `The examiner gave the answer in question ${r.num} ${q.exMark}/${q.origMarks}. Rewrite the student's answer so that it would earn ${q.origMarks}/${q.origMarks}, using the mark scheme you were shown.`,
+      marks: Math.min(4, Math.max(1, q.origMarks)), scheme: `${q.shown}\nCredit each mark-scheme point the rewritten answer now makes clearly (the original answer was: "${q.candidate}").` };
   try {
     const system =
       `You are an experienced ${courseOf(hw)} teacher setting ONE short follow-up task after marking a student's homework. ` +
@@ -273,7 +277,7 @@ async function markFollowUp(hw: any, fu: FU, answer: string) {
 // Marks one set of answers. Quick, multiple-choice and true/false answers are marked here; written, code and
 // be-the-examiner answers go to the three markers together in one batch.
 async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix?: string }[], answers: Record<string, string>, meta: any) {
-  const results: R[] = [], forAI: Item[] = [], examinerAuto: Record<string, number> = {};
+  const results: R[] = [], forAI: Item[] = [], examinerAuto: Record<string, number> = {}, examinerNote: Record<string, string> = {};
   for (const { q, section, idPrefix } of qlist) {
     const key = (idPrefix || "") + q.id;
     const given = clip(answers[key], MAX_ANSWER);
@@ -298,11 +302,14 @@ async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix
       let ex: any = {}; try { ex = JSON.parse(given); } catch (_e) { ex = { why: given }; }
       const m = Number(ex.mark), ok = Number.isFinite(m) && Math.abs(m - q.exMark) <= (q.origMarks >= 4 ? 1 : 0);
       examinerAuto[key] = ok ? 1 : 0;
+      // after hand-in the student is told what the examiner gave and why: that is the point of the question
+      examinerNote[key] = `${ok ? "You matched the examiner" : `You gave ${Number.isFinite(m) ? m : "no mark"}`}: the examiner gave ${q.exMark}/${q.origMarks}.` +
+        (q.exComment ? ` Examiner's comment: "${clip(q.exComment, 300)}"` : "");
       r.answer = `Mark given: ${Number.isFinite(m) ? m : "none"}/${q.origMarks}. Reason: ${clip(ex.why, 1500)}`;
-      if (q.marks > 1) forAI.push({ id: key, question: `The student marked this answer to "${q.original}" [${q.origMarks}]: "${q.candidate}". Mark how well their reason applies the mark scheme.`,
+      if (q.marks > 1) forAI.push({ id: key, question: `The student marked this answer to "${q.original}" [${q.origMarks}]: "${q.candidate}". Mark how well their reason applies the mark scheme: credit each point they judged the same way as the examiner. In feedback, name any point they judged differently from the examiner.`,
         max_marks: q.marks - 1, mark_scheme: `Mark scheme the student used: ${q.shown}\nThe examiner gave ${q.exMark}/${q.origMarks}: ${q.exComment}`, student_answer: clip(ex.why, 1500),
         context: `The student gave ${Number.isFinite(m) ? m : "no mark"}; the examiner gave ${q.exMark}.` });
-      else { r.awarded = examinerAuto[key]; r.feedback = ok ? "You matched the examiner's mark." : `The examiner gave ${q.exMark}.`; }
+      else { r.awarded = examinerAuto[key]; r.feedback = examinerNote[key]; }
       continue;
     }
     const checks = q.type === "code" ? clip(meta?.code?.[key], 300) : "";
@@ -315,7 +322,7 @@ async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix
     const v = verdicts[r.id]; if (!v) continue;
     const auto = examinerAuto[r.id] || 0;
     r.awarded = Math.min(r.marks, v.marks + auto);
-    r.feedback = r.type === "examiner" ? (auto ? "You matched the examiner's mark. " : "Your mark didn't match the examiner's. ") + v.feedback : v.feedback;
+    r.feedback = r.type === "examiner" ? examinerNote[r.id] + " " + v.feedback : v.feedback;
     r.by = v.by; (r as any).markers = v.markers; (r as any).decision = v.decision;
     if (v.by === "needs checking") aiFailed = true;
     if (v.by === "needs moderation") moderation = true;
