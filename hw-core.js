@@ -31,16 +31,19 @@ function parseHomework(text) {
   const lines = String(text || "").replace(/\r/g, "").replace(/\u00a0/g, " ").replace(/\t/g, "    ").split("\n");
   const hw = { title: "", spec: "", intro: "", sections: [] };
   const warnings = [];
-  let section = null, q = null, fu = null, fuMode = "", inAnswer = false, prevBlank = true, lastNum = 0, afterRule = false;
+  let section = null, q = null, fu = null, fuMode = "", blk = "", inAnswer = false, prevBlank = true, lastNum = 0, afterRule = false;
 
   const isRule = l => /^[─━—–\-=_*~·•.┄┈═]{3,}$/.test(l.replace(/\s/g, ""));
   const newSection = name => { section = { name: name || "", questions: [] }; hw.sections.push(section); };
-  const finishQ = () => { q = null; fu = null; fuMode = ""; inAnswer = false; };
+  const finishQ = () => { q = null; fu = null; fuMode = ""; blk = ""; inAnswer = false; };
   const addLine = (str, line) => str + (str && !str.endsWith("\n") ? "\n" : "") + line;
 
   for (const raw of lines) {
     const line = raw.trim();
-    if (!line) { prevBlank = true; if (fu) { if (fuMode === "answer") fu.answer += "\n"; else fu.text += "\n"; } else if (q && !inAnswer && q.text) q.text += "\n"; else if (inAnswer && q) q.answer += "\n"; continue; }
+    if (q && blk && (blk === "starter" || blk === "candidate") && !/^(test|mark\s*scheme|answer|shown\s*scheme|examiner\s*(mark|comment)|original|follow[\s-]*up)\b[^:]{0,12}:/i.test(line)) {
+      q[blk] = (q[blk] || "") + raw.replace(/^ {0,4}/, "") + "\n"; prevBlank = !line; continue;
+    }
+    if (!line) { prevBlank = true; if (q && blk) { q[blk] += "\n"; continue; } if (fu) { if (fuMode === "answer") fu.answer += "\n"; else fu.text += "\n"; } else if (q && !inAnswer && q.text) q.text += "\n"; else if (inAnswer && q) q.answer += "\n"; continue; }
     const afterBlank = prevBlank; prevBlank = false;
     let m;
 
@@ -79,7 +82,20 @@ function parseHomework(text) {
     }
 
     // Question type tag: "Type: quick" (marked right or wrong) or "Type: written" (AI feedback)
-    if ((m = line.match(/^(?:type|marking)\s*:\s*(quick|written)\b/i))) { q.tag = m[1].toLowerCase(); continue; }
+    if ((m = line.match(/^(?:type|marking)\s*:\s*(quick|written|code|examiner)\b/i))) { q.tag = m[1].toLowerCase(); continue; }
+
+    // Code questions: "Starter:" (indented code) and "Test: input -> expected output" (inputs split with ;)
+    // Be-the-examiner questions: "Original:", "Candidate:", "Shown scheme:", "Examiner mark:", "Examiner comment:"
+    if ((m = line.match(/^starter(?:\s*code)?\s*:\s*(.*)$/i))) { blk = "starter"; inAnswer = true; q.starter = m[1] ? m[1] + "\n" : ""; continue; }
+    if ((m = line.match(/^test\s*:\s*(.*?)\s*->\s*(.*)$/i))) {
+      blk = ""; inAnswer = true; (q.tests = q.tests || []).push({ input: m[1].split(/\s*;\s*/).filter(x => x !== "").join("\n"), expect: m[2].trim() }); continue;
+    }
+    if ((m = line.match(/^original(?:\s*question)?\s*:\s*(.+)$/i))) { blk = ""; inAnswer = true; q.original = m[1]; continue; }
+    if ((m = line.match(/^candidate(?:\s*answer)?\s*:\s*(.*)$/i))) { blk = "candidate"; inAnswer = true; q.candidate = m[1] ? m[1] + "\n" : ""; continue; }
+    if ((m = line.match(/^shown\s*scheme\s*:\s*(.*)$/i))) { blk = "shown"; inAnswer = true; q.shown = m[1] ? m[1] + "\n" : ""; continue; }
+    if ((m = line.match(/^examiner\s*mark\s*:\s*(\d{1,2})/i))) { blk = ""; inAnswer = true; q.exMark = Number(m[1]); continue; }
+    if ((m = line.match(/^examiner\s*comment\s*:\s*(.*)$/i))) { blk = "exComment"; inAnswer = true; q.exComment = m[1] ? m[1] + "\n" : ""; continue; }
+    if (blk && !/^(?:answer|answers|mark\s*scheme|ms|model answer)\s*:/i.test(line)) { q[blk] = (q[blk] || "") + line + "\n"; continue; }
 
     // Follow-up task, set after hand-in if the student drops marks on this question:
     // "Follow-up: Explain why... [2]" then "Follow-up answer: ..." (a question can have more than one)
@@ -93,7 +109,7 @@ function parseHomework(text) {
 
     // Answer / mark scheme
     if ((m = line.match(/^(?:answer|answers|mark\s*scheme|ms|model answer)\s*:\s*(.*)$/i))) {
-      inAnswer = true; q.answer = addLine(q.answer, m[1]); continue;
+      inAnswer = true; blk = ""; q.answer = addLine(q.answer, m[1]); continue;
     }
     if (inAnswer) { q.answer = addLine(q.answer, line); continue; }
 
@@ -142,11 +158,24 @@ function parseHomework(text) {
       if (!q.accepted.length) warnings.push(`Question ${q.num} is tagged quick but has no "Answer:", so it can't be marked. Add e.g. "Answer: 0.375 | 3/8".`);
     } else if (q.tag === "written") {
       q.type = "long";
+    } else if (q.tag === "code") {
+      q.type = "code";
+      q.starter = (q.starter || "").replace(/\s+$/, "");
+      q.tests = (q.tests || []).slice(0, 8);
+    } else if (q.tag === "examiner") {
+      q.type = "examiner";
+      const om = String(q.original || "").match(/\s*\[\s*(\d{1,2})\s*(?:marks?)?\s*\]/i);
+      q.origMarks = om ? Number(om[1]) : 0;
+      if (om) q.original = (q.original.slice(0, om.index) + q.original.slice(om.index + om[0].length)).trim();
+      q.candidate = (q.candidate || "").replace(/\s+$/, ""); q.shown = (q.shown || "").trim(); q.exComment = (q.exComment || "").trim();
+      if (!q.original || !q.candidate || !q.origMarks) warnings.push(`Question ${q.num} (be the examiner) needs "Original: question [marks]" and a "Candidate:" answer.`);
+      if (q.exMark == null || q.exMark > q.origMarks) warnings.push(`Question ${q.num} (be the examiner) needs "Examiner mark: n" (0 to ${q.origMarks || "the original's marks"}).`);
+      if (!q.answer) q.answer = `The examiner gave ${q.exMark}/${q.origMarks}. ${q.exComment}`;
     } else {
       // One-line box only for short 1-mark questions; anything else gets a big box
       q.type = (!essay && !noMarks.includes(q.num) && q.marks === 1 && !q.text.includes("\n")) ? "short" : "long";
     }
-    if (!q.answer && q.type !== "mcq") noAnswer.push(q.num);
+    if (!q.answer && q.type !== "mcq" && q.type !== "examiner") noAnswer.push(q.num);
     q.followups = (q.followups || []).map(f => {
       let t = f.text.replace(/\n{3,}/g, "\n\n").trim(), marks = 2;
       const fm = t.match(/\s*\[\s*(\d{1,2})\s*(?:marks?)?\s*\]/i);
@@ -173,7 +202,12 @@ function studentView(hw) {
   return {
     title: hw.title, spec: hw.spec, intro: hw.intro, totalMarks: hw.totalMarks,
     sections: hw.sections.map(s => ({ name: s.name,
-      questions: s.questions.map(q => ({ id: q.id, num: q.num, text: q.text, marks: q.marks, type: q.type, options: q.options })) }))
+      questions: s.questions.map(q => {
+        const v = { id: q.id, num: q.num, text: q.text, marks: q.marks, type: q.type, options: q.options };
+        if (q.type === "code") { v.starter = q.starter || ""; v.tests = (q.tests || []).map((t, i) => ({ name: "Check " + (i + 1), input: t.input, expect: t.expect, contains: true, ignoreCase: true })); }
+        if (q.type === "examiner") { v.original = q.original; v.origMarks = q.origMarks; v.candidate = q.candidate; v.shown = q.shown; }
+        return v;
+      }) }))
   };
 }
 

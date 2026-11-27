@@ -39,6 +39,16 @@
 .fu textarea{display:block;width:100%;margin-top:12px;font:inherit;font-size:17px;padding:12px 14px;border:1px solid var(--field);border-radius:10px;resize:vertical;min-height:130px}
 .fu textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
 .q.fu-target{border:2px solid var(--navy);box-shadow:0 0 0 4px var(--navy-soft)}
+.exam .ex-l{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.exam .ex-q{margin:0;font-weight:600}
+.exam pre{margin:0;padding:12px 14px;background:var(--lock-soft);border-radius:10px;white-space:pre-wrap;font:inherit;font-size:16px}
+.exam pre.ex-c{background:#fff;border:2px dashed var(--field)}
+.exam select{font:inherit;font-size:17px;padding:8px 10px;border:1px solid var(--field);border-radius:8px;margin-top:4px}
+.review-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.review-h small{color:var(--muted);font-family:var(--body);font-size:14px;font-weight:600}
+.qry{margin-top:8px}
+.qry button.linkish{background:none;border:0;padding:0;color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline;font-size:14px}
+.qry textarea{min-height:70px!important;font-size:15px!important}
 .fu-res{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--navy-soft)}
 fieldset{border:0;padding:0;margin:0}
 legend{padding:0}
@@ -131,31 +141,117 @@ legend{padding:0}
     var html = "";
     hw.sections.forEach(function (s) {
       if (s.name) html += '<h2 class="sec-h">' + esc(s.name) + '</h2>';
-      s.questions.forEach(function (qq) {
-        var a = S.answers[qq.id] || "", box;
-        if (qq.type === "mcq") {
-          box = '<fieldset class="opts"><legend class="sr">Options</legend>' + qq.options.map(function (o) {
-            return '<label class="opt"><input type="radio" name="' + qq.id + '" value="' + o.key + '"' + (a === o.key ? " checked" : "") + '><span>' + o.key + ') ' + esc(o.text) + '</span></label>';
-          }).join("") + '</fieldset>';
-        } else if (qq.type === "tf") {
-          box = '<fieldset class="opts"><legend class="sr">True or false</legend>' + ["true", "false"].map(function (v) {
-            return '<label class="opt"><input type="radio" name="' + qq.id + '" value="' + v + '"' + (a === v ? " checked" : "") + '><span>' + (v === "true" ? "True" : "False") + '</span></label>';
-          }).join("") + '</fieldset>';
-        } else if (qq.type === "quick" || qq.type === "short") {
-          box = '<label class="sr" for="in-' + qq.id + '">Answer to question ' + qq.num + '</label><input type="text" id="in-' + qq.id + '" data-q="' + qq.id + '" autocomplete="off" spellcheck="false" value="' + esc(a) + '">';
-        } else {
-          box = '<label class="sr" for="in-' + qq.id + '">Answer to question ' + qq.num + '</label><textarea id="in-' + qq.id + '" data-q="' + qq.id + '" rows="' + Math.min(14, 3 + qq.marks * 2) + '">' + esc(a) + '</textarea>';
-        }
-        html += '<div class="q" id="box-' + qq.id + '" data-qbox="' + qq.id + '"><div class="q-top"><p class="q-text"><span class="q-num">' + qq.num + '.</span>' + esc(qq.text) + '</p><span class="marks">' + qq.marks + (qq.marks === 1 ? " mark" : " marks") + '</span></div>' + box + '<div class="fb hidden" id="fb-' + qq.id + '"></div></div>';
-      });
+      s.questions.forEach(function (qq) { html += qBox(qq, qq.id); });
     });
     $("questions").innerHTML = html;
+    loadReview();
+    setupCode();
     $("msg").classList.add("hidden"); $("app").classList.remove("hidden");
     if (!S.started && !preview) { S.started = new Date().toISOString(); save(); }
     if (S.done) showResult(S.done);
     else if (S.pending) showFollowUp(S.pending);
     if (!preview && !S.done && !S.pending) $("prog").classList.remove("hidden");
     progress();
+  }
+
+  // One question's box. key is the answer's name: "q3", or "r:<homework>:q3" for a personal review question.
+  function qBox(qq, key, label) {
+        var a = S.answers[key] || "", box, qid = key;
+        if (qq.type === "mcq") {
+          box = '<fieldset class="opts"><legend class="sr">Options</legend>' + qq.options.map(function (o) {
+            return '<label class="opt"><input type="radio" name="' + qid + '" value="' + o.key + '"' + (a === o.key ? " checked" : "") + '><span>' + o.key + ') ' + esc(o.text) + '</span></label>';
+          }).join("") + '</fieldset>';
+        } else if (qq.type === "tf") {
+          box = '<fieldset class="opts"><legend class="sr">True or false</legend>' + ["true", "false"].map(function (v) {
+            return '<label class="opt"><input type="radio" name="' + qid + '" value="' + v + '"' + (a === v ? " checked" : "") + '><span>' + (v === "true" ? "True" : "False") + '</span></label>';
+          }).join("") + '</fieldset>';
+        } else if (qq.type === "quick" || qq.type === "short") {
+          box = '<label class="sr" for="in-' + qid + '">Answer to question ' + qq.num + '</label><input type="text" id="in-' + qid + '" data-q="' + qid + '" autocomplete="off" spellcheck="false" value="' + esc(a) + '">';
+        } else if (qq.type === "code") {
+          box = '<textarea id="in-' + qid + '" name="' + qid + '" data-q="' + qid + '" data-code="1" data-label="Question ' + qq.num + '" data-tests="' + esc(JSON.stringify(qq.tests || [])) + '">' + esc(a || qq.starter || "") + '</textarea>';
+        } else if (qq.type === "examiner") {
+          var ex = {}; try { ex = JSON.parse(a || "{}") || {}; } catch (e) {}
+          var opts = '<option value="">Choose</option>'; for (var m = 0; m <= qq.origMarks; m++) opts += '<option value="' + m + '"' + (String(ex.mark) === String(m) ? " selected" : "") + '>' + m + '</option>';
+          box = '<div class="exam"><p class="ex-l">The exam question</p><p class="ex-q">' + esc(qq.original) + ' [' + qq.origMarks + ']</p>' +
+            '<p class="ex-l">A student\u2019s answer</p><pre class="ex-c">' + esc(qq.candidate) + '</pre>' +
+            (qq.shown ? '<p class="ex-l">Mark scheme</p><pre>' + esc(qq.shown) + '</pre>' : '') +
+            '<p class="ex-l"><label for="exm-' + qid + '">Your mark out of ' + qq.origMarks + '</label></p><select id="exm-' + qid + '" data-exmark="' + qid + '">' + opts + '</select>' +
+            '<p class="ex-l"><label for="exw-' + qid + '">Why did you give that mark?</label></p><textarea id="exw-' + qid + '" data-exwhy="' + qid + '" rows="4">' + esc(ex.why || "") + '</textarea></div>';
+        } else {
+          box = '<label class="sr" for="in-' + qid + '">Answer to question ' + qq.num + '</label><textarea id="in-' + qid + '" data-q="' + qid + '" rows="' + Math.min(14, 3 + qq.marks * 2) + '">' + esc(a) + '</textarea>';
+        }
+        return '<div class="q" id="box-' + qid + '" data-qbox="' + qid + '"><div class="q-top"><p class="q-text"><span class="q-num">' + esc(label || qq.num + ".") + '</span>' + esc(qq.text) + '</p><span class="marks">' + qq.marks + (qq.marks === 1 ? " mark" : " marks") + '</span></div>' + box + '<div class="fb hidden" id="fb-' + qid + '"></div></div>';
+  }
+
+  // Code questions use the CodeBox editor (real Python, run in this browser)
+  function setupCode() {
+    var tas = document.querySelectorAll("textarea[data-code]");
+    if (!tas.length) return;
+    var sc = document.createElement("script"); sc.src = "/codebox.js";
+    sc.onload = function () {
+      tas.forEach(function (ta) {
+        var q = findQ(ta.dataset.q);
+        window.CodeBox.build(ta, (q && q.starter) || "", { key: "abity-hw-" + code, lang: "py" });
+        if (S.done || S.pending) ta.disabled = true;
+      });
+    };
+    document.head.appendChild(sc);
+  }
+  function findQ(id) {
+    var all = [].concat.apply([], HW.hw.sections.map(function (s) { return s.questions; }));
+    return all.filter(function (x) { return x.id === id; })[0];
+  }
+  function exSave(id) {
+    var m = document.querySelector('[data-exmark="' + id + '"]'), w = document.querySelector('[data-exwhy="' + id + '"]');
+    S.answers[id] = (m.value === "" && !w.value.trim()) ? "" : JSON.stringify({ mark: m.value === "" ? null : Number(m.value), why: w.value });
+    save(); progress();
+  }
+
+  // Personal review: questions this device got wrong in earlier homeworks come back after 3, 7, 21 and 60 days.
+  // The list is kept on this device only; the website never stores who got what wrong.
+  var REV = "abity-review", DAYS = [3, 7, 21, 60], reviewItems = [];
+  function revList() { try { return JSON.parse(localStorage.getItem(REV) || "[]") || []; } catch (e) { return []; } }
+  function revSave(l) { try { localStorage.setItem(REV, JSON.stringify(l.slice(-200))); } catch (e) {} }
+  function loadReview() {
+    if (preview) return;
+    var now = Date.now();
+    if (!S.reviewPick) {
+      S.reviewPick = revList().filter(function (x) { return x.code !== code && x.due <= now; }).sort(function (a, b) { return a.due - b.due; }).slice(0, 2)
+        .map(function (x) { return { code: x.code, qid: x.qid }; });
+      save();
+    }
+    if (!S.reviewPick.length) return;
+    Abity.rpc("site_hw_review", { p_codes: S.reviewPick.map(function (x) { return x.code; }) }).then(function (r) {
+      if (!r || !r.ok) return;
+      reviewItems = S.reviewPick.map(function (x) {
+        var h = r.homeworks[x.code]; if (!h) return null;
+        var q = [].concat.apply([], h.student.sections.map(function (s) { return s.questions; })).filter(function (y) { return y.id === x.qid; })[0];
+        return q && q.type !== "code" && q.type !== "examiner" ? { code: x.code, qid: x.qid, key: "r:" + x.code + ":" + x.qid, q: q, title: h.title } : null;
+      }).filter(Boolean);
+      if (!reviewItems.length) return;
+      var html = '<h2 class="sec-h review-h">Your personal review <small>Questions you found tricky before. They don\u2019t count towards your score.</small></h2>';
+      reviewItems.forEach(function (it, i) { html += qBox(it.q, it.key, "R" + (i + 1) + "."); });
+      var d = document.createElement("div"); d.id = "review"; d.innerHTML = html;
+      $("questions").appendChild(d);
+      if (S.done || S.pending) { lockAndMark(S.done || S.pending); }
+    }).catch(function () {});
+  }
+  function reviewPayload() { return reviewItems.map(function (it) { return { code: it.code, qid: it.qid, answer: S.answers[it.key] || "" }; }); }
+  function reviewUpdate(r) {
+    if (S.reviewUpdated) return;
+    var l = revList(), now = Date.now(), day = 864e5;
+    (r.review || []).forEach(function (x) {
+      var p = x.id.split(":"), i = l.findIndex(function (y) { return y.code === p[1] && y.qid === p[2]; });
+      if (i < 0) return;
+      if (x.awarded === x.marks) { l[i].box++; if (l[i].box >= DAYS.length) l.splice(i, 1); else l[i].due = now + DAYS[l[i].box] * day; }
+      else { l[i].box = 0; l[i].due = now + DAYS[0] * day; }
+    });
+    r.results.forEach(function (x) {
+      var q = findQ(x.id); if (!q || q.type === "code" || q.type === "examiner" || x.awarded >= x.marks) return;
+      l = l.filter(function (y) { return !(y.code === code && y.qid === x.id); });
+      l.push({ code: code, qid: x.id, num: x.num, title: HW.hw.title, box: 0, due: now + DAYS[0] * day });
+    });
+    revSave(l); S.reviewUpdated = true; save();
   }
   function progress() {
     if (!HW) return;
@@ -179,9 +275,11 @@ legend{padding:0}
   });
   document.addEventListener("change", function (e) {
     if (e.target.type === "radio") { S.answers[e.target.name] = e.target.value; save(); progress(); }
+    if (e.target.dataset && e.target.dataset.exmark) exSave(e.target.dataset.exmark);
   });
+  document.addEventListener("input", function (e) { if (e.target.dataset && e.target.dataset.exwhy) exSave(e.target.dataset.exwhy); });
   document.addEventListener("paste", function (e) {
-    var id = e.target.dataset && e.target.dataset.q; if (id) { S.pastes[id] = (S.pastes[id] || 0) + 1; save(); }
+    var id = e.target.dataset && (e.target.dataset.q || e.target.dataset.exwhy); if (id) { S.pastes[id] = (S.pastes[id] || 0) + 1; save(); }
   });
   function stopTimer() { if (curQ) { S.seconds[curQ] = (S.seconds[curQ] || 0) + (Date.now() - curT) / 1000; curQ = null; save(); } }
   document.addEventListener("focusin", function (e) {
@@ -207,8 +305,8 @@ legend{padding:0}
     stopTimer();
     var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
     fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
-      body: JSON.stringify({ code: code, name: name, group: group, answers: S.answers,
-        meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: !!(S.assist || window.hwAssist) } }) })
+      body: JSON.stringify({ code: code, name: name, group: group, answers: mainAnswers(), review: reviewPayload(),
+        meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: !!(S.assist || window.hwAssist), code: codeChecks() } }) })
       .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
       .then(function (x) {
         if (x.body && x.body.ok && x.body.stage === "followup") { S.pending = x.body; save(); showFollowUp(x.body); return; }
@@ -220,13 +318,22 @@ legend{padding:0}
       .catch(function () { err.textContent = "We can't reach the server. Your answers are saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Hand in homework"; });
   });
 
+  function mainAnswers() { var o = {}; Object.keys(S.answers).forEach(function (k) { if (/^q\d+$/.test(k)) o[k] = S.answers[k]; }); return o; }
+  function codeChecks() {
+    var o = {}; if (!window.CodeBox) return o;
+    document.querySelectorAll("textarea[data-code]").forEach(function (ta) { var st = window.CodeBox.status(ta.name); if (st) o[ta.name] = st; });
+    return o;
+  }
+  function byNote(by) {
+    return by === "needs moderation" ? " <i>(your teacher will confirm this mark)</i>" : /^AI/.test(by) || by === "AI-suggested" ? " <i>(AI-marked)</i>" : "";
+  }
   function lockAndMark(r) {
     $("prog").classList.add("hidden");
-    document.querySelectorAll("#questions input, #questions textarea, #name, #groups button").forEach(function (el) { el.disabled = true; });
-    r.results.forEach(function (x) {
+    document.querySelectorAll("#questions input, #questions textarea, #questions select, #name, #groups button").forEach(function (el) { el.disabled = true; });
+    r.results.concat(r.review || []).forEach(function (x) {
       var fb = $("fb-" + x.id); if (!fb) return;
       fb.className = "fb " + (x.awarded === x.marks ? "full" : x.awarded ? "part" : "none");
-      fb.innerHTML = "<b>" + x.awarded + "/" + x.marks + "</b> · " + esc(x.feedback) + (x.by === "AI-suggested" ? " <i>(AI-suggested mark)</i>" : "");
+      fb.innerHTML = "<b>" + x.awarded + "/" + x.marks + "</b> · " + esc(x.feedback) + byNote(x.by);
     });
   }
   function fuTitle(f) { return f.kind === "stretch" ? "Stretch question" : "Follow-up on question " + f.num; }
@@ -274,19 +381,49 @@ legend{padding:0}
 
   function showResult(r) {
     lockAndMark(r);
+    if (!preview) reviewUpdate(r);
+    addQueries(r);
     var f = r.followup;
     $("submit-box").className = "card result";
     $("submit-box").innerHTML = '<div class="eyebrow">Handed in</div><div class="big">' + r.score + ' / ' + r.total + '</div>' +
       (f ? '<p style="margin:0 0 8px;font-weight:700">' + esc(fuTitle(f)) + ': ' + f.awarded + ' / ' + f.marks + '</p>' : '') +
       '<p style="margin:0">' + r.percent + '%. Your teacher has your answers. ' +
-      (r.needsChecking ? "Some answers will be checked by your teacher. " : "") + 'Feedback is under each question. Written answers have AI-suggested marks: your teacher has the final say.</p>' +
-      (f ? '<div class="fu-res"><b>' + esc(fuTitle(f)) + '</b><p style="margin:6px 0;white-space:pre-wrap">' + esc(f.prompt) + '</p><p style="margin:0">' + esc(f.feedback) + (f.by === "AI-suggested" ? " <i>(AI-suggested mark)</i>" : "") + '</p></div>' : '') +
+      (r.needsChecking ? "Some answers will be checked by your teacher. " : "") + 'Feedback is under each question. Written answers are marked by three AI markers: your teacher has the final say, and you can query a mark under its feedback.</p>' +
+      (r.review && r.review.length ? '<p style="margin:8px 0 0"><b>Personal review:</b> ' + r.review.filter(function (x) { return x.awarded === x.marks; }).length + ' of ' + r.review.length + ' remembered.</p>' : '') +
+      (f ? '<div class="fu-res"><b>' + esc(fuTitle(f)) + '</b><p style="margin:6px 0;white-space:pre-wrap">' + esc(f.prompt) + '</p><p style="margin:0">' + esc(f.feedback) + byNote(f.by) + '</p></div>' : '') +
       '<p class="saved"><button class="back" type="button" id="again">Start again</button> (only works if your teacher has allowed a redo)</p>';
     $("again").addEventListener("click", function () {
       if (!confirm("Clear your answers on this device and start again?")) return;
       try { localStorage.removeItem(store); } catch (e) {} location.reload();
     });
     $("submit-box").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  // "Query this mark": a short note to the teacher about one AI-marked answer
+  function addQueries(r) {
+    S.queried = S.queried || {};
+    r.results.forEach(function (x) {
+      var fb = $("fb-" + x.id); if (!fb || !(/^AI|needs/.test(x.by) || x.by === "AI-suggested")) return;
+      var d = document.createElement("div"); d.className = "qry";
+      if (S.queried[x.id]) { d.innerHTML = "<small>Query sent to your teacher.</small>"; fb.appendChild(d); return; }
+      d.innerHTML = '<button type="button" class="linkish">Query this mark</button>';
+      fb.appendChild(d);
+      d.querySelector("button").addEventListener("click", function () {
+        d.innerHTML = '<label class="sr" for="qn-' + x.id + '">Why should the mark change?</label><textarea id="qn-' + x.id + '" maxlength="600" placeholder="Say which part of your answer you think earns a mark, and why."></textarea>' +
+          '<p class="err" role="alert"></p><button class="btn ghost" type="button" style="min-height:40px;padding:8px 16px;font-size:15px">Send to my teacher</button>';
+        var ta = d.querySelector("textarea"), er = d.querySelector(".err"), b = d.querySelector(".btn"); ta.focus();
+        b.addEventListener("click", function () {
+          if (ta.value.trim().length < 5) { er.textContent = "Say why you think the mark should change."; return; }
+          b.disabled = true; er.textContent = "";
+          fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
+            body: JSON.stringify({ action: "query", code: code, name: Abity.nameCase(S.name || ""), group: S.group, question: String(x.num), note: ta.value }) })
+            .then(function (res) { return res.json(); })
+            .then(function (j) {
+              if (j && j.ok) { S.queried[x.id] = true; save(); d.innerHTML = "<small>Query sent to your teacher.</small>"; }
+              else { er.textContent = (j && j.error) || "Not sent. Try again."; b.disabled = false; }
+            }).catch(function () { er.textContent = "Not sent: check your connection."; b.disabled = false; });
+        });
+      });
+    });
   }
 })();
 </script>

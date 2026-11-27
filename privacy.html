@@ -64,6 +64,9 @@
     <li>if you were set a follow-up task, the task, your answer and its mark;</li>
     <li>when you started and handed in, how long you spent on each question, how many times you pasted into each answer, and how many times you left the page.</li>
   </ul>
+  <p><b>Marking.</b> Written, code and "be the examiner" answers are marked by three AI models run by Cloudflare: two mark each answer separately, a third marks it if they disagree, and if all three disagree your teacher decides. They see the questions, mark schemes and answers, never your name. Your teacher has the final say, and you can query any mark after you hand in: your note goes only to your teacher's school email.</p>
+  <p><b>Code questions</b> run your Python inside your own browser. Your code is only sent when you hand in.</p>
+  <p><b>Personal review.</b> If you get a question wrong, this device remembers it and brings it back in a later homework after a few days, then a week, three weeks and two months. That list is kept only in your browser on this device; the website does not know which questions anyone got wrong.</p>
   <p><b>Follow-up tasks.</b> After you hand in, you may be given one short task based on your feedback. The homework goes to your teacher when you send that task. Until then, the website holds your marked answers for up to 7 days <b>without your name</b>, linked to a random code kept on your device. If you don't finish the task within 7 days, they are deleted.</p>
   <p>The website does <b>not</b> keep your name or answers after the email is sent. It keeps only a scrambled code made from your name, group and the homework, which cannot be turned back into your name. It is used only to stop the same homework being handed in twice, and it is deleted every 1 August. Your answers are saved in your browser while you work, so you can come back to them.</p>
   <p>Written answers are marked by an AI (Cloudflare Workers AI), which receives only the question, the mark scheme and your answer, never your name. The AI's marks are suggestions: your teacher's mark is the one that counts. Multiple-choice, true/false and short "quick" answers are marked automatically without AI.</p>
@@ -84,7 +87,7 @@
     <thead><tr><th>Service</th><th>What it does</th><th>What it sees</th></tr></thead>
     <tbody>
       <tr><td>Vercel</td><td>Hosts the pages</td><td>Internet addresses in its server logs</td></tr>
-      <tr><td>Cloudflare Workers AI</td><td>Suggests marks and feedback for written homework answers, and sets and marks follow-up tasks</td><td>The question, mark scheme and answer only (no name). Not used for training.</td></tr>
+      <tr><td>Cloudflare Workers AI</td><td>Three AI models (Llama, Mistral and Qwen) mark written, code and "be the examiner" answers, set and mark follow-up tasks, and write a short summary for your teacher</td><td>The question, mark scheme and answer only (no name). Not used for training.</td></tr>
       <tr><td>Resend (sends from Ireland; a US company)</td><td>Sends homework results to the teacher's school mailbox</td><td>Your name, group and answers, kept briefly for delivery checks</td></tr>
       <tr><td>Supabase (London)</td><td>The database described above</td><td>Groups, switches, sign-in codes, quiz answers (no names), internet addresses in its logs</td></tr>
       <tr><td>Microsoft (MakeCode, OneDrive)</td><td>Where students build and save their work, through links in the workbooks</td><td>Covered by the school's own Microsoft agreement and Microsoft's privacy terms</td></tr>
@@ -98,6 +101,8 @@
     <tbody>
       <tr><td>Names</td><td>Never kept by the website. On your device until you sign out or clear your browser.</td></tr>
       <tr><td>Homework hand-ins (name, answers, marks)</td><td>Not kept by the website. The email to your teacher is kept under the school's email rules.</td></tr>
+      <tr><td>Accessibility settings (text size, font, colours)</td><td>Only on your device, until you reset them or clear your browser</td></tr>
+      <tr><td>Personal review list (questions you got wrong)</td><td>Only on your device, until you clear your browser. Each question drops off once you get it right four times in a row.</td></tr>
       <tr><td>Marked answers waiting for a follow-up task (no name)</td><td>Until you send the follow-up, and never more than 7 days</td></tr>
       <tr><td>Scrambled homework hand-in codes</td><td>Until 1 August each year, or sooner if your teacher allows a redo or deletes the homework</td></tr>
       <tr><td>Badges and class question answers (Years 10 to 13)</td><td>Deleted with the sign-in code they belong to, and always on 1 August</td></tr>

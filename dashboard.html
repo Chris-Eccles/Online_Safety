@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abity homework dashboard (offline)</title>
+<meta name="robots" content="noindex">
+<!-- Offline dashboard for the JSON files attached to Abity homework emails.
+     Save this page to your computer and open it there. Files you drop in are read by your browser only:
+     nothing is uploaded or sent anywhere, and nothing is kept after you close the tab. -->
+<style>
+:root{--navy:#1E3A5F;--navy-soft:#EDF2F8;--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--ok:#15803d;--amber:#d97706;--bad:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:#f8fafc}
+header{background:var(--navy);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:1.25rem;margin:0}
+header small{opacity:.8}
+main{max-width:1280px;margin:0 auto;padding:24px}
+.drop{display:block;border:3px dashed #94a3b8;border-radius:14px;padding:28px;text-align:center;background:#fff;cursor:pointer}
+.drop.over{border-color:var(--navy);background:var(--navy-soft)}
+.drop b{color:var(--navy)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+select,button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}
+button{cursor:pointer;font-weight:600}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:0 0 18px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tile .l{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.tile .v{font-size:1.6rem;font-weight:700;color:var(--navy)}
+h2{font-size:1.1rem;color:var(--navy);margin:26px 0 10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--navy-soft);position:sticky;top:0;cursor:pointer;white-space:nowrap}
+tr.st:hover td{background:#f1f5f9;cursor:pointer}
+table.heat{width:auto}
+.heat td.c{width:34px;min-width:34px;text-align:center;font-size:12px;font-weight:700;color:#fff;border:2px solid #fff;border-radius:6px}
+.heat th.c{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;padding:6px 2px;cursor:default}
+.flag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px;margin:0 4px 2px 0}
+.flag.mod{background:#fef3c7;color:#92400e}.flag.chk{background:#fee2e2;color:#991b1b}.flag.ast{background:#e0e7ff;color:#3730a3}
+.meter{height:12px;background:var(--line);border-radius:6px;overflow:hidden;min-width:120px}
+.meter i{display:block;height:100%}
+.weak li{margin:0 0 8px}
+.muted{color:var(--muted)}
+dialog{max-width:900px;width:calc(100% - 32px);border:0;border-radius:14px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog .in{padding:22px 24px}
+dialog h3{margin:0;color:var(--navy)}
+.qa{border-top:1px solid var(--line);padding:10px 0}
+.qa pre{white-space:pre-wrap;font:inherit;background:#f8fafc;border-radius:8px;padding:8px 10px;margin:6px 0}
+.hidden{display:none!important}
+@media print{header,.drop,.bar{display:none}}
+</style>
+</head>
+<body>
+<header><div><h1>Homework dashboard</h1><small>Offline: files stay on this computer</small></div>
+  <div class="bar" style="margin:0"><button type="button" id="clear" class="hidden" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.6)">Clear</button></div></header>
+<main>
+  <label class="drop" id="drop" for="files"><b>Drop the JSON files from your homework emails here</b><br><span class="muted">or click to choose them. You can add more at any time; repeats are ignored.</span>
+    <input id="files" type="file" accept=".json,application/json" multiple class="hidden"></label>
+  <p class="muted" id="loaded"></p>
+
+  <div id="view" class="hidden">
+    <div class="bar">
+      <label>Homework <select id="f-hw"></select></label>
+      <label>Group <select id="f-grp"></select></label>
+      <button type="button" id="csv">Download class summary (CSV)</button>
+      <button type="button" onclick="print()">Print</button>
+    </div>
+    <div class="tiles" id="tiles"></div>
+
+    <div id="attn-wrap"><h2>Needs you</h2><div class="card"><ul id="attn" style="margin:0;padding-left:18px"></ul></div></div>
+
+    <h2>Students <span class="muted" style="font-size:14px;font-weight:400">Click a column to sort, a row to open the student card</span></h2>
+    <div class="card"><table id="students"></table></div>
+
+    <h2>Question heat map <span class="muted" style="font-size:14px;font-weight:400">Each square is one student's mark on one question</span></h2>
+    <div class="card"><table class="heat" id="heat"></table></div>
+
+    <h2>Where the class is weakest</h2>
+    <div class="card"><ol class="weak" id="weak"></ol></div>
+
+    <h2>Sections</h2>
+    <div class="card"><table id="sections"></table></div>
+  </div>
+</main>
+<dialog id="dlg"><div class="in" id="dlg-in"></div></dialog>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  var R = [], seen = {}, sortKey = "name", sortDir = 1;
+  var col = function (r) { return r >= .75 ? "#15803d" : r >= .5 ? "#d97706" : r > 0 ? "#dc2626" : "#94a3b8"; };
+  var pct = function (a, b) { return b ? Math.round(100 * a / b) : 0; };
+
+  function add(files) {
+    var jobs = [].slice.call(files).map(function (f) {
+      return f.text().then(function (t) {
+        var j = JSON.parse(t);
+        if (!j || !j.homework || !j.student || !Array.isArray(j.questions)) throw new Error("not a homework file");
+        var k = j.homework.code + "|" + j.student.name + "|" + j.student.group + "|" + (j.handed_in_at || j.submitted_at);
+        if (!seen[k]) { seen[k] = 1; R.push(j); }
+        return true;
+      }).catch(function () { return f.name; });
+    });
+    Promise.all(jobs).then(function (res) {
+      var bad = res.filter(function (x) { return x !== true; });
+      $("loaded").textContent = R.length + " hand-in" + (R.length === 1 ? "" : "s") + " loaded." + (bad.length ? " Skipped (not homework files): " + bad.join(", ") : "");
+      filters(); draw();
+    });
+  }
+  $("files").addEventListener("change", function () { add(this.files); this.value = ""; });
+  ["dragenter", "dragover"].forEach(function (e) { $("drop").addEventListener(e, function (ev) { ev.preventDefault(); $("drop").classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function (e) { $("drop").addEventListener(e, function (ev) { ev.preventDefault(); $("drop").classList.remove("over"); }); });
+  $("drop").addEventListener("drop", function (ev) { add(ev.dataTransfer.files); });
+  $("clear").addEventListener("click", function () { if (confirm("Clear everything from this page?")) { R = []; seen = {}; $("loaded").textContent = ""; filters(); draw(); } });
+
+  function filters() {
+    var hws = {}, grps = {};
+    R.forEach(function (r) { hws[r.homework.code] = r.homework.title; grps[r.student.group] = 1; });
+    var hv = $("f-hw").value, gv = $("f-grp").value;
+    var codes = Object.keys(hws);
+    $("f-hw").innerHTML = codes.map(function (c) { return '<option value="' + esc(c) + '">' + esc(hws[c]) + '</option>'; }).join("");
+    if (hv && hws[hv]) $("f-hw").value = hv;
+    $("f-grp").innerHTML = '<option value="">All groups</option>' + Object.keys(grps).sort().map(function (g) { return '<option>' + esc(g) + '</option>'; }).join("");
+    if (gv && grps[gv]) $("f-grp").value = gv;
+    $("view").classList.toggle("hidden", !R.length); $("clear").classList.toggle("hidden", !R.length);
+  }
+  $("f-hw").addEventListener("change", draw); $("f-grp").addEventListener("change", draw);
+  function rows() { var h = $("f-hw").value, g = $("f-grp").value; return R.filter(function (r) { return r.homework.code === h && (!g || r.student.group === g); }); }
+
+  function needs(r) {
+    var mod = r.questions.filter(function (q) { return q.marked_by === "needs moderation"; });
+    if (r.follow_up && r.follow_up.marked_by === "needs moderation") mod.push({ number: "F", question: r.follow_up.task, student_answer: r.follow_up.student_answer, awarded: r.follow_up.awarded, max_marks: r.follow_up.max_marks, markers: r.follow_up.markers });
+    var chk = r.questions.filter(function (q) { return q.marked_by === "needs checking"; });
+    return { mod: mod, chk: chk };
+  }
+
+  function draw() {
+    if (!R.length) return;
+    var rs = rows(); if (!rs.length) return;
+    var tot = rs[0].homework.total_marks, avg = rs.reduce(function (t, r) { return t + r.percent; }, 0) / rs.length;
+    var fus = rs.filter(function (r) { return r.follow_up && r.follow_up.kind !== "stretch"; });
+    var closed = fus.filter(function (r) { return r.follow_up.gap_closed === "yes"; }).length;
+    var mins = rs.map(function (r) { return r.minutes_taken; }).filter(function (m) { return m != null; }).sort(function (a, b) { return a - b; });
+    var att = []; rs.forEach(function (r) { var n = needs(r); n.mod.forEach(function (q) { att.push([r, q, "mod"]); }); n.chk.forEach(function (q) { att.push([r, q, "chk"]); }); });
+    $("tiles").innerHTML = [
+      ["Hand-ins", rs.length], ["Average", Math.round(avg) + "%"], ["Median time", mins.length ? mins[Math.floor(mins.length / 2)] + " min" : "–"],
+      ["Gaps closed", fus.length ? closed + " of " + fus.length : "–"], ["To moderate", att.filter(function (a) { return a[2] === "mod"; }).length],
+      ["Assistive tools", rs.filter(function (r) { return r.accessibility_tools_used; }).length]
+    ].map(function (t) { return '<div class="tile"><div class="l">' + t[0] + '</div><div class="v">' + t[1] + '</div></div>'; }).join("");
+
+    $("attn-wrap").classList.toggle("hidden", !att.length);
+    $("attn").innerHTML = att.map(function (a) {
+      var r = a[0], q = a[1];
+      return '<li><b>' + esc(r.student.name) + '</b> (' + esc(r.student.group) + ') · ' + (a[2] === "mod" ? '<span class="flag mod">Moderate</span>Q' + esc(q.number) + ': markers gave ' + esc((q.markers || []).map(function (m) { return m.marks; }).join(", ")) : '<span class="flag chk">Check</span>Q' + esc(q.number) + ': not marked automatically') +
+        '<br><span class="muted">' + esc(String(q.question).slice(0, 200)) + '</span><pre style="white-space:pre-wrap;font:inherit;margin:4px 0">' + esc(q.student_answer) + '</pre></li>';
+    }).join("");
+
+    // Students table
+    var cols = [["name", "Name"], ["group", "Group"], ["percent", "Score"], ["fu", "Follow-up"], ["minutes", "Time"], ["pastes", "Pastes"], ["away", "Left page"], ["review", "Review"], ["flags", "Flags"]];
+    var data = rs.map(function (r) {
+      var n = needs(r);
+      return { r: r, name: r.student.name, group: r.student.group, percent: r.percent, score: r.score,
+        fu: r.follow_up ? r.follow_up.awarded / (r.follow_up.max_marks || 1) : -1, minutes: r.minutes_taken == null ? 1e9 : r.minutes_taken,
+        pastes: r.pastes_total || 0, away: r.left_page_count || 0, review: r.personal_review ? r.personal_review.remembered / (r.personal_review.of || 1) : -1,
+        flags: n.mod.length * 10 + n.chk.length + (r.accessibility_tools_used ? .5 : 0), n: n };
+    });
+    data.sort(function (a, b) { var x = a[sortKey], y = b[sortKey]; return (x < y ? -1 : x > y ? 1 : 0) * sortDir; });
+    $("students").innerHTML = '<tr>' + cols.map(function (c) { return '<th data-k="' + c[0] + '">' + c[1] + (sortKey === c[0] ? (sortDir > 0 ? " ▲" : " ▼") : "") + '</th>'; }).join("") + '</tr>' +
+      data.map(function (d, i) {
+        var r = d.r;
+        return '<tr class="st" data-i="' + R.indexOf(r) + '"><td><b>' + esc(d.name) + '</b></td><td>' + esc(d.group) + '</td>' +
+          '<td style="white-space:nowrap">' + r.score + '/' + tot + ' <span style="color:' + col(r.percent / 100) + ';font-weight:700">' + r.percent + '%</span></td>' +
+          '<td>' + (r.follow_up ? (r.follow_up.kind === "stretch" ? "Stretch " : "") + r.follow_up.awarded + '/' + r.follow_up.max_marks + (r.follow_up.kind !== "stretch" ? ' <span class="muted">(' + esc(r.follow_up.gap_closed) + ')</span>' : '') : '<span class="muted">none</span>') + '</td>' +
+          '<td>' + (r.minutes_taken == null ? "?" : r.minutes_taken + " min") + '</td><td>' + d.pastes + '</td><td>' + d.away + '×</td>' +
+          '<td>' + (r.personal_review ? r.personal_review.remembered + '/' + r.personal_review.of : '<span class="muted">–</span>') + '</td>' +
+          '<td>' + (d.n.mod.length ? '<span class="flag mod">Moderate ' + d.n.mod.length + '</span>' : '') + (d.n.chk.length ? '<span class="flag chk">Check ' + d.n.chk.length + '</span>' : '') + (r.accessibility_tools_used ? '<span class="flag ast">Assistive</span>' : '') + '</td></tr>';
+      }).join("");
+
+    // Heat map
+    var qs = rs[0].questions.map(function (q) { return { id: q.id, number: q.number, question: q.question, max: q.max_marks, section: q.section }; });
+    $("heat").innerHTML = '<tr><th style="cursor:default">Student</th>' + qs.map(function (q) { return '<th class="c" title="' + esc(q.question) + '">Q' + esc(q.number) + '</th>'; }).join("") + '<th class="c">Follow-up</th></tr>' +
+      data.map(function (d) {
+        var by = {}; d.r.questions.forEach(function (q) { by[q.id] = q; });
+        return '<tr><td style="white-space:nowrap">' + esc(d.name) + '</td>' + qs.map(function (q) {
+          var x = by[q.id]; if (!x) return '<td></td>';
+          var rr = x.max_marks ? x.awarded / x.max_marks : 0, blank = !String(x.student_answer || "").trim();
+          return '<td class="c" style="background:' + (blank ? "#cbd5e1" : col(rr)) + '" title="' + esc(d.name + " · Q" + x.number + ": " + x.awarded + "/" + x.max_marks + (blank ? " (blank)" : "") + (x.marked_by === "needs moderation" ? " · to moderate" : "")) + '">' + x.awarded + (x.marked_by === "needs moderation" ? "?" : "") + '</td>';
+        }).join("") + (function () { var f = d.r.follow_up; return f ? '<td class="c" style="background:' + col(f.awarded / (f.max_marks || 1)) + '" title="' + esc(f.task) + '">' + f.awarded + '</td>' : '<td></td>'; })() + '</tr>';
+      }).join("") +
+      '<tr><td><b>Class</b></td>' + qs.map(function (q) {
+        var got = 0, of = 0; rs.forEach(function (r) { r.questions.forEach(function (x) { if (x.id === q.id) { got += x.awarded; of += x.max_marks; } }); });
+        return '<td class="c" style="background:' + col(of ? got / of : 0) + '">' + pct(got, of) + '</td>';
+      }).join("") + '<td></td></tr>';
+
+    // Weakest questions
+    var weak = qs.map(function (q) {
+      var got = 0, of = 0, blank = 0, fb = {};
+      rs.forEach(function (r) { r.questions.forEach(function (x) { if (x.id === q.id) { got += x.awarded; of += x.max_marks; if (!String(x.student_answer || "").trim()) blank++; } }); });
+      return { q: q, r: of ? got / of : 0, blank: blank };
+    }).sort(function (a, b) { return a.r - b.r; }).slice(0, 5);
+    $("weak").innerHTML = weak.map(function (w) {
+      return '<li><b>Q' + esc(w.q.number) + '</b> · ' + Math.round(100 * w.r) + '% of marks' + (w.blank ? ' · ' + w.blank + ' left it blank' : '') + (w.q.section ? ' · <span class="muted">' + esc(w.q.section) + '</span>' : '') + '<br>' + esc(String(w.q.question).slice(0, 220)) + '</li>';
+    }).join("");
+
+    // Sections
+    var secs = {};
+    rs.forEach(function (r) { Object.keys(r.sections || {}).forEach(function (k) { secs[k] = secs[k] || { got: 0, of: 0, s: 0 }; secs[k].got += r.sections[k].got; secs[k].of += r.sections[k].of; secs[k].s += r.sections[k].seconds || 0; }); });
+    $("sections").innerHTML = '<tr><th>Section</th><th>Class average</th><th></th><th>Average time</th></tr>' + Object.keys(secs).map(function (k) {
+      var v = secs[k], rr = v.of ? v.got / v.of : 0;
+      return '<tr><td>' + esc(k) + '</td><td style="width:50%"><div class="meter"><i style="width:' + Math.round(100 * rr) + '%;background:' + col(rr) + '"></i></div></td><td>' + Math.round(100 * rr) + '%</td><td>' + (v.s ? Math.round(v.s / rs.length / 60) + " min" : "–") + '</td></tr>';
+    }).join("");
+  }
+
+  $("students").addEventListener("click", function (e) {
+    var th = e.target.closest("th[data-k]");
+    if (th) { var k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; draw(); return; }
+    var tr = e.target.closest("tr[data-i]"); if (tr) open(R[Number(tr.dataset.i)]);
+  });
+
+  // Student card: everything about one hand-in
+  function open(r) {
+    var s = r.summary || {}, f = r.follow_up, rv = r.personal_review;
+    var li = function (xs) { return xs && xs.length ? '<ul>' + xs.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>' : '<p class="muted">None stood out.</p>'; };
+    $("dlg-in").innerHTML = '<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>' + esc(r.student.name) + ' · ' + esc(r.student.group) + '</h3><p class="muted" style="margin:2px 0 0">' + esc(r.homework.title) + ' · ' + esc(new Date(r.completed_at || r.submitted_at).toLocaleString("en-GB")) + '</p></div><button type="button" id="dlg-x">Close</button></div>' +
+      '<div class="tiles" style="margin-top:14px">' + [["Score", r.score + "/" + r.homework.total_marks + " (" + r.percent + "%)"], ["Follow-up", f ? f.awarded + "/" + f.max_marks + (f.kind !== "stretch" ? " · " + f.gap_closed : " · stretch") : "none"], ["Time", r.minutes_taken == null ? "?" : r.minutes_taken + " min"], ["Review", rv ? rv.remembered + "/" + rv.of : "–"]]
+        .map(function (t) { return '<div class="tile"><div class="l">' + t[0] + '</div><div class="v" style="font-size:1.2rem">' + esc(t[1]) + '</div></div>'; }).join("") + '</div>' +
+      (s.summary ? '<p><b>' + esc(s.summary) + '</b></p><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><b style="color:var(--ok)">Strengths</b>' + li(s.strengths) + '</div><div><b style="color:#b45309">To work on</b>' + li(s.weaknesses) + '</div></div><p><b>Next step:</b> ' + esc(s.next_step) + '</p>' : '') +
+      '<p class="muted">Left the page ' + (r.left_page_count || 0) + '× · pastes ' + (r.pastes_total || 0) + ' · assistive tools ' + (r.accessibility_tools_used ? "used" : "not used") + '</p>' +
+      r.questions.map(function (q) {
+        return '<div class="qa"><b>Q' + esc(q.number) + '</b> <span style="color:' + col(q.max_marks ? q.awarded / q.max_marks : 0) + ';font-weight:700">' + q.awarded + '/' + q.max_marks + '</span> <span class="muted">' + esc(q.marked_by) + (q.markers && q.markers.length ? ' · markers ' + esc(q.markers.map(function (m) { return m.marks; }).join(", ")) : '') + ' · ' + Math.round((q.seconds_on_question || 0) / 60) + ' min' + (q.pastes ? ' · pasted ' + q.pastes + '×' : '') + '</span>' +
+          '<div>' + esc(q.question) + '</div><pre>' + (esc(q.student_answer) || '<i>blank</i>') + '</pre><div class="muted">' + esc(q.feedback) + '</div></div>';
+      }).join("") +
+      (f ? '<div class="qa"><b>' + (f.kind === "stretch" ? "Stretch" : "Follow-up on Q" + esc(f.question_number)) + '</b> ' + f.awarded + '/' + f.max_marks + ' <span class="muted">set by ' + esc(f.set_by) + '</span><div>' + esc(f.task) + '</div><pre>' + esc(f.student_answer) + '</pre><div class="muted">' + esc(f.feedback) + '</div></div>' : '') +
+      (rv ? '<div class="qa"><b>Personal review</b> ' + rv.remembered + '/' + rv.of + rv.questions.map(function (q) { return '<div>' + esc(q.question) + ' · ' + q.awarded + '/' + q.max_marks + '</div>'; }).join("") + '</div>' : '');
+    $("dlg").showModal();
+    $("dlg-x").addEventListener("click", function () { $("dlg").close(); });
+  }
+  $("dlg").addEventListener("click", function (e) { if (e.target === $("dlg")) $("dlg").close(); });
+
+  $("csv").addEventListener("click", function () {
+    var rs = rows(), cell = function (v) { var s = String(v == null ? "" : v); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+    var head = ["Name", "Group", "Score", "Out of", "Percent", "Follow-up", "Follow-up out of", "Gap closed", "Minutes", "Pastes", "Left page", "Review remembered", "Review of", "Assistive tools", "To moderate", "Summary", "Strengths", "To work on", "Next step"];
+    var lines = [head.map(cell).join(",")].concat(rs.map(function (r) {
+      var f = r.follow_up, rv = r.personal_review, s = r.summary || {};
+      return [r.student.name, r.student.group, r.score, r.homework.total_marks, r.percent, f ? f.awarded : "", f ? f.max_marks : "", f ? f.gap_closed : "", r.minutes_taken, r.pastes_total || 0, r.left_page_count || 0,
+        rv ? rv.remembered : "", rv ? rv.of : "", r.accessibility_tools_used ? "yes" : "no", needs(r).mod.length, s.summary, (s.strengths || []).join("; "), (s.weaknesses || []).join("; "), s.next_step].map(cell).join(",");
+    }));
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv" }));
+    a.download = (rs[0] ? rs[0].homework.title.replace(/[^\w-]+/g, "_") : "homework") + "_class_summary.csv"; a.click();
+  });
+})();
+</script>
+</body>
+</html>
