@@ -8,9 +8,11 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const MODEL = "@cf/google/gemma-4-26b-a4b-it";
-const RATE: [number, number] = [9091, 27273];    // neurons per million tokens, input and output (Cloudflare price list, Nov 2026)
+const FALLBACK = "@cf/meta/llama-3.1-8b-instruct-fp8-fast";   // used if Gemma errors or gives an unreadable reply
+// Neurons per million tokens, input and output (Cloudflare price list, Nov 2026)
+const RATES: Record<string, [number, number]> = { [MODEL]: [9091, 27273], [FALLBACK]: [4119, 34868] };
 const DAILY_BUDGET = 8000;                         // shared with hw-submit: nothing runs past this
-const ENV_DAILY_CAP = 1500;                        // Env Sci's own share (about 40 marked answers a day)
+const ENV_DAILY_CAP = 3000;                        // Env Sci's own share (about 130 marked answers a day: prep and worksheets)
 const ENV_ORIGINS = ["https://env.abity.co.uk"];
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
@@ -33,8 +35,8 @@ async function envOver() { const { data } = await db.rpc("site_ai_usage_key", { 
 async function overBudget() { const { data } = await db.rpc("site_ai_usage", { p_add: 0 }); return Number(data?.today) >= DAILY_BUDGET; }
 
 // One Workers AI call. Returns the model's raw reply and records the neurons used.
-async function runAI(box: { neurons: number }, messages: { role: string; content: string }[], schema: unknown, maxTokens: number, temperature = 0) {
-  const url = `https://api.cloudflare.com/client/v4/accounts/${Deno.env.get("CF_ACCOUNT_ID")}/ai/run/${MODEL}`;
+async function runAI(box: { neurons: number }, messages: { role: string; content: string }[], schema: unknown, maxTokens: number, temperature = 0, model = MODEL) {
+  const url = `https://api.cloudflare.com/client/v4/accounts/${Deno.env.get("CF_ACCOUNT_ID")}/ai/run/${model}`;
   const body: any = { messages, temperature, max_tokens: maxTokens };
   if (schema) body.response_format = { type: "json_schema", json_schema: schema };
   const call = async () => {
@@ -46,7 +48,7 @@ async function runAI(box: { neurons: number }, messages: { role: string; content
       const out = j && j.response !== undefined ? j.response : j?.choices ? j.choices[0]?.message?.content : j;
       const inTok = Number(j?.usage?.prompt_tokens) || Math.ceil(JSON.stringify(messages).length / 4);
       const outTok = Number(j?.usage?.completion_tokens) || Math.ceil(JSON.stringify(out ?? "").length / 4);
-      box.neurons += (inTok * RATE[0] + outTok * RATE[1]) / 1e6;
+      const rate = RATES[model]; box.neurons += (inTok * rate[0] + outTok * rate[1]) / 1e6;
       return out;
     } finally { clearTimeout(t); }
   };
@@ -83,14 +85,19 @@ async function envMark(req: Request, box: { neurons: number }) {
   const schema = { type: "object", properties: { results: { type: "array", items: { type: "object",
     properties: { id: { type: "string" }, marks: { type: "integer" }, feedback: { type: "string" }, improve: { type: "array", items: { type: "string" } } },
     required: ["id", "marks", "feedback", "improve"] } } }, required: ["results"] };
-  let data: any;
-  try {
-    data = await runAI(box, [{ role: "system", content: system + ' Format: {"results":[{"id":"q1","marks":0,"feedback":"...","improve":["...","..."]}]}' },
-      { role: "user", content: `Topic: ${clip(b.topic, 120)}\nTopic notes:\n${clip(b.context, 5000)}\n\nMark these answers:\n${JSON.stringify(items, null, 2)}` }],
-      schema, Math.min(1500, 150 + 220 * items.length));
-  } catch (e) { console.error(e); return json({ error: "The marker is busy. Try again in a minute." }, 503, cors); }
-  try { if (typeof data === "string") { const m = data.replace(/```(?:json)?/g, "").match(/\{[\s\S]*\}/); data = JSON.parse(m ? m[0] : data); } }
-  catch { return json({ error: "The marker gave a muddled reply. Try again." }, 502, cors); }
+  const msgs = [{ role: "system", content: system + ' Format: {"results":[{"id":"q1","marks":0,"feedback":"...","improve":["...","..."]}]}' },
+    { role: "user", content: `Topic: ${clip(b.topic, 120)}\nTopic notes:\n${clip(b.context, 5000)}\n\nMark these answers:\n${JSON.stringify(items, null, 2)}` }];
+  const parse = (x: any) => {
+    if (typeof x !== "string") return x;
+    const m = x.replace(/<think>[\s\S]*?<\/think>/g, "").replace(/```(?:json)?/g, "").match(/\{[\s\S]*\}/);
+    return JSON.parse(m ? m[0] : x);
+  };
+  let data: any = null;
+  for (const model of [MODEL, FALLBACK]) {
+    try { data = parse(await runAI(box, msgs, schema, Math.min(1500, 150 + 220 * items.length), 0, model)); if (data) break; }
+    catch (e) { console.error("marker failed", model, String(e).slice(0, 200)); data = null; }
+  }
+  if (!data) return json({ error: "The marker is busy. Try again in a minute." }, 503, cors);
   const list = Array.isArray(data) ? data : (data && data.results) || [];
   const results = items.map((it: any) => {
     const r = list.find((x: any) => x && String(x.id) === it.id) || {};

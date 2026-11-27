@@ -40,12 +40,12 @@ function cors(req: Request): Record<string, string> {
 const reply = (req: Request, body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors(req), "Content-Type": "application/json" } });
 
-// Best-effort rate limit per address (per function instance)
+// Best-effort flood guard per address (per function instance)
 const hits = new Map<string, number[]>();
 function limited(ip: string) {
   const now = Date.now(), list = (hits.get(ip) || []).filter(t => now - t < 10 * 60_000);
   list.push(now); hits.set(ip, list);
-  return list.length > 12;
+  return list.length > 300;   // high: a whole school shares one connection; the real limit is per signed-in device
 }
 
 function encodeBase64(bytes: Uint8Array) {
