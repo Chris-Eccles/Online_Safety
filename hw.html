@@ -49,6 +49,15 @@
 .qry{margin-top:8px}
 .qry button.linkish{background:none;border:0;padding:0;color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline;font-size:14px}
 .qry textarea{min-height:70px!important;font-size:15px!important}
+.marking{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:grayscale(1) blur(2px)}
+.marking .mbox{background:#fff;border-radius:18px;border-top:6px solid var(--navy);max-width:460px;width:100%;padding:26px 26px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+.marking h2{font-family:var(--head);font-weight:600;color:var(--navy);margin:0 0 6px;font-size:1.6rem}
+.marking .mstage{margin:0 0 16px;min-height:2.8em;color:var(--ink);font-weight:600}
+.marking .mtrack{height:14px;background:var(--lock-soft);border-radius:999px;overflow:hidden}
+.marking .mtrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),#3B6FA8);border-radius:999px;transition:width .5s linear}
+.marking .mtime{display:flex;justify-content:space-between;margin:8px 0 0;font-size:14px;color:var(--muted);font-weight:700}
+.marking .mnote{margin:14px 0 0;font-size:14px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.marking .mtrack i{transition:none}}
 .fu-res{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--navy-soft)}
 fieldset{border:0;padding:0;margin:0}
 legend{padding:0}
@@ -304,19 +313,61 @@ legend{padding:0}
     if (!confirm((blank ? "You have " + blank + " unanswered question" + (blank > 1 ? "s" : "") + ". " : "") + "Hand in now? You can only hand in once.")) return;
     stopTimer();
     var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
+    var stop = marking("handin");
     fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
       body: JSON.stringify({ code: code, name: name, group: group, answers: mainAnswers(), review: reviewPayload(),
         meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: !!(S.assist || window.hwAssist), code: codeChecks() } }) })
       .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
       .then(function (x) {
+        stop();
         if (x.body && x.body.ok && x.body.stage === "followup") { S.pending = x.body; save(); showFollowUp(x.body); return; }
         if (x.body && x.body.ok) { S.done = x.body; save(); showResult(x.body); return; }
         err.textContent = (x.body && x.body.error) || "Something went wrong. Try again.";
         btn.disabled = false; btn.textContent = "Hand in homework";
         if (x.body && x.body.already) { btn.classList.add("hidden"); }
       })
-      .catch(function () { err.textContent = "We can't reach the server. Your answers are saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Hand in homework"; });
+      .catch(function () { stop(); err.textContent = "We can't reach the server. Your answers are saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Hand in homework"; });
   });
+
+  // While the three markers work (often up to a minute) the page is greyed out with a progress bar, a countdown and
+  // what is happening now, so students wait instead of refreshing. The bar slows near the end and fills when marking is done.
+  function marking(kind) {
+    var est = kind === "followup" ? 40 : 60, t0 = Date.now(), done = false;
+    var steps = kind === "followup"
+      ? [[0, "Sending your answer"], [4, "Two markers are reading your answer"], [18, "A third marker is checking if they disagree"], [28, "Writing your feedback and sending your work to your teacher"]]
+      : [[0, "Handing in your answers"], [3, "Marking the multiple-choice and quick answers"], [8, "Two markers are reading your written answers"], [28, "A third marker is checking anything they disagreed on"], [42, "Choosing your follow-up task and writing your feedback"]];
+    var ov = document.createElement("div");
+    ov.className = "marking"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-labelledby", "mk-h");
+    ov.innerHTML = '<div class="mbox"><h2 id="mk-h">Marking your work</h2><p class="mstage" id="mk-s" aria-live="polite"></p>' +
+      '<div class="mtrack" role="progressbar" aria-label="Marking progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="mk-bar"></i></div>' +
+      '<p class="mtime"><span id="mk-el">0:00</span><span id="mk-left"></span></p>' +
+      '<p class="mnote">Three markers check written answers, so this can take up to a minute. Keep this page open.</p></div>';
+    document.body.appendChild(ov); document.body.style.overflow = "hidden";
+    var warn = function (e) { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    var mm = function (n) { return Math.floor(n / 60) + ":" + ("0" + Math.floor(n % 60)).slice(-2); };
+    function tick() {
+      if (done) return;
+      var t = (Date.now() - t0) / 1000, pc = 95 * (1 - Math.exp(-t / (est / 2.5)));
+      ov.querySelector("#mk-bar").style.width = pc.toFixed(1) + "%";
+      ov.querySelector(".mtrack").setAttribute("aria-valuenow", Math.round(pc));
+      ov.querySelector("#mk-el").textContent = mm(t);
+      var left = Math.ceil(est - t);
+      ov.querySelector("#mk-left").textContent = left > 0 ? "about " + left + " second" + (left === 1 ? "" : "s") + " left" : "taking a little longer than usual";
+      var st = steps.filter(function (x) { return t >= x[0]; }).pop()[1];
+      if (t > est + 15) st = "Nearly there: thanks for waiting";
+      var el = ov.querySelector("#mk-s"); if (el.textContent !== st) el.textContent = st;
+      setTimeout(tick, 500);
+    }
+    tick();
+    return function () {
+      if (done) return; done = true;
+      window.removeEventListener("beforeunload", warn);
+      ov.querySelector("#mk-bar").style.width = "100%";
+      ov.querySelector("#mk-s").textContent = "Done";
+      setTimeout(function () { ov.remove(); document.body.style.overflow = ""; }, 450);
+    };
+  }
 
   function mainAnswers() { var o = {}; Object.keys(S.answers).forEach(function (k) { if (/^q\d+$/.test(k)) o[k] = S.answers[k]; }); return o; }
   function codeChecks() {
@@ -364,17 +415,19 @@ legend{padding:0}
       if (!ans.trim()) { err.textContent = "Write your answer to the task first."; inp.focus(); return; }
       if (fuStart) { S.fuSeconds = (S.fuSeconds || 0) + (Date.now() - fuStart) / 1000; fuStart = Date.now(); save(); }
       var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
+      var stop = marking("followup");
       fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
         body: JSON.stringify({ action: "followup", code: code, name: Abity.nameCase(S.name || ""), group: S.group, pending: r.pending, secret: r.secret,
           answer: ans, meta: { seconds: S.fuSeconds || 0, pastes: S.fuPastes || 0 } }) })
         .then(function (res) { return res.json().then(function (b) { return { status: res.status, body: b }; }); })
         .then(function (x) {
+          stop();
           if (x.body && x.body.ok) { S.done = x.body; delete S.pending; save(); showResult(x.body); return; }
           err.textContent = (x.body && x.body.error) || "Something went wrong. Try again.";
           btn.disabled = false; btn.textContent = "Send to my teacher";
           if (x.body && x.body.expired) btn.classList.add("hidden");
         })
-        .catch(function () { err.textContent = "We can't reach the server. Your answer is saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Send to my teacher"; });
+        .catch(function () { stop(); err.textContent = "We can't reach the server. Your answer is saved on this device: try again when you're back online."; btn.disabled = false; btn.textContent = "Send to my teacher"; });
     });
     box.scrollIntoView({ behavior: "smooth", block: "center" });
   }
