@@ -455,7 +455,7 @@ async function finalise(hw: any, name: string, group: string, p: Pending, fuDone
       <td style="vertical-align:top;width:50%"><b style="color:#b45309">To work on</b>${li(card.weaknesses)}</td></tr></table>
     <p style="margin:10px 0"><b>Next step:</b> ${esc(card.next_step)}</p>
     <table style="width:100%;font-size:13px;margin:6px 0 12px">${secRows}</table>
-    <p style="margin:0 0 12px;font-size:13px;color:#475569">Pastes: ${pastes} · Assistive tools: ${p.assist ? "used" : "not used"} · Marked by three AI markers${toModerate.length ? "" : " with no disagreements left"}</p>
+    <p style="margin:0 0 12px;font-size:13px;color:#475569">Paste tries (blocked unless assistive tools on): ${pastes} · Assistive tools: ${p.assist ? "used" : "not used"} · Marked by three AI markers${toModerate.length ? "" : " with no disagreements left"}</p>
     ${attention.length ? `<div style="border:2px solid #d97706;border-radius:8px;padding:10px 14px;background:#fffbeb"><b>Needs you</b><ul style="margin:6px 0 0;padding-left:18px">${attention.join("")}</ul></div>` : ""}
     <p style="color:#64748b;font-size:12px;margin-top:14px">Full breakdown in the attached JSON (drop it into the offline dashboard) and CSV (Excel). Scores are the first hand-in; the follow-up is separate.</p></div>`;
 

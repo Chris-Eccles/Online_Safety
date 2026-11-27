@@ -61,6 +61,11 @@
 .fu-res{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--navy-soft)}
 fieldset{border:0;padding:0;margin:0}
 legend{padding:0}
+/* Copy and paste are off: question text can't be selected; answers can. The accessibility panel's assistive tools mode turns this off. */
+html:not(.a11y-assist) main{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(.a11y-assist) main select{-webkit-user-select:text;user-select:text}
+#nocp{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1E3A5F;color:#fff;padding:10px 18px;border-radius:8px;font:600 .95rem system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s}
+#nocp.on{opacity:1}
 </style>
 </head>
 <body>
@@ -287,6 +292,24 @@ legend{padding:0}
     if (e.target.dataset && e.target.dataset.exmark) exSave(e.target.dataset.exmark);
   });
   document.addEventListener("input", function (e) { if (e.target.dataset && e.target.dataset.exwhy) exSave(e.target.dataset.exwhy); });
+  // Copy and paste are switched off (assistive tools mode in the accessibility panel allows them, and your teacher is told).
+  // Blocked paste attempts are still counted for the teacher.
+  var nocpT;
+  function noCP(e, msg) {
+    if (document.documentElement.classList.contains("a11y-assist")) return false;
+    e.preventDefault();
+    var t = $("nocp"); if (!t) { t = document.createElement("div"); t.id = "nocp"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add("on"); clearTimeout(nocpT); nocpT = setTimeout(function () { t.classList.remove("on"); }, 2200);
+    return true;
+  }
+  ["copy", "cut"].forEach(function (ev) { document.addEventListener(ev, function (e) { noCP(e, "Copying is switched off for this work."); }, true); });
+  document.addEventListener("paste", function (e) { noCP(e, "Pasting is switched off: type your answer."); }, true);
+  document.addEventListener("drop", function (e) { if (e.target.closest && e.target.closest("textarea, input")) noCP(e, "Pasting is switched off: type your answer."); }, true);
+  document.addEventListener("dragstart", function (e) { if (!(e.target.closest && e.target.closest("textarea, input"))) noCP(e, "Copying is switched off for this work."); }, true);
+  document.addEventListener("beforeinput", function (e) {
+    if (e.inputType === "insertFromPaste" || e.inputType === "insertFromDrop" || e.inputType === "insertFromPasteAsQuotation") noCP(e, "Pasting is switched off: type your answer.");
+  }, true);
+  document.addEventListener("contextmenu", function (e) { if (!(e.target.closest && e.target.closest("textarea, input"))) noCP(e, "Copying is switched off for this work."); }, true);
   document.addEventListener("paste", function (e) {
     var id = e.target.dataset && (e.target.dataset.q || e.target.dataset.exwhy); if (id) { S.pastes[id] = (S.pastes[id] || 0) + 1; save(); }
   });

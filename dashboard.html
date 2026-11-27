@@ -159,7 +159,7 @@ dialog h3{margin:0;color:var(--navy)}
     }).join("");
 
     // Students table
-    var cols = [["name", "Name"], ["group", "Group"], ["percent", "Score"], ["fu", "Follow-up"], ["minutes", "Time"], ["pastes", "Pastes"], ["away", "Left page"], ["review", "Review"], ["flags", "Flags"]];
+    var cols = [["name", "Name"], ["group", "Group"], ["percent", "Score"], ["fu", "Follow-up"], ["minutes", "Time"], ["pastes", "Paste tries"], ["away", "Left page"], ["review", "Review"], ["flags", "Flags"]];
     var data = rs.map(function (r) {
       var n = needs(r);
       return { r: r, name: r.student.name, group: r.student.group, percent: r.percent, score: r.score,
@@ -228,9 +228,9 @@ dialog h3{margin:0;color:var(--navy)}
       '<div class="tiles" style="margin-top:14px">' + [["Score", r.score + "/" + r.homework.total_marks + " (" + r.percent + "%)"], ["Follow-up", f ? f.awarded + "/" + f.max_marks + (f.kind !== "stretch" ? " · " + f.gap_closed : " · stretch") : "none"], ["Time", r.minutes_taken == null ? "?" : r.minutes_taken + " min"], ["Review", rv ? rv.remembered + "/" + rv.of : "–"]]
         .map(function (t) { return '<div class="tile"><div class="l">' + t[0] + '</div><div class="v" style="font-size:1.2rem">' + esc(t[1]) + '</div></div>'; }).join("") + '</div>' +
       (s.summary ? '<p><b>' + esc(s.summary) + '</b></p><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><b style="color:var(--ok)">Strengths</b>' + li(s.strengths) + '</div><div><b style="color:#b45309">To work on</b>' + li(s.weaknesses) + '</div></div><p><b>Next step:</b> ' + esc(s.next_step) + '</p>' : '') +
-      '<p class="muted">Left the page ' + (r.left_page_count || 0) + '× · pastes ' + (r.pastes_total || 0) + ' · assistive tools ' + (r.accessibility_tools_used ? "used" : "not used") + '</p>' +
+      '<p class="muted">Left the page ' + (r.left_page_count || 0) + '× · paste tries ' + (r.pastes_total || 0) + ' · assistive tools ' + (r.accessibility_tools_used ? "used" : "not used") + '</p>' +
       r.questions.map(function (q) {
-        return '<div class="qa"><b>Q' + esc(q.number) + '</b> <span style="color:' + col(q.max_marks ? q.awarded / q.max_marks : 0) + ';font-weight:700">' + q.awarded + '/' + q.max_marks + '</span> <span class="muted">' + esc(q.marked_by) + (q.markers && q.markers.length ? ' · markers ' + esc(q.markers.map(function (m) { return m.marks; }).join(", ")) : '') + ' · ' + Math.round((q.seconds_on_question || 0) / 60) + ' min' + (q.pastes ? ' · pasted ' + q.pastes + '×' : '') + '</span>' +
+        return '<div class="qa"><b>Q' + esc(q.number) + '</b> <span style="color:' + col(q.max_marks ? q.awarded / q.max_marks : 0) + ';font-weight:700">' + q.awarded + '/' + q.max_marks + '</span> <span class="muted">' + esc(q.marked_by) + (q.markers && q.markers.length ? ' · markers ' + esc(q.markers.map(function (m) { return m.marks; }).join(", ")) : '') + ' · ' + Math.round((q.seconds_on_question || 0) / 60) + ' min' + (q.pastes ? ' · tried to paste ' + q.pastes + '×' : '') + '</span>' +
           '<div>' + esc(q.question) + '</div><pre>' + (esc(q.student_answer) || '<i>blank</i>') + '</pre><div class="muted">' + esc(q.feedback) + '</div></div>';
       }).join("") +
       (f ? '<div class="qa"><b>' + (f.kind === "stretch" ? "Stretch" : "Follow-up on Q" + esc(f.question_number)) + '</b> ' + f.awarded + '/' + f.max_marks + ' <span class="muted">set by ' + esc(f.set_by) + '</span><div>' + esc(f.task) + '</div><pre>' + esc(f.student_answer) + '</pre><div class="muted">' + esc(f.feedback) + '</div></div>' : '') +
@@ -242,7 +242,7 @@ dialog h3{margin:0;color:var(--navy)}
 
   $("csv").addEventListener("click", function () {
     var rs = rows(), cell = function (v) { var s = String(v == null ? "" : v); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
-    var head = ["Name", "Group", "Score", "Out of", "Percent", "Follow-up", "Follow-up out of", "Gap closed", "Minutes", "Pastes", "Left page", "Review remembered", "Review of", "Assistive tools", "To moderate", "Summary", "Strengths", "To work on", "Next step"];
+    var head = ["Name", "Group", "Score", "Out of", "Percent", "Follow-up", "Follow-up out of", "Gap closed", "Minutes", "Paste tries", "Left page", "Review remembered", "Review of", "Assistive tools", "To moderate", "Summary", "Strengths", "To work on", "Next step"];
     var lines = [head.map(cell).join(",")].concat(rs.map(function (r) {
       var f = r.follow_up, rv = r.personal_review, s = r.summary || {};
       return [r.student.name, r.student.group, r.score, r.homework.total_marks, r.percent, f ? f.awarded : "", f ? f.max_marks : "", f ? f.gap_closed : "", r.minutes_taken, r.pastes_total || 0, r.left_page_count || 0,
