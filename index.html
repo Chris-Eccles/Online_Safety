@@ -40,10 +40,10 @@
     </div>
     <h2 class="section-h">GCSE and A Level</h2>
     <div class="grid">
-      <button class="tile" type="button" disabled>Year 10<small>Coming soon</small></button>
-      <button class="tile" type="button" disabled>Year 11<small>Coming soon</small></button>
-      <button class="tile" type="button" disabled>Year 12<small>Coming soon</small></button>
-      <button class="tile" type="button" disabled>Year 13<small>Coming soon</small></button>
+      <button class="tile" type="button" data-year="10">Year 10</button>
+      <button class="tile" type="button" data-year="11">Year 11</button>
+      <button class="tile" type="button" data-year="12">Year 12</button>
+      <button class="tile" type="button" data-year="13">Year 13</button>
     </div>
   </section>
 
@@ -77,7 +77,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var q = new URLSearchParams(location.search);
   var next = q.get("next") || "";
-  if (!/^\/(group|ks3\/[a-z-]+)(#[A-Za-z0-9]*)?$/.test(next)) next = "/group";
+  if (!/^\/(group|ks3\/[a-z-]+|hw\/[a-z0-9]{6,12})(#[A-Za-z0-9]*)?$/.test(next)) next = "/group";
   var year = null, group = null;
 
   // Already signed in on this device: straight to the group page (or where they were going).

@@ -316,6 +316,9 @@ async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix
     forAI.push({ id: key, question: clip(q.text, 800) + (q.type === "code" && q.starter ? `\n(Starting code given:\n${clip(q.starter, 600)})` : ""), max_marks: q.marks,
       mark_scheme: clip(q.answer || "(no mark scheme given: use accurate subject knowledge)", 1200), student_answer: clip(given, 2000), context: checks ? "Automatic checks: " + checks : undefined });
   }
+  // An answer that tries to instruct the AI markers is still marked, but always goes to the teacher to check
+  const steer = /\b(ignore|disregard|forget)\b.{0,40}\b(instructions?|prompt|rules|above|previous|mark scheme)\b|\b(award|give)\b.{0,25}\b(full|maximum|max|all( the)?) marks\b|\byou are (now )?(an?|the) (ai|assistant|model|marker)\b|\bsystem prompt\b|\bas an ai\b|"?marks"?\s*:\s*\d/i;
+  const flagged = new Set(forAI.filter(it => steer.test(it.student_answer)).map(it => it.id));
   const verdicts = await moderate(hw, forAI);
   let aiFailed = false, moderation = false;
   for (const r of results) {
@@ -324,6 +327,7 @@ async function markQuestions(hw: any, qlist: { q: any; section: string; idPrefix
     r.awarded = Math.min(r.marks, v.marks + auto);
     r.feedback = r.type === "examiner" ? examinerNote[r.id] + " " + v.feedback : v.feedback;
     r.by = v.by; (r as any).markers = v.markers; (r as any).decision = v.decision;
+    if (flagged.has(r.id)) { r.by = "needs checking"; (r as any).decision = "answer seems to give instructions to the AI markers"; }
     if (v.by === "needs checking") aiFailed = true;
     if (v.by === "needs moderation") moderation = true;
   }
@@ -437,7 +441,9 @@ async function finalise(hw: any, name: string, group: string, p: Pending, fuDone
   }).join("");
   const attention = [
     ...toModerate.map((r: any) => `<li><b>Moderate Q${r.num}</b> (${r.awarded}/${r.marks} for now). Markers gave ${(r.markers || []).map((m: any) => m.marks).join(", ")}.<br><span style="color:#475569">${esc(String(r.question).slice(0, 160))}</span><br><i>${esc(String(r.answer).slice(0, 400))}</i></li>`),
-    ...toCheck.map(r => `<li><b>Check Q${r.num}</b>: not marked automatically.</li>`),
+    ...toCheck.map(r => (r as any).decision === "answer seems to give instructions to the AI markers"
+      ? `<li><b>Check Q${r.num}</b> (${r.awarded}/${r.marks} for now): the answer seems to give instructions to the AI markers.<br><i>${esc(String(r.answer).slice(0, 400))}</i></li>`
+      : `<li><b>Check Q${r.num}</b>: not marked automatically.</li>`),
     ...(fuDone && fuDone.by === "needs checking" ? [`<li><b>Check the follow-up</b>: not marked automatically.</li>`] : []),
   ];
   const html = `<div style="font-family:Arial,sans-serif;color:#0f172a;max-width:680px">
@@ -487,10 +493,19 @@ async function handle(req: Request, box: any): Promise<Response> {
   if (error || !hw) return reply(req, { error: "This homework link isn't valid." }, 404);
   if (!hw.open) return reply(req, { error: "This homework is closed. Speak to your teacher." }, 403);
 
+  // Only a device signed in to the website as a student in this year can hand in. The group comes from the sign-in,
+  // so nobody can hand in for another class, and a link shared outside school is useless on its own.
+  const token = clip(b.token, 80);
+  if (!/^[0-9a-f]{48}$/.test(token)) return reply(req, { error: "Sign in to the website on this device first, then hand in.", signin: true }, 401);
+  const { data: st } = await db.rpc("site_state", { p_token: token });
+  if (!st || !st.ok || st.year !== hw.year) return reply(req, { error: `Sign in to the website on this device as a Year ${hw.year} student first, then hand in.`, signin: true }, 401);
+  // At most 15 hand-ins, follow-ups and mark queries per device in 10 minutes (kept in the database, so it holds across servers)
+  const { data: rateOk } = await db.rpc("site_hw_rate", { p_key: await hmac(hw.salt, "rate|" + token), p_max: 15, p_mins: 10 });
+  if (rateOk === false) return reply(req, { error: "Too many tries from this device. Wait ten minutes and try again." }, 429);
   const name = nameCase(clip(b.name, 60));
-  const group = clip(b.group, 12);
+  const group = String(st.group);
   if (name.length < 3 || !name.includes(" ")) return reply(req, { error: "Type your first name and surname." }, 400);
-  if (!hw.groups.includes(group)) return reply(req, { error: "Pick your group." }, 400);
+  if (!hw.groups.includes(group)) return reply(req, { error: "Your group isn't set up for this homework. Speak to your teacher." }, 400);
   const hash = await hmac(hw.salt, `${norm(name)}|${group}|${hw.id}`);
   box.hw = hw;
   if (b.action !== "query") {

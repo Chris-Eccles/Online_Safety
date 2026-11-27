@@ -69,6 +69,7 @@
   <p><b>Personal review.</b> If you get a question wrong, this device remembers it and brings it back in a later homework after a few days, then a week, three weeks and two months. That list is kept only in your browser on this device; the website does not know which questions anyone got wrong.</p>
   <p><b>Follow-up tasks.</b> After you hand in, you may be given one short task based on your feedback. The homework goes to your teacher when you send that task. Until then, the website holds your marked answers for up to 7 days <b>without your name</b>, linked to a random code kept on your device. If you don't finish the task within 7 days, they are deleted.</p>
   <p>The website does <b>not</b> keep your name or answers after the email is sent. It keeps only a scrambled code made from your name, group and the homework, which cannot be turned back into your name. It is used only to stop the same homework being handed in twice, and it is deleted every 1 August. Your answers are saved in your browser while you work, so you can come back to them.</p>
+  <p>To hand in, your device must be signed in to the website with your group's password. The hand-in checks the device's random sign-in code (which holds no name) to confirm the year and group. To stop anyone flooding the system, the website keeps a scrambled form of that code for each hand-in, follow-up or mark query for one day, then deletes it.</p>
   <p>Written answers are marked by an AI (Cloudflare Workers AI), which receives only the question, the mark scheme and your answer, never your name. The AI's marks are suggestions: your teacher's mark is the one that counts. Multiple-choice, true/false and short "quick" answers are marked automatically without AI.</p>
 
   <h2>What the website's database holds</h2>
@@ -78,6 +79,7 @@
     <li>The random sign-in codes described above, linked to a group only.</li>
     <li>Quiz answers (the option picked), linked to a sign-in code. Your teacher sees only totals for a group or year.</li>
     <li>The homework questions and mark schemes, and the scrambled hand-in codes described above.</li>
+    <li>For one day after a hand-in, follow-up or mark query, a scrambled form of the device's sign-in code, used only to limit how many can be sent.</li>
     <li>After a wrong password, a scrambled (salted and hashed) form of the device's internet address, kept for 15 minutes to block guessing. It cannot be turned back into the address.</li>
   </ul>
   <p>None of this identifies a student.</p>

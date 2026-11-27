@@ -150,7 +150,17 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
       return '<button type="button" data-g="' + esc(g) + '" aria-pressed="false">' + r.year + esc(g) + '</button>';
     }).join("") || '<p class="hint">No groups set up for this year yet. Tell your teacher.</p>';
     if (S.name) $("name").value = S.name;
-    if (S.group && r.groups.indexOf(S.group) >= 0) pick(S.group);
+    // Hand-in needs this device signed in to the website as a student in this year; the group comes from that sign-in
+    var me = Abity.me();
+    if (me && me.token && me.year === r.year && (r.groups.indexOf(me.group) >= 0 || me.group === "DEMO")) {
+      pick(me.group);
+      $("groups").innerHTML = '<p class="hint" style="margin:0"><b>' + r.year + esc(me.group) + '</b> (from your sign-in on this device)</p>';
+      if (!S.name && me.name && me.name !== "Demo Student") $("name").value = me.name;
+    } else if (!preview) {
+      group = null;
+      $("groups").innerHTML = '<p class="hint" style="margin:0;color:var(--bad,#b91c1c)"><b>Sign in first.</b> To hand in, this device must be signed in to the website as a Year ' + r.year +
+        ' student. <a href="/?next=/hw/' + encodeURIComponent(code) + '">Sign in here</a> and you\'ll come straight back. Your answers are saved on this device meanwhile.</p>';
+    }
 
     var html = "";
     hw.sections.forEach(function (s) {
@@ -276,6 +286,7 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
   }
   $("to-submit").addEventListener("click", function () { $("submit-box").scrollIntoView({ behavior: "smooth", block: "center" }); });
 
+  function tok() { var me = Abity.me(); return me && me.token || ""; }
   function pick(g) {
     group = g; S.group = g; save();
     $("groups").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.g === g)); });
@@ -330,7 +341,7 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
     if (!HW || preview) return;
     var err = $("err"), name = Abity.nameCase($("name").value);
     if (name.length < 3 || name.indexOf(" ") < 0) { err.textContent = "Type your first name and surname at the top."; $("name").focus(); return; }
-    if (!group) { err.textContent = "Pick your group at the top."; return; }
+    if (!group) { err.textContent = "Sign in to the website on this device first (see the top of the page), then refresh and hand in."; return; }
     var all = [].concat.apply([], HW.hw.sections.map(function (s) { return s.questions; }));
     var blank = all.filter(function (x) { return !String(S.answers[x.id] || "").trim(); }).length;
     if (!confirm((blank ? "You have " + blank + " unanswered question" + (blank > 1 ? "s" : "") + ". " : "") + "Hand in now? You can only hand in once.")) return;
@@ -338,7 +349,7 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
     var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
     var stop = marking("handin");
     fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
-      body: JSON.stringify({ code: code, name: name, group: group, answers: mainAnswers(), review: reviewPayload(),
+      body: JSON.stringify({ code: code, token: tok(), name: name, group: group, answers: mainAnswers(), review: reviewPayload(),
         meta: { started: S.started, pastes: S.pastes, seconds: S.seconds, away: S.away, assist: !!(S.assist || window.hwAssist), code: codeChecks() } }) })
       .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
       .then(function (x) {
@@ -440,7 +451,7 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
       var btn = this; btn.disabled = true; btn.textContent = "Marking…"; err.textContent = "";
       var stop = marking("followup");
       fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
-        body: JSON.stringify({ action: "followup", code: code, name: Abity.nameCase(S.name || ""), group: S.group, pending: r.pending, secret: r.secret,
+        body: JSON.stringify({ action: "followup", code: code, token: tok(), name: Abity.nameCase(S.name || ""), group: S.group, pending: r.pending, secret: r.secret,
           answer: ans, meta: { seconds: S.fuSeconds || 0, pastes: S.fuPastes || 0 } }) })
         .then(function (res) { return res.json().then(function (b) { return { status: res.status, body: b }; }); })
         .then(function (x) {
@@ -491,7 +502,7 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
           if (ta.value.trim().length < 5) { er.textContent = "Say why you think the mark should change."; return; }
           b.disabled = true; er.textContent = "";
           fetch(FN, { method: "POST", headers: { "Content-Type": "application/json", apikey: KEY },
-            body: JSON.stringify({ action: "query", code: code, name: Abity.nameCase(S.name || ""), group: S.group, question: String(x.num), note: ta.value }) })
+            body: JSON.stringify({ action: "query", code: code, token: tok(), name: Abity.nameCase(S.name || ""), group: S.group, question: String(x.num), note: ta.value }) })
             .then(function (res) { return res.json(); })
             .then(function (j) {
               if (j && j.ok) { S.queried[x.id] = true; save(); d.innerHTML = "<small>Query sent to your teacher.</small>"; }
