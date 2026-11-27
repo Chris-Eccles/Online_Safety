@@ -48,6 +48,18 @@
     $("title").textContent = code + " · Computing";
     $("lede").textContent = st.group === "DEMO" ? "Demo group: every lesson is open so you can look around. Press Sign out (top right) to leave the demo." : "Your projects for each term. Lessons open when your teacher switches them on.";
 
+    // Years 10 to 13: course pages (topics, prep, worksheets, spec list) arrive with the KS4/5 build; badges and class questions work now
+    if (st.year >= 10) {
+      $("lede").textContent = st.group === "DEMO" ? "Demo group (Year " + st.year + "). Start a class question in admin to try the answer buttons. Press Sign out to leave the demo."
+        : "Your topics, prep pages and worksheets will appear here when your teacher opens them.";
+      $("terms").innerHTML = '<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">' +
+        '<a class="tile" href="/badges" style="text-decoration:none">My badges<small>See every badge and the ones you have earned</small></a>' +
+        '<div class="tile" style="cursor:default">My specification<small>Coming soon: every spec point, ticked as you cover it</small></div></div>';
+      Abity.badge("hello");
+      var sc = document.createElement("script"); sc.src = "/answers.js"; document.body.appendChild(sc);
+      return;
+    }
+
     // The current project: the latest term with something open.
     var now = 0;
     st.items.forEach(function (it) { if (it.lessons.some(function (l) { return l.open; })) now = Math.max(now, it.term); });

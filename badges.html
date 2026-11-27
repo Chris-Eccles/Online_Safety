@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My badges · Abity</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+<style>
+.count{display:flex;align-items:center;gap:16px;margin:0 0 8px}
+.count .big{font-family:var(--head);font-weight:600;font-size:2.4rem;color:var(--navy);line-height:1}
+.meter-b{flex:1;max-width:360px;height:12px;background:var(--lock-soft);border-radius:999px;overflow:hidden}
+.meter-b i{display:block;height:100%;background:var(--navy);border-radius:999px}
+.bgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.badge{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.badge b{display:block;font-family:var(--head);font-weight:600;font-size:1.1rem;line-height:1.2;color:var(--ink)}
+.badge p{margin:4px 0 0;font-size:14px;color:var(--muted);line-height:1.35}
+.badge small{display:block;margin-top:6px;font-size:12px;font-weight:700;color:var(--ok)}
+.badge.off{background:#f8fafc}
+.badge.off b{color:#94a3b8}
+.badge.off p{color:#94a3b8}
+.badge.on{border-color:#c7d5e6;box-shadow:0 2px 0 var(--navy-soft)}
+.badge .hex{flex:0 0 auto}
+.secret{letter-spacing:.2em;font-weight:800}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School">
+  <span class="who"><span id="who"></span><a class="btn-line" href="/group">← My group</a></span>
+</div></header>
+
+<main>
+  <h1 class="page-title">My badges</h1>
+  <p class="lede" id="lede">Loading…</p>
+  <div id="out" aria-live="polite"></div>
+</main>
+
+<footer><div class="in">
+  <span>Abity · Computer Science at Maidstone Grammar School</span>
+  <span><a href="/privacy">Privacy notice</a></span>
+</div></footer>
+
+<script src="/api.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  function hex(glyph, on, size) {
+    var g = String(glyph || ""), fs = g.length > 3 ? 13 : g.length > 2 ? 16 : 22;
+    return '<svg class="hex" width="' + size + '" height="' + size + '" viewBox="0 0 60 60" aria-hidden="true">' +
+      '<polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" fill="' + (on ? "#1E3A5F" : "#e2e8f0") + '" stroke="' + (on ? "#3B6FA8" : "#cbd5e1") + '" stroke-width="3"/>' +
+      '<text x="30" y="31" text-anchor="middle" dominant-baseline="central" font-family="Fredoka,Nunito,sans-serif" font-weight="600" font-size="' + fs + '" fill="' + (on ? "#fff" : "#94a3b8") + '">' + esc(g) + '</text></svg>';
+  }
+  var me = Abity.me();
+  if (!me || !me.token) { location.replace("/"); return; }
+  $("who").innerHTML = "<b>" + esc(me.name || "") + "</b> · " + esc((me.year || "") + (me.group || ""));
+  if (!(me.year >= 10)) { $("lede").textContent = "Badges are for Years 10 to 13."; return; }
+
+  Abity.badge("curious").then(function () { return Abity.badges(); }).then(function (r) {
+    if (!r || !r.ok) { location.replace("/"); return; }
+    var list = r.badges || [], got = list.filter(function (b) { return b.earned; }).length;
+    $("lede").textContent = "Earn badges for good habits, using your feedback and mastering each topic. Some are secret: you'll find out how to get them when you do.";
+    var html = '<div class="count"><span class="big">' + got + '</span><span><b>of ' + list.length + ' badges</b></span>' +
+      '<span class="meter-b" aria-hidden="true"><i style="width:' + Math.round(100 * got / (list.length || 1)) + '%"></i></span></div>';
+    var groups = [];
+    list.forEach(function (b) { if (groups.indexOf(b.grp) < 0) groups.push(b.grp); });
+    groups.forEach(function (g) {
+      html += '<h2 class="section-h">' + esc(g) + '</h2><div class="bgrid">';
+      list.filter(function (b) { return b.grp === g; }).forEach(function (b) {
+        var when = b.at ? new Date(b.at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "";
+        html += '<div class="badge ' + (b.earned ? "on" : "off") + '">' + hex(b.glyph, b.earned, 56) + '<div><b>' + esc(b.name) + '</b>' +
+          (b.descr == null ? '<p class="secret" aria-label="Secret badge">???</p>' : '<p>' + esc(b.descr) + '</p>') +
+          (b.earned ? '<small>Earned ' + esc(when) + '</small>' : '<span class="sr">Not earned yet</span>') + '</div></div>';
+      });
+      html += '</div>';
+    });
+    $("out").innerHTML = html;
+  }).catch(function () { $("lede").textContent = "We can't reach the website's server. Check your internet connection, then refresh the page."; });
+})();
+</script>
+<script src="/answers.js"></script>
+<script src="/nav.js"></script>
+</body>
+</html>

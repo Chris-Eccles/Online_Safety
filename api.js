@@ -58,6 +58,21 @@
       if (!me || !me.token) return Promise.reject(new Error("not signed in"));
       return rpc("site_confidence", { p_token: me.token, p_item: item, p_lesson: lesson, p_levels: levels });
     },
+    // KS4/5 badges and class questions: linked to this device's sign-in code only, never a name.
+    token: function () { var me = read(localStorage, ME); return me && me.token; },
+    badges: function () {
+      var me = read(localStorage, ME);
+      if (!me || !me.token) return Promise.resolve(null);
+      return rpc("site_badges", { p_token: me.token });
+    },
+    badge: function (id) {   // only the few badges a page can award itself (hello, curious, f404, easter)
+      var me = read(localStorage, ME);
+      if (!me || !me.token || (me.year && me.year < 10)) return Promise.resolve(null);
+      return rpc("site_badge", { p_token: me.token, p_badge: id }).then(function (r) {
+        if (r && r.new && window.AbityPanel) window.AbityPanel.check();
+        return r;
+      }).catch(function () { return null; });
+    },
     signOut: function () {
       write(localStorage, ME, null);
       write(sessionStorage, PASS, null);

@@ -68,6 +68,13 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
 .pv-fu{margin:8px 0 0 18px;padding:6px 10px;border-left:3px solid var(--navy);background:var(--navy-soft);border-radius:6px;font-size:14px}
 .pv-fu pre{margin:4px 0 0}
+.pq-bars{display:grid;gap:8px}
+.pq-bar{display:grid;grid-template-columns:60px 1fr 44px auto;gap:10px;align-items:center}
+.pq-l{font-family:var(--head);font-weight:600;font-size:1.4rem;color:var(--navy)}
+.pq-track{height:30px;background:var(--lock-soft);border-radius:8px;overflow:hidden}
+.pq-track i{display:block;height:100%;background:var(--navy);border-radius:8px}
+.pq-bar.right .pq-track i{background:var(--ok)}
+.pq-n{font-weight:800;font-size:1.2rem;text-align:right}
 </style>
 </head>
 <body>
@@ -76,6 +83,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
     <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
     <button role="tab" data-tab="results" aria-selected="false">Class results</button>
+    <button role="tab" data-tab="questions" aria-selected="false">Class questions</button>
     <button role="tab" data-tab="homework" aria-selected="false">Homework</button>
     <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
@@ -113,6 +121,21 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <div class="chips" id="r-items" role="group" aria-label="Workbook"></div>
     <div class="chips" id="r-lessons" role="group" aria-label="Lesson"></div>
     <div id="r-body"></div>
+  </section>
+
+  <section id="p-questions" class="hidden">
+    <h1 class="page-title">Class questions</h1>
+    <p class="lede">Years 10 to 13. Put the question on the board, start it here, and students answer with the buttons at the top left of their page. Put this screen on the board to show the answers.</p>
+    <div class="card stack">
+      <div class="row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <label for="pq-group" style="margin:0">Group</label>
+        <select id="pq-group" style="font-size:17px;padding:8px 10px;border-radius:8px;border:1px solid var(--field)"></select>
+        <button class="btn" type="button" id="pq-abcd">New A–D question</button>
+        <button class="btn ghost" type="button" id="pq-tf">New True/False question</button>
+      </div>
+      <p class="hint" id="pq-devices" style="margin:0"></p>
+      <div id="pq-out" aria-live="polite"></div>
+    </div>
   </section>
 
   <section id="p-homework" class="hidden">
@@ -158,7 +181,9 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     <h1 class="page-title">Settings</h1>
     <h2 class="section-h">Showing a colleague</h2>
     <div class="card"><p style="margin:0 0 12px"><b>Demo as a student</b> (top bar) opens the student site as a hidden demo group, Year 7 "DEMO", with every Level Up and Pitch It! lesson switched on. No passwords to type, it doesn't appear in the students' group list, and its quiz answers are left out of whole-year class results. Press <b>Sign out</b> on the student page to leave the demo.</p>
-    <p style="margin:0">To show homework, use <b>Preview</b> on any homework in the Homework tab: it shows exactly what students see, with hand-in switched off.</p></div>
+    <p style="margin:0 0 12px">To show homework, use <b>Preview</b> on any homework in the Homework tab: it shows exactly what students see, with hand-in switched off.</p>
+    <p style="margin:0 0 12px"><b>Year 10 demo</b> shows the KS4 student view: the badges page and the class question buttons. Open it, then start a question for "Demo (Year 10)" in the Class questions tab.</p>
+    <button class="btn ghost" type="button" id="demo10">Demo as a Year 10 student ↗</button></div>
     <h2 class="section-h">Other sites</h2>
     <div class="links">
       <a href="https://cpd.abity.co.uk/admin">Staff CPD admin<small>cpd.abity.co.uk</small></a>
@@ -201,7 +226,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   }
   function load() { return call("list").then(function (r) { D = r; render(); }); }
   function logout(msg) { PW = null; try { sessionStorage.removeItem("abity-admin"); } catch (e) {} $("tabs").classList.add("hidden"); show("login"); $("login-err").textContent = msg || ""; }
-  function show(id) { ["login", "p-lessons", "p-results", "p-homework", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
+  function show(id) { ["login", "p-lessons", "p-results", "p-questions", "p-homework", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
 
   $("f-login").addEventListener("submit", function (e) {
     e.preventDefault(); PW = $("admin-pw").value;
@@ -213,14 +238,61 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     }).catch(function () { $("login-err").textContent = "Can't reach the server."; }).then(function () { b.disabled = false; });
   });
   $("logout").addEventListener("click", function () { logout(); });
-  // One-click demo: signs this browser in to a hidden demo group (Year 7, every lesson open) and opens it.
-  $("demo").addEventListener("click", function () {
+  // One-click demo: signs this browser in to a hidden demo group (Year 7, every lesson open; or Year 10 for badges
+  // and class questions) and opens it.
+  function demo(year) {
     var w = window.open("about:blank", "_blank");
-    call("demo").then(function (r) {
+    call("demo", { year: year }).then(function (r) {
       if (!r.ok) { if (w) w.close(); toast("Couldn't start the demo."); return; }
       Abity.setMe({ token: r.token, year: r.year, group: r.group, name: "Demo Student" });
       if (w) w.location = "/group"; else location.href = "/group";
     }).catch(function () { if (w) w.close(); });
+  }
+  $("demo").addEventListener("click", function () { demo(7); });
+  document.addEventListener("click", function (e) { if (e.target.closest("#demo10")) demo(10); });
+
+  // Class questions (KS4/5): start a question for a group, watch the answers come in, then reveal the right one
+  var PQ = { groups: [], poll: null };
+  function pqGroups() {
+    call("poll_groups").then(function (r) {
+      PQ.groups = r.groups || [];
+      var cur = $("pq-group").value;
+      $("pq-group").innerHTML = PQ.groups.map(function (g) { return '<option value="' + g.id + '">' + (g.demo ? "Demo (Year " + g.year + ")" : g.year + esc(g.name)) + '</option>'; }).join("") ||
+        '<option value="">No Year 10 to 13 groups yet</option>';
+      if (cur) $("pq-group").value = cur;
+      pqState();
+    }).catch(function () {});
+  }
+  function pqState() {
+    var gid = $("pq-group").value; if (!gid) { $("pq-out").innerHTML = ""; return; }
+    call("poll_state", { group_id: gid }).then(function (r) {
+      PQ.poll = r.poll;
+      $("pq-devices").textContent = r.devices + " device" + (r.devices === 1 ? "" : "s") + " signed in to this group.";
+      var p = r.poll;
+      if (!p) { $("pq-out").innerHTML = '<p class="m" style="color:var(--muted)">No question running. Start one above.</p>'; return; }
+      var labels = p.kind === "tf" ? ["True", "False"] : ["A", "B", "C", "D"], max = Math.max.apply(null, p.counts.concat([1]));
+      $("pq-out").innerHTML = '<p style="margin:0 0 10px;font-weight:700">' + (p.closed ? "Answers closed" : "Answers open") + ' · ' + p.total + ' answer' + (p.total === 1 ? "" : "s") + '</p>' +
+        '<div class="pq-bars">' + labels.map(function (l, i) {
+          return '<div class="pq-bar' + (p.correct === i ? " right" : "") + '"><span class="pq-l">' + l + '</span><span class="pq-track"><i style="width:' + Math.round(100 * p.counts[i] / max) + '%"></i></span><span class="pq-n">' + p.counts[i] + '</span>' +
+            (p.correct == null ? '<button class="small-btn" type="button" data-pqright="' + i + '">Reveal as answer</button>' : (p.correct === i ? '<b style="color:var(--ok)">✓ Answer</b>' : '')) + '</div>';
+        }).join("") + '</div>' +
+        '<div class="row" style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">' + (p.closed ? "" : '<button class="btn ghost" type="button" id="pq-close">Close answers</button>') +
+        '<button class="small-btn" type="button" id="pq-end">Finish this question</button></div>';
+    }).catch(function () {});
+  }
+  function pqStart(kind) {
+    var gid = $("pq-group").value; if (!gid) return;
+    call("poll_start", { group_id: gid, kind: kind }).then(function () { toast("Question started"); pqState(); });
+  }
+  $("pq-abcd").addEventListener("click", function () { pqStart("abcd"); });
+  $("pq-tf").addEventListener("click", function () { pqStart("tf"); });
+  $("pq-group").addEventListener("change", pqState);
+  $("pq-out").addEventListener("click", function (e) {
+    if (!PQ.poll) return;
+    var r = e.target.closest("[data-pqright]");
+    if (r) { call("poll_reveal", { id: PQ.poll.id, correct: Number(r.dataset.pqright) }).then(pqState); return; }
+    if (e.target.closest("#pq-close")) call("poll_close", { id: PQ.poll.id }).then(pqState);
+    if (e.target.closest("#pq-end")) call("poll_end", { id: PQ.poll.id }).then(pqState);
   });
   document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   function tab(t) {
@@ -228,6 +300,7 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     show("p-" + t); render();
     clearInterval(timer); timer = null;
     if (t === "results") { results(); timer = setInterval(function () { if (!document.hidden) results(true); }, 10000); }
+    if (t === "questions") { pqGroups(); timer = setInterval(function () { if (!document.hidden) pqState(); }, 2000); }
     if (t === "homework") hwLoad();
   }
 
