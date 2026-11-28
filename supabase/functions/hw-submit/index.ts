@@ -510,14 +510,19 @@ async function handle(req: Request, box: any): Promise<Response> {
   const token = clip(b.token, 80);
   if (!/^[0-9a-f]{48}$/.test(token)) return reply(req, { error: "Sign in to the website on this device first, then hand in.", signin: true }, 401);
   const { data: st } = await db.rpc("site_state", { p_token: token });
-  if (!st || !st.ok || st.year !== hw.year) return reply(req, { error: `Sign in to the website on this device as a Year ${hw.year} student first, then hand in.`, signin: true }, 401);
+  if (!st || !st.ok) return reply(req, { error: "Sign in to the website on this device as a student first, then hand in.", signin: true }, 401);
+  // The groups that may hand in come from the homework's course (older homeworks: its year). Each group has a teacher,
+  // and the hand-in goes to that teacher's school email.
+  const mine = (hw.groups || []).find((g: any) => typeof g === "string" ? (g === st.group && st.year === hw.year) : (g.year === st.year && g.name === st.group));
+  if (!mine) return reply(req, { error: "This device is signed in to a group that isn't set this homework. Sign in as your own group, or speak to your teacher.", signin: true }, 401);
+  if (typeof mine === "object" && mine.email) hw.email = mine.email;
+  hw.year = st.year;
   // At most 15 hand-ins, follow-ups and mark queries per device in 10 minutes (kept in the database, so it holds across servers)
   const { data: rateOk } = await db.rpc("site_hw_rate", { p_key: await hmac(hw.salt, "rate|" + token), p_max: 15, p_mins: 10 });
   if (rateOk === false) return reply(req, { error: "Too many tries from this device. Wait ten minutes and try again." }, 429);
   const name = nameCase(clip(b.name, 60));
   const group = String(st.group);
   if (name.length < 3 || !name.includes(" ")) return reply(req, { error: "Type your first name and surname." }, 400);
-  if (!hw.groups.includes(group)) return reply(req, { error: "Your group isn't set up for this homework. Speak to your teacher." }, 400);
   const hash = await hmac(hw.salt, `${norm(name)}|${group}|${hw.id}`);
   box.hw = hw;
   if (b.action !== "query") {

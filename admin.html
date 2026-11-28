@@ -8,66 +8,100 @@
 <link rel="icon" href="/favicon.png">
 <link rel="stylesheet" href="/site.css">
 <style>
-.tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tabs button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;cursor:pointer}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs button,.tabs a{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;font-size:15px;text-decoration:none}
 .tabs button[aria-selected=true]{background:#fff;color:var(--navy);border-color:#fff}
+.tabs select{font:inherit;font-size:15px;font-weight:700;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.6);background:var(--navy);color:#fff}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
-.chips button{background:#fff;border:1px solid var(--field);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-width:56px;min-height:46px;font-size:16px}
+.chips button{background:#fff;border:1px solid var(--field);border-radius:999px;padding:9px 16px;font-weight:700;cursor:pointer;min-height:44px;font-size:16px;color:var(--navy)}
 .chips button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
 .chips .all{border-style:dashed}
-.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
-.item h2{font-size:1.3rem}
-.item .meta{color:var(--muted);font-size:15px;margin:2px 0 14px}
+.chips small{font-weight:600;opacity:.8}
+.head2{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:0 0 14px}
+.head2 .page-title{margin:0}
+.kick{color:var(--muted);font-weight:700;margin:0 0 4px}
+.weekbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 18px}
+.weekbar .now{background:var(--navy-soft);color:var(--navy);border-radius:8px;padding:8px 14px;font-weight:800}
+.small-btn{background:#fff;border:1px solid var(--field);border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:15px;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:40px}
+.small-btn:hover{border-color:var(--navy);color:var(--navy)}
+.small-btn.danger{color:var(--bad)}
+.small-btn.main{background:var(--navy);border-color:var(--navy);color:#fff}
+.small-btn.main:hover{background:var(--navy-dark);color:#fff}
+.small-btn:disabled{opacity:.5;cursor:not-allowed}
+.wk{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+.wk-main{flex:999 1 620px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.wk-side{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.step.now{border:2px solid var(--navy)}
+.step-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px}
+.step-h>div{display:flex;align-items:center;gap:12px}
+.step-h h2{font-size:1.2rem}
+.step-h p{margin:0;color:var(--muted);font-size:15px}
+.num{width:34px;height:34px;border-radius:50%;background:var(--navy-soft);color:var(--navy);display:grid;place-items:center;font-weight:800;flex:none}
+.step.now .num{background:var(--navy);color:#fff}
+.num.done{background:var(--ok);color:#fff}
+.pill{font-size:13px;font-weight:800;border-radius:999px;padding:3px 11px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.todo{background:var(--amber-soft);color:#92400e}.pill.off{background:var(--lock-soft);color:var(--lock)}
+.row-i{border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.row-i>div:first-child{min-width:0;flex:1 1 300px}
+.row-i b{display:block}
+.row-i .m{color:var(--muted);font-size:14px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{color:var(--muted);font-size:15px;margin:8px 0 0}
+.side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.side h2{font-size:1.05rem;margin:0 0 8px}
+.side.warn{background:var(--amber-soft);border-color:#fde68a}
+.bar2{height:8px;background:var(--lock-soft);border-radius:999px;overflow:hidden;margin:4px 0 2px}.bar2 i{display:block;height:100%;background:var(--navy)}
 .toggles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
-.tog{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;min-height:104px}
+.tog{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;min-height:104px;font:inherit}
 .tog b{font-size:16px}.tog small{color:var(--muted);font-size:14px;line-height:1.3}
 .tog .st{margin-top:auto;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--lock-soft);color:var(--lock)}
 .tog[aria-pressed=true]{border-color:var(--ok);background:var(--ok-soft)}
 .tog[aria-pressed=true] .st{background:var(--ok);color:#fff}
-.tog.some{border-color:var(--amber);background:var(--amber-soft)}
-.tog.some .st{background:var(--amber);color:#fff}
 .tog:disabled{opacity:.6;cursor:wait}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
+.item h2{font-size:1.25rem}.item .meta{color:var(--muted);font-size:15px;margin:2px 0 14px}
 table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 th{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-td input{max-width:200px;font-size:16px;padding:8px 10px}
-.small-btn{background:#fff;border:1px solid var(--field);border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
-.small-btn.danger{color:var(--bad)}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.row>div{display:flex;flex-direction:column;gap:6px}
+.scroll{overflow-x:auto}
+.form{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));align-items:end}
+.form>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.form label{font-weight:700;font-size:15px}
+.form input,.form select{font:inherit;font-size:16px;padding:10px;border-radius:10px;border:1px solid var(--field);width:100%}
+.posbox{display:flex;gap:6px}
+.posbox select{flex:1;min-width:0}
+.lib-t{font-size:1.15rem;color:var(--navy);margin:22px 0 4px}
+.lib .row-i{background:#fff}
+.lib .row-i.this{border:2px solid var(--navy)}
+.wkl{width:72px;flex:none;color:var(--muted);font-weight:800;font-size:14px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+.tile b{font-family:var(--head);font-size:1.5rem;color:var(--navy)}
+details.more{margin-top:26px}
+details.more summary{cursor:pointer;font-weight:800;color:var(--navy)}
 .links{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 .links a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none}
 .links a small{display:block;color:var(--muted);font-weight:400}
 .rq{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px}
 .rq h3{font-family:var(--body);font-size:17px;margin:0 0 4px}
-.rq .score{font-size:14px;color:var(--muted);margin:0 0 10px}
-.rq .score b{color:var(--ink)}
+.rq .score{font-size:14px;color:var(--muted);margin:0 0 10px}.rq .score b{color:var(--ink)}
 .opt{display:grid;grid-template-columns:minmax(0,1fr) 140px 44px;gap:10px;align-items:center;padding:6px 0;font-size:15px}
 .opt .meter{height:14px;background:var(--lock-soft);border-radius:7px;overflow:hidden}
 .opt .meter i{display:block;height:100%;background:var(--field)}
-.opt.right{font-weight:700;color:var(--ok)}
-.opt.right .meter i{background:var(--ok)}
+.opt.right{font-weight:700;color:var(--ok)}.opt.right .meter i{background:var(--ok)}
 .opt.common .meter i{background:#C27C0E}
 .opt .n{text-align:right;font-variant-numeric:tabular-nums}
 .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px;margin-left:6px;background:#FBF3E2;color:#7A4E00;vertical-align:1px}
 .kind-h{font-family:var(--body);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
 .r-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
 @media (max-width:600px){.opt{grid-template-columns:minmax(0,1fr) 80px 36px}}
-.hwc{background:#fff;border:1px solid var(--line);border-top:5px solid var(--navy);border-radius:14px;padding:18px 20px;margin-bottom:12px}
-.hwc.closed{border-top-color:#94a3b8}
-.hwc h3{font-family:var(--head);font-weight:600;font-size:1.25rem;margin:0}
-.hwc .m{color:var(--muted);font-size:14px;margin:2px 0 10px}
-.hwc .link{font-family:ui-monospace,monospace;font-size:15px;background:var(--navy-soft);border-radius:8px;padding:6px 10px;display:inline-block;margin:0 0 10px;word-break:break-all}
-.hwc .acts{display:flex;gap:8px;flex-wrap:wrap}
-.status{font-size:12px;font-weight:800;border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:3px}
-.status.on{background:var(--ok-soft);color:var(--ok)}.status.off{background:var(--lock-soft);color:var(--lock)}
 .pv-q{border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
 .pv-q pre{white-space:pre-wrap;font:inherit;margin:4px 0 0;color:var(--ok)}
 .badge{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:1px 8px;background:var(--lock-soft);color:var(--lock);margin-left:6px}
-.warn{background:var(--amber-soft);border-radius:10px;padding:10px 14px;color:#78350f;margin:6px 0}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
+.warnbox{background:var(--amber-soft);border-radius:10px;padding:10px 14px;color:#78350f;margin:6px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;z-index:9}
 .pv-fu{margin:8px 0 0 18px;padding:6px 10px;border-left:3px solid var(--navy);background:var(--navy-soft);border-radius:6px;font-size:14px}
-.pv-fu pre{margin:4px 0 0}
 .pq-bars{display:grid;gap:8px}
 .pq-bar{display:grid;grid-template-columns:60px 1fr 44px auto;gap:10px;align-items:center}
 .pq-l{font-family:var(--head);font-weight:600;font-size:1.4rem;color:var(--navy)}
@@ -80,15 +114,17 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 <body>
 <header class="bar"><div class="bar-in">
   <img src="/brand/mgs-logo-white.png" alt="Maidstone Grammar School" data-home="/admin">
-  <nav class="tabs hidden" id="tabs" role="tablist" aria-label="Admin sections">
-    <button role="tab" data-tab="lessons" aria-selected="true">Lessons</button>
-    <button role="tab" data-tab="results" aria-selected="false">Class results</button>
-    <button role="tab" data-tab="questions" aria-selected="false">Class questions</button>
-    <button role="tab" data-tab="homework" aria-selected="false">Homework</button>
-    <button role="tab" data-tab="groups" aria-selected="false">Groups</button>
-    <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
-    <button type="button" id="demo" title="Opens the student site as a demo Year 7 group with every lesson open">Demo as a student ↗</button>
-    <a href="/" target="_blank" rel="noopener" title="Opens the student site in a new tab" style="color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;padding:7px 16px;font-weight:700;text-decoration:none">Student site ↗</a>
+  <nav class="tabs hidden" id="tabs" aria-label="Admin sections">
+    <div role="tablist" class="tabs" aria-label="Admin sections">
+      <button role="tab" data-tab="week" aria-selected="true">This week</button>
+      <button role="tab" data-tab="library" aria-selected="false">Homework library</button>
+      <button role="tab" data-tab="results" aria-selected="false">Class results</button>
+      <button role="tab" data-tab="questions" aria-selected="false">Class questions</button>
+      <button role="tab" data-tab="settings" aria-selected="false">Groups and settings</button>
+    </div>
+    <label class="sr" for="who">Show groups for</label>
+    <select id="who" title="Show groups for"></select>
+    <a href="/" target="_blank" rel="noopener" title="Opens the student site in a new tab">Student site ↗</a>
     <button type="button" id="logout">Log out</button>
   </nav>
 </div></header>
@@ -105,17 +141,47 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     </form>
   </section>
 
-  <section id="p-lessons" class="hidden">
-    <h1 class="page-title">Lessons</h1>
-    <p class="lede">Pick a year and a group, then tap a lesson to switch it on or off for that group. Students see the change next time they open or refresh the page.</p>
-    <div class="chips" id="years" role="group" aria-label="Year"></div>
-    <div class="chips" id="grps" role="group" aria-label="Group"></div>
-    <div id="items"></div>
+  <!-- This week: one group, its fortnight in the order it happens -->
+  <section id="p-week" class="hidden">
+    <div class="head2">
+      <div><p class="kick" id="w-kick"></p><h1 class="page-title" id="w-title">This week</h1></div>
+    </div>
+    <div class="chips" id="w-groups" role="group" aria-label="Group"></div>
+    <div id="w-body"></div>
+  </section>
+
+  <!-- Homework library: ready-made homeworks in scheme-of-work order -->
+  <section id="p-library" class="hidden">
+    <div class="head2"><div><p class="kick">Ready-made homeworks, in scheme-of-work order</p><h1 class="page-title">Homework library</h1></div></div>
+    <div class="chips" id="l-course" role="group" aria-label="Course and year"></div>
+    <div class="tiles" id="l-tiles"></div>
+    <div class="lib" id="l-list"></div>
+    <div id="l-other"></div>
+    <div class="side" id="hw-ai" style="margin-top:22px"></div>
+    <p style="margin:14px 0 0"><a class="small-btn" href="/dashboard" download="abity-homework-dashboard.html">Download the offline dashboard</a>
+      <span class="hint" style="margin-left:8px">Open it on your computer and drop the JSON files from the results emails onto it.</span></p>
+    <details class="more" id="hw-more">
+      <summary>Add or replace a homework yourself</summary>
+      <div class="card stack" style="margin-top:12px" id="hw-form">
+        <h2 class="section-h" id="hw-form-h" style="margin:0">New homework</h2>
+        <div class="form">
+          <div><label for="hw-course">Course</label><select id="hw-course"><option value="gcse2">GCSE two-year</option><option value="gcse3">GCSE three-year</option><option value="alevel">A Level</option><option value="">One year only (no course)</option></select></div>
+          <div><label for="hw-year">Year</label><select id="hw-year"><option>9</option><option selected>10</option><option>11</option><option>12</option><option>13</option></select></div>
+          <div><label for="hw-sow">Scheme-of-work week</label><select id="hw-sow"></select></div>
+          <div><label for="hw-file">Homework file (.txt)</label><input id="hw-file" type="file" accept=".txt,text/plain"></div>
+        </div>
+        <label for="hw-text">Or paste the homework text</label>
+        <textarea id="hw-text" rows="10" style="width:100%;font-family:ui-monospace,monospace;font-size:14px;padding:12px;border:1px solid var(--field);border-radius:10px" placeholder="Title: …"></textarea>
+        <div class="acts"><button class="btn ghost" type="button" id="hw-preview">Check and preview</button><button class="btn" type="button" id="hw-publish" disabled>Publish</button><button class="small-btn hidden" type="button" id="hw-cancel">Cancel editing</button></div>
+        <p class="err" id="hw-err" role="alert"></p>
+        <div id="hw-out"></div>
+      </div>
+    </details>
   </section>
 
   <section id="p-results" class="hidden">
     <h1 class="page-title">Class results</h1>
-    <p class="lede">How the group answered each quiz question: do now, hinge and exit ticket. Anonymous: one answer per device (the first one), no names. It updates every 10 seconds while this page is open.</p>
+    <p class="lede">KS3 workbooks: how a group answered each quiz question (do now, hinge and exit ticket). Anonymous: one answer per device, no names. It updates every 10 seconds while this page is open. Homework results are emailed to each group's teacher.</p>
     <div class="chips" id="r-years" role="group" aria-label="Year"></div>
     <div class="chips" id="r-grps" role="group" aria-label="Group"></div>
     <div class="chips" id="r-items" role="group" aria-label="Workbook"></div>
@@ -125,10 +191,10 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 
   <section id="p-questions" class="hidden">
     <h1 class="page-title">Class questions</h1>
-    <p class="lede">Years 10 to 13. Put the question on the board, start it here, and students answer with the buttons at the top left of their page. Put this screen on the board to show the answers.</p>
+    <p class="lede">Years 9 to 13 GCSE and A Level groups. Put the question on the board, start it here, and students answer with the buttons at the top left of their page. Put this screen on the board to show the answers.</p>
     <div class="card stack">
-      <div class="row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <label for="pq-group" style="margin:0">Group</label>
+      <div class="acts">
+        <label for="pq-group" style="margin:0;font-weight:700">Group</label>
         <select id="pq-group" style="font-size:17px;padding:8px 10px;border-radius:8px;border:1px solid var(--field)"></select>
         <button class="btn" type="button" id="pq-abcd">New A–D question</button>
         <button class="btn ghost" type="button" id="pq-tf">New True/False question</button>
@@ -138,55 +204,52 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     </div>
   </section>
 
-  <section id="p-homework" class="hidden">
-    <h1 class="page-title">Homework</h1>
-    <p class="lede">Years 10 to 13. Upload a homework .txt (the hw-homework-builder format), check the preview, publish, then copy the link into Teams. Students can only reach a homework through its link. Each hand-in is marked by three AI markers and emailed to you as a student card with a CSV and a JSON file; nothing about the student is kept on the website.</p>
-    <p style="margin:-14px 0 22px"><a class="btn ghost" href="/dashboard" download="abity-homework-dashboard.html" style="min-height:40px;padding:8px 16px;font-size:15px">Download the offline dashboard</a>
-      <span class="hint" style="margin-left:8px">Save it once, open it on your computer, and drop the JSON files from the emails onto it.</span></p>
-    <div class="card" id="hw-ai" style="margin:0 0 18px;padding:14px 18px"></div>
-    <div id="hw-list"></div>
-    <h2 class="section-h" id="hw-form-h">New homework</h2>
-    <div class="card stack" id="hw-form">
-      <div class="row">
-        <div><label for="hw-year">Year</label><select id="hw-year" style="font-size:17px;padding:10px;border-radius:10px;border:1px solid var(--field)"><option>10</option><option>11</option><option>12</option><option>13</option></select></div>
-        <div style="flex:1;min-width:240px"><label for="hw-file">Homework file (.txt)</label><input id="hw-file" type="file" accept=".txt,text/plain" style="font-size:16px;padding:8px 0"></div>
-      </div>
-      <label for="hw-text">Or paste the homework text</label>
-      <textarea id="hw-text" rows="10" style="width:100%;font-family:ui-monospace,monospace;font-size:14px;padding:12px;border:1px solid var(--field);border-radius:10px" placeholder="Title: …"></textarea>
-      <div class="row"><button class="btn ghost" type="button" id="hw-preview">Check and preview</button><button class="btn" type="button" id="hw-publish" disabled>Publish</button><button class="small-btn hidden" type="button" id="hw-cancel">Cancel editing</button></div>
-      <p class="err" id="hw-err" role="alert"></p>
-      <div id="hw-out"></div>
-    </div>
-    <h2 class="section-h">Where results are sent</h2>
-    <form class="card row" id="f-email" novalidate>
-      <div style="flex:1;min-width:260px"><label for="hw-email">School email address</label><input id="hw-email" type="text" autocomplete="off"></div>
-      <button class="btn" type="submit">Save</button>
-      <p class="err" id="email-err" role="alert" style="flex-basis:100%"></p>
-    </form>
-  </section>
-
-  <section id="p-groups" class="hidden">
-    <h1 class="page-title">Groups</h1>
-    <p class="lede">Each group has its own password. Changing a password signs out every device in that group, so students will need the new one.</p>
-    <div id="group-table"></div>
-    <h2 class="section-h">Add a group</h2>
-    <form class="card row" id="f-add" novalidate>
-      <div><label for="add-year">Year</label><select id="add-year" style="font-size:17px;padding:10px;border-radius:10px;border:1px solid var(--field)">
-        <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option></select></div>
-      <div><label for="add-name">Group name</label><input id="add-name" type="text" maxlength="12" placeholder="e.g. Q or 10A" autocomplete="off"></div>
-      <div><label for="add-pw">Password</label><input id="add-pw" type="text" maxlength="40" autocomplete="off"></div>
-      <button class="btn" type="submit">Add group</button>
-      <p class="err" id="add-err" role="alert" style="flex-basis:100%"></p>
-    </form>
-  </section>
-
   <section id="p-settings" class="hidden">
-    <h1 class="page-title">Settings</h1>
-    <h2 class="section-h">Showing a colleague</h2>
-    <div class="card"><p style="margin:0 0 12px"><b>Demo as a student</b> (top bar) opens the student site as a hidden demo group, Year 7 "DEMO", with every Level Up and Pitch It! lesson switched on. No passwords to type, it doesn't appear in the students' group list, and its quiz answers are left out of whole-year class results. Press <b>Sign out</b> on the student page to leave the demo.</p>
-    <p style="margin:0 0 12px">To show homework, use <b>Preview</b> on any homework in the Homework tab: it shows exactly what students see, with hand-in switched off.</p>
-    <p style="margin:0 0 12px"><b>Year 10 demo</b> shows the KS4 student view: the badges page and the class question buttons. Open it, then start a question for "Demo (Year 10)" in the Class questions tab.</p>
-    <button class="btn ghost" type="button" id="demo10">Demo as a Year 10 student ↗</button></div>
+    <h1 class="page-title">Groups and settings</h1>
+    <p class="lede">The course decides what a group sees; the year is only a label. Each group's homework results are emailed to its teacher.</p>
+
+    <h2 class="section-h">Groups</h2>
+    <div class="scroll" id="g-table"></div>
+    <div class="card stack" id="g-form" style="margin-top:14px">
+      <h2 style="font-size:1.2rem" id="g-form-h">Add a group</h2>
+      <div class="form">
+        <div><label for="g-year">Year</label><select id="g-year"><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option></select></div>
+        <div><label for="g-name">Group name</label><input id="g-name" type="text" maxlength="12" placeholder="e.g. X" autocomplete="off"></div>
+        <div><label for="g-teacher">Teacher</label><select id="g-teacher"></select></div>
+        <div><label for="g-course">Course</label><select id="g-course"><option value="ks3">KS3</option><option value="gcse3">GCSE three-year</option><option value="gcse2">GCSE two-year</option><option value="alevel">A Level</option></select></div>
+        <div id="g-pos-w" style="grid-column:span 2"><label for="g-pos-y">Where they are now</label><div class="posbox"><select id="g-pos-y" aria-label="Scheme-of-work year"></select><select id="g-pos-t" aria-label="Term"></select><select id="g-pos-wk" aria-label="Week"></select></div></div>
+        <div><label for="g-pw">Group password</label><input id="g-pw" type="text" maxlength="40" autocomplete="off"></div>
+      </div>
+      <p class="hint" style="margin:0">Changing a group's password signs out every device in that group, so its students will need the new one.</p>
+      <div class="acts"><button class="btn" type="button" id="g-save">Add group</button><button class="small-btn hidden" type="button" id="g-cancel">Cancel</button></div>
+      <p class="err" id="g-err" role="alert"></p>
+    </div>
+
+    <h2 class="section-h">Teachers</h2>
+    <div class="scroll" id="t-table"></div>
+    <form class="card" id="f-teacher" novalidate style="margin-top:14px">
+      <div class="form">
+        <div><label for="t-name">Name</label><input id="t-name" type="text" maxlength="40" placeholder="e.g. Ms Patel" autocomplete="off"></div>
+        <div><label for="t-email">School email</label><input id="t-email" type="text" placeholder="…@mgs.kent.sch.uk" autocomplete="off"></div>
+        <div><button class="btn" type="submit" id="t-save">Add teacher</button></div>
+      </div>
+      <p class="err" id="t-err" role="alert"></p>
+    </form>
+
+    <h2 class="section-h">Passwords</h2>
+    <form class="card" id="f-site" novalidate>
+      <div class="form"><div><label for="site-new">New site password (all students)</label><input id="site-new" type="text" autocomplete="off" minlength="4"></div><div><button class="btn" type="submit">Change</button></div></div>
+      <p class="err" id="site-err" role="alert"></p>
+    </form>
+    <form class="card" id="f-admin" novalidate style="margin-top:12px">
+      <div class="form"><div><label for="admin-new">New admin password (10 or more characters)</label><input id="admin-new" type="password" autocomplete="new-password"></div><div><button class="btn" type="submit">Change</button></div></div>
+      <p class="hint" style="margin:6px 0 0">The master password always works as well, and it can't be changed here.</p>
+      <p class="err" id="admin-err" role="alert"></p>
+    </form>
+
+    <h2 class="section-h">Showing someone the student view</h2>
+    <div class="card"><p style="margin:0 0 12px">The demo buttons open the student site as a hidden demo group (it never appears in students' group lists). The Year 7 demo has every Level Up and Pitch It! lesson open. Press <b>Sign out</b> on the student page to leave it.</p>
+      <div class="acts"><button class="small-btn" type="button" id="demo">Demo as a Year 7 student ↗</button><button class="small-btn" type="button" id="demo10">Demo as a Year 10 student ↗</button></div></div>
     <h2 class="section-h">Other sites</h2>
     <div class="links">
       <a href="https://cpd.abity.co.uk/admin">Staff CPD admin<small>cpd.abity.co.uk</small></a>
@@ -194,18 +257,6 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
       <a href="https://tools.abity.co.uk/">Teach Tools<small>tools.abity.co.uk</small></a>
       <a href="https://env.abity.co.uk/">Env Sci<small>env.abity.co.uk</small></a>
     </div>
-    <h2 class="section-h">Site password</h2>
-    <form class="card row" id="f-site" novalidate>
-      <div style="flex:1;min-width:220px"><label for="site-new">New site password (all students)</label><input id="site-new" type="text" autocomplete="off" minlength="4"></div>
-      <button class="btn" type="submit">Change</button>
-      <p class="err" id="site-err" role="alert" style="flex-basis:100%"></p>
-    </form>
-    <h2 class="section-h">Admin password</h2>
-    <form class="card row" id="f-admin" novalidate>
-      <div style="flex:1;min-width:220px"><label for="admin-new">New admin password (10 or more characters)</label><input id="admin-new" type="password" autocomplete="new-password"></div>
-      <button class="btn" type="submit">Change</button>
-      <p class="err" id="admin-err" role="alert" style="flex-basis:100%"></p>
-    </form>
   </section>
 </main>
 
@@ -215,166 +266,253 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
-  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
-  var RC = [], PW = null, D = null, year = 7, gid = "all", timer = null, rItem = null, rLesson = null, R = null;
-  var KINDS = { dn: "Do now", hg: "Hinge question", ex: "Exit ticket" };
-  try { PW = sessionStorage.getItem("abity-admin"); } catch (e) {}
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
+  var SITE = location.origin;
+  var COURSES = { ks3: "KS3", gcse3: "GCSE three-year", gcse2: "GCSE two-year", alevel: "A Level" };
+  var PW = null, D = null, HWL = null, SOW = {}, timer = null;
+  var WHO = "", WG = null, VIEW = null;          // teacher filter, group shown on This week, week being viewed
+  try { PW = sessionStorage.getItem("abity-admin"); WHO = localStorage.getItem("abity-admin-who") || ""; WG = localStorage.getItem("abity-admin-group"); } catch (e) {}
 
-  function toast(t) { var d = document.createElement("div"); d.className = "toast"; d.setAttribute("role", "status"); d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 2200); }
+  function toast(t) { var d = document.createElement("div"); d.className = "toast"; d.setAttribute("role", "status"); d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 2400); }
   function call(action, args) {
     return Abity.rpc("site_admin", { p_pw: PW, p_action: action, p_args: args || {} }).then(function (r) {
       if (r.auth === false || r.wait) { logout(r.wait ? "Too many wrong tries. Wait 15 minutes." : "Please log in again."); throw new Error("auth"); }
       return r;
     });
   }
-  function load() { return call("list").then(function (r) { D = r; render(); }); }
+  function load() { return call("list").then(function (r) { D = r; draw(); }); }
+  function hwLoad() { return call("hw_list").then(function (r) { HWL = r; draw(); }); }
   function logout(msg) { PW = null; try { sessionStorage.removeItem("abity-admin"); } catch (e) {} $("tabs").classList.add("hidden"); show("login"); $("login-err").textContent = msg || ""; }
-  function show(id) { ["login", "p-lessons", "p-results", "p-questions", "p-homework", "p-groups", "p-settings"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
-
-  $("f-login").addEventListener("submit", function (e) {
-    e.preventDefault(); PW = $("admin-pw").value;
-    var b = this.querySelector("button"); b.disabled = true;
-    Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) {
-      if (!r.ok) { $("login-err").textContent = r.wait ? "Too many wrong tries. Wait 15 minutes." : "That password isn't right."; PW = null; return; }
-      try { sessionStorage.setItem("abity-admin", PW); } catch (e) {}
-      $("admin-pw").value = ""; D = r; $("tabs").classList.remove("hidden"); tab("lessons");
-    }).catch(function () { $("login-err").textContent = "Can't reach the server."; }).then(function () { b.disabled = false; });
-  });
-  $("logout").addEventListener("click", function () { logout(); });
-  // One-click demo: signs this browser in to a hidden demo group (Year 7, every lesson open; or Year 10 for badges
-  // and class questions) and opens it.
-  function demo(year) {
-    var w = window.open("about:blank", "_blank");
-    call("demo", { year: year }).then(function (r) {
-      if (!r.ok) { if (w) w.close(); toast("Couldn't start the demo."); return; }
-      Abity.setMe({ token: r.token, year: r.year, group: r.group, name: "Demo Student" });
-      if (w) w.location = "/group"; else location.href = "/group";
-    }).catch(function () { if (w) w.close(); });
-  }
-  $("demo").addEventListener("click", function () { demo(7); });
-  document.addEventListener("click", function (e) { if (e.target.closest("#demo10")) demo(10); });
-
-  // Class questions (KS4/5): start a question for a group, watch the answers come in, then reveal the right one
-  var PQ = { groups: [], poll: null };
-  function pqGroups() {
-    call("poll_groups").then(function (r) {
-      PQ.groups = r.groups || [];
-      var cur = $("pq-group").value;
-      $("pq-group").innerHTML = PQ.groups.map(function (g) { return '<option value="' + g.id + '">' + (g.demo ? "Demo (Year " + g.year + ")" : g.year + esc(g.name)) + '</option>'; }).join("") ||
-        '<option value="">No Year 10 to 13 groups yet</option>';
-      if (cur) $("pq-group").value = cur;
-      pqState();
-    }).catch(function () {});
-  }
-  function pqState() {
-    var gid = $("pq-group").value; if (!gid) { $("pq-out").innerHTML = ""; return; }
-    call("poll_state", { group_id: gid }).then(function (r) {
-      PQ.poll = r.poll;
-      $("pq-devices").textContent = r.devices + " device" + (r.devices === 1 ? "" : "s") + " signed in to this group.";
-      var p = r.poll;
-      if (!p) { $("pq-out").innerHTML = '<p class="m" style="color:var(--muted)">No question running. Start one above.</p>'; return; }
-      var labels = p.kind === "tf" ? ["True", "False"] : ["A", "B", "C", "D"], max = Math.max.apply(null, p.counts.concat([1]));
-      $("pq-out").innerHTML = '<p style="margin:0 0 10px;font-weight:700">' + (p.closed ? "Answers closed" : "Answers open") + ' · ' + p.total + ' answer' + (p.total === 1 ? "" : "s") + '</p>' +
-        '<div class="pq-bars">' + labels.map(function (l, i) {
-          return '<div class="pq-bar' + (p.correct === i ? " right" : "") + '"><span class="pq-l">' + l + '</span><span class="pq-track"><i style="width:' + Math.round(100 * p.counts[i] / max) + '%"></i></span><span class="pq-n">' + p.counts[i] + '</span>' +
-            (p.correct == null ? '<button class="small-btn" type="button" data-pqright="' + i + '">Reveal as answer</button>' : (p.correct === i ? '<b style="color:var(--ok)">✓ Answer</b>' : '')) + '</div>';
-        }).join("") + '</div>' +
-        '<div class="row" style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">' + (p.closed ? "" : '<button class="btn ghost" type="button" id="pq-close">Close answers</button>') +
-        '<button class="small-btn" type="button" id="pq-end">Finish this question</button></div>';
-    }).catch(function () {});
-  }
-  function pqStart(kind) {
-    var gid = $("pq-group").value; if (!gid) return;
-    call("poll_start", { group_id: gid, kind: kind }).then(function () { toast("Question started"); pqState(); });
-  }
-  $("pq-abcd").addEventListener("click", function () { pqStart("abcd"); });
-  $("pq-tf").addEventListener("click", function () { pqStart("tf"); });
-  $("pq-group").addEventListener("change", pqState);
-  $("pq-out").addEventListener("click", function (e) {
-    if (!PQ.poll) return;
-    var r = e.target.closest("[data-pqright]");
-    if (r) { call("poll_reveal", { id: PQ.poll.id, correct: Number(r.dataset.pqright) }).then(pqState); return; }
-    if (e.target.closest("#pq-close")) call("poll_close", { id: PQ.poll.id }).then(pqState);
-    if (e.target.closest("#pq-end")) call("poll_end", { id: PQ.poll.id }).then(pqState);
-  });
-  document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
-  function tab(t) {
-    document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
-    show("p-" + t); render();
-    clearInterval(timer); timer = null;
-    if (t === "results") { results(); timer = setInterval(function () { if (!document.hidden) results(true); }, 10000); }
-    if (t === "questions") { pqGroups(); timer = setInterval(function () { if (!document.hidden) pqState(); }, 2000); }
-    if (t === "homework") hwLoad();
+  var PAGES = ["login", "p-week", "p-library", "p-results", "p-questions", "p-settings"], TAB = "week";
+  function show(id) { PAGES.forEach(function (s) { $(s).classList.toggle("hidden", s !== id); }); }
+  function copy(text, done) {
+    var ok = function () { toast(done || "Copied"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, function () { prompt("Copy this:", text); });
+    else prompt("Copy this:", text);
   }
 
-  function groupsOf(y) { return D.groups.filter(function (g) { return g.year === y; }); }
-  function isOn(g, item, lesson) { return D.switches.some(function (s) { return s.group_id === g && s.item === item && s.lesson === lesson; }); }
+  // ---- Scheme of work (static files in /sow) ----
+  function sowLoad(course) {
+    if (SOW[course] !== undefined) return Promise.resolve(SOW[course]);
+    return fetch("/sow/" + course + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      .then(function (j) { SOW[course] = j; return j; });
+  }
+  function sowYears(course) { var s = SOW[course]; return s ? Object.keys(s.years).map(Number) : []; }
+  function weeksOf(course, y) {          // ordered list of {term, week, key} for a scheme-of-work year
+    var s = SOW[course]; if (!s || !s.years[y]) return [];
+    var seen = {}, out = [];
+    s.years[y].lessons.forEach(function (l) { var k = "y" + y + "-t" + l.term + "-w" + l.week; if (!seen[k]) { seen[k] = 1; out.push({ year: +y, term: l.term, week: l.week, key: k }); } });
+    return out;
+  }
+  function lessonsOf(course, w) { var s = SOW[course]; return s && w ? s.years[w.year].lessons.filter(function (l) { return l.term === w.term && l.week === w.week; }) : []; }
+  function hwPlan(course, w) { var s = SOW[course]; return s && w ? (s.years[w.year].homework || []).find(function (h) { return h.term === w.term && h.week === w.week; }) : null; }
+  function termName(course, w) { var s = SOW[course]; return s && w ? s.years[w.year].terms[w.term] || "" : ""; }
+  function built(course, id, kind) { var s = SOW[course]; return !!(s && s.built && s.built[kind] && s.built[kind].indexOf(id) >= 0); }
+  function weekLabel(w) { return "Term " + w.term + ", Week " + w.week; }
+  function groupWeek(g) {               // the group's current scheme-of-work week
+    var ws = weeksOf(g.course, g.pos_year || g.year); if (!ws.length) ws = weeksOf(g.course, sowYears(g.course)[0]);
+    return ws.find(function (w) { return w.term === g.pos_term && w.week === g.pos_week && w.year === (g.pos_year || g.year); }) || ws[0] || null;
+  }
+  function shift(course, w, by) {        // next or previous week, across terms and years
+    var all = []; sowYears(course).forEach(function (y) { all = all.concat(weeksOf(course, y)); });
+    var i = all.findIndex(function (x) { return x.key === w.key; });
+    return all[i + by] || null;
+  }
 
-  function render() {
+  // ---- Who's groups ----
+  function teacher(id) { return (D.teachers || []).find(function (t) { return t.id === id; }); }
+  function groupsShown() { return D.groups.filter(function (g) { return !WHO || g.teacher_id === WHO; }); }
+  function gName(g) { return g.year + g.name; }
+  function sentAt(gid, kind, ref) { var s = (D.sent || []).find(function (x) { return x.group_id === gid && x.kind === kind && x.ref === ref; }); return s ? s.at : null; }
+  function day(t) { return new Date(t).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }); }
+
+  function draw() {
     if (!D) return;
-    // years that have groups or items
-    var years = [7, 8, 9, 10, 11, 12, 13].filter(function (y) { return groupsOf(y).length || D.items.some(function (i) { return i.year === y; }); });
-    if (years.indexOf(year) < 0) year = years[0] || 7;
-    $("years").innerHTML = years.map(function (y) { return '<button type="button" data-y="' + y + '" aria-pressed="' + (y === year) + '">Year ' + y + '</button>'; }).join("");
-    var gs = groupsOf(year);
-    if (gid !== "all" && !gs.some(function (g) { return g.id === gid; })) gid = "all";
-    $("grps").innerHTML = '<button type="button" class="all" data-g="all" aria-pressed="' + (gid === "all") + '">Whole year</button>' +
-      gs.map(function (g) { return '<button type="button" data-g="' + g.id + '" aria-pressed="' + (g.id === gid) + '">' + year + esc(g.name) + '</button>'; }).join("");
+    $("who").innerHTML = '<option value="">Everyone\'s groups</option>' + D.teachers.map(function (t) { return '<option value="' + t.id + '"' + (t.id === WHO ? " selected" : "") + '>' + esc(t.name) + "'s groups</option>"; }).join("");
+    if (TAB === "week") drawWeek();
+    if (TAB === "library") drawLibrary();
+    if (TAB === "settings") drawSettings();
+  }
 
-    var items = D.items.filter(function (i) { return i.year === year; });
-    $("items").innerHTML = !items.length ? '<p class="lede">Nothing set up for Year ' + year + ' yet.</p>' : items.map(function (it) {
-      return '<div class="item"><h2>' + esc(it.title) + '</h2><p class="meta">Term ' + it.term + (gid === "all" ? " · switching here changes every Year " + year + " group" : " · group " + year + esc((gs.find(function (g) { return g.id === gid; }) || {}).name || "")) + '</p><div class="toggles">' +
+  // ================= This week =================
+  function drawWeek() {
+    var gs = groupsShown();
+    if (!gs.some(function (g) { return g.id === WG; })) { WG = gs.length ? gs[0].id : null; VIEW = null; }
+    $("w-groups").innerHTML = gs.map(function (g) {
+      return '<button type="button" data-wg="' + g.id + '" aria-pressed="' + (g.id === WG) + '">' + esc(gName(g)) + ' <small>' + COURSES[g.course] + '</small></button>';
+    }).join("") || '<p class="lede">No groups for this teacher yet. Add them in Groups and settings.</p>';
+    var g = D.groups.find(function (x) { return x.id === WG; });
+    if (!g) { $("w-title").textContent = "This week"; $("w-kick").textContent = ""; $("w-body").innerHTML = ""; return; }
+    var t = teacher(g.teacher_id);
+    if (g.course === "ks3") return drawKS3(g, t);
+    sowLoad(g.course).then(function (s) {
+      if (WG !== g.id) return;
+      if (!s) {
+        $("w-kick").textContent = COURSES[g.course] + " · " + (t ? t.name : "no teacher");
+        $("w-title").textContent = gName(g);
+        $("w-body").innerHTML = '<div class="step"><p style="margin:0">There is no scheme of work loaded for the <b>' + COURSES[g.course] + '</b> course yet, so this group has no week-by-week plan. ' +
+          'Its homeworks are in the Homework library. To use the two-year plan, change the group\'s course in Groups and settings.</p></div>';
+        return;
+      }
+      drawGcse(g, t);
+    });
+  }
+
+  function drawKS3(g, t) {
+    $("w-kick").textContent = "KS3 · " + (t ? t.name : "no teacher") + " · tap a lesson to open or close it for this group";
+    $("w-title").textContent = gName(g) + ": workbooks";
+    var items = D.items.filter(function (i) { return i.year === g.year; });
+    var isOn = function (item, lesson) { return D.switches.some(function (s) { return s.group_id === g.id && s.item === item && s.lesson === lesson; }); };
+    var same = D.groups.filter(function (x) { return x.year === g.year && x.course === "ks3"; }).length;
+    $("w-body").innerHTML = (same > 1 ? '<label class="note" style="display:flex;gap:8px;align-items:center;margin:0 0 14px"><input type="checkbox" id="ks3-all"> Change every Year ' + g.year + ' KS3 group at once (' + same + ' groups)</label>' : '') +
+      (!items.length ? '<p class="lede">Nothing set up for Year ' + g.year + ' yet.</p>' : items.map(function (it) {
+      return '<div class="item"><h2>' + esc(it.title) + '</h2><p class="meta">Term ' + it.term + '</p><div class="toggles">' +
         it.lessons.map(function (l) {
-          var n = gs.filter(function (g) { return isOn(g.id, it.item, l.lesson); }).length;
-          var on = gid === "all" ? (gs.length > 0 && n === gs.length) : isOn(gid, it.item, l.lesson);
-          var some = gid === "all" && n > 0 && n < gs.length;
-          var st = gid === "all" ? (n === 0 ? "Off everywhere" : n === gs.length ? "On for all " + n : "On for " + n + " of " + gs.length) : (on ? "On" : "Off");
-          var label = l.lesson === "WS" ? "Workshop" : "Lesson " + l.lesson.slice(1);
-          return '<button type="button" class="tog' + (some ? " some" : "") + '" aria-pressed="' + on + '" data-item="' + it.item + '" data-lesson="' + l.lesson + '">' +
-            '<b>' + label + '</b><small>' + esc(l.lesson === "WS" ? "Extra quests" : l.title) + '</small><span class="st">' + st + '</span></button>';
+          var on = isOn(it.item, l.lesson), label = l.lesson === "WS" ? "Workshop" : "Lesson " + l.lesson.slice(1);
+          return '<button type="button" class="tog" aria-pressed="' + on + '" data-item="' + it.item + '" data-lesson="' + l.lesson + '">' +
+            '<b>' + label + '</b><small>' + esc(l.lesson === "WS" ? "Extra quests" : l.title) + '</small><span class="st">' + (on ? "Open" : "Closed") + '</span></button>';
         }).join("") + '</div></div>';
-    }).join("");
-
-    // groups table
-    var all = D.groups.slice();
-    $("group-table").innerHTML = !all.length ? "<p>No groups yet.</p>" : '<table><thead><tr><th>Group</th><th>Password</th><th></th></tr></thead><tbody>' +
-      all.map(function (g) {
-        return '<tr><td><b>' + g.year + esc(g.name) + '</b></td><td><label class="sr" for="pw-' + g.id + '">Password for ' + g.year + esc(g.name) + '</label><input id="pw-' + g.id + '" type="text" value="' + esc(g.pw) + '" autocomplete="off"></td>' +
-          '<td style="text-align:right;white-space:nowrap"><button class="small-btn" type="button" data-save="' + g.id + '">Save password</button> <button class="small-btn danger" type="button" data-del="' + g.id + '">Delete</button></td></tr>';
-      }).join("") + '</tbody></table>';
+    }).join(""));
   }
 
-  // ---- Homework ----
-  var HWL = null, hwEditId = null, hwParsed = null;
-  var SITE = location.origin;
-  function hwLoad() {
-    call("hw_list").then(function (r) { HWL = r; $("hw-email").value = r.email || ""; hwDraw(); aiDraw(r.ai); }).catch(function () {});
+  function prepLink(l) { return SITE + "/gcse/" + l.id; }
+  function hwFor(g, w) { return HWL && w ? HWL.homeworks.find(function (h) { return h.course === g.course && h.sow_id === w.key; }) : null; }
+
+  function drawGcse(g, t) {
+    var cur = groupWeek(g); if (!cur) { $("w-body").innerHTML = '<p class="lede">The scheme of work has no weeks.</p>'; return; }
+    if (!VIEW || VIEW.course !== g.course || !weeksOf(g.course, VIEW.year).some(function (x) { return x.key === VIEW.key; })) VIEW = Object.assign({ course: g.course }, cur);
+    var w = VIEW, isCur = w.key === cur.key, ls = lessonsOf(g.course, w), next = shift(g.course, w, 1), prev = shift(g.course, w, -1);
+    var nls = lessonsOf(g.course, next), hw = hwFor(g, w), plan = hwPlan(g.course, w);
+    $("w-kick").textContent = COURSES[g.course] + " · Year " + w.year + " plan · " + (t ? t.name : "no teacher") + " · " + ls.length + " lesson" + (ls.length === 1 ? "" : "s") + " this week";
+    $("w-title").textContent = gName(g) + ": " + (termName(g.course, w) || weekLabel(w));
+
+    var prepSent = sentAt(g.id, "prep", w.key), hwSent = hw && sentAt(g.id, "hw", hw.id), nextSent = next && sentAt(g.id, "prep", next.key);
+    var wsOpen = ls.filter(function (l) { return sentAt(g.id, "ws", l.id); }).length;
+    var stage = !prepSent ? 1 : (hw && !hwSent) ? 2 : wsOpen < ls.filter(function (l) { return l.kind === "lesson"; }).length ? 3 : 4;
+    var num = function (n, done) { return '<span class="num' + (done ? " done" : "") + '">' + (done ? "✓" : n) + '</span>'; };
+    var lessonLine = function (l) { return '<b>Lesson ' + l.lesson + ' · ' + esc(l.focus) + '</b><span class="m">' + esc(l.spec ? "Spec " + l.spec + " · " : "") + esc(l.topic) + '</span>'; };
+
+    var html = '<div class="weekbar">' +
+      '<button class="small-btn" type="button" data-view="-1"' + (prev ? "" : " disabled") + '>← ' + (prev ? weekLabel(prev) : "Start") + '</button>' +
+      '<span class="now">' + weekLabel(w) + (isCur ? " · this week" : "") + '</span>' +
+      '<button class="small-btn" type="button" data-view="1"' + (next ? "" : " disabled") + '>' + (next ? weekLabel(next) : "End") + ' →</button>' +
+      (isCur ? '' : '<button class="small-btn" type="button" data-view="0">Back to this week</button><button class="small-btn main" type="button" data-setpos="' + w.key + '">Make this ' + esc(gName(g)) + '\'s current week</button>') +
+      '</div><div class="wk"><div class="wk-main">';
+
+    // 1. Preps for this week (sent the Friday before)
+    html += '<section class="step' + (stage === 1 ? " now" : "") + '"><div class="step-h"><div>' + num(1, prepSent) + '<div><h2>Preps for this week</h2><p>' +
+      (prepSent ? "Sent " + day(prepSent) : "Send these the Friday before") + '</p></div></div>' +
+      (prepSent ? '<button class="small-btn" type="button" data-unmark="prep|' + w.key + '">Mark as not sent</button>' : '<button class="small-btn main" type="button" data-prep="' + w.key + '">Copy Teams message</button>') + '</div>' +
+      ls.map(function (l) { return '<div class="row-i"><div>' + lessonLine(l) + '</div><span class="pill ' + (built(g.course, l.id, "prep") ? "ok\">Prep ready" : "off\">Prep not built yet") + '</span></div>'; }).join("") + '</section>';
+
+    // 2. Homework (set Monday, due Friday after school)
+    html += '<section class="step' + (stage === 2 ? " now" : "") + '"><div class="step-h"><div>' + num(2, hwSent) + '<div><h2>Monday: homework</h2><p>' +
+      (hwSent ? "Sent " + day(hwSent) + " · due Friday after school" : "Due Friday after school") + '</p></div></div>' +
+      (hw ? '<span class="pill ' + (hwSent ? 'ok">Sent' : 'todo">To send') + '</span>' : '<span class="pill off">Not built yet</span>') + '</div>';
+    if (hw) html += '<div class="row-i"><div><b>' + esc(hw.title) + '</b><span class="m">' + hw.total + ' marks · ' + hw.submitted + ' handed in' + (hw.awaiting ? ' · ' + hw.awaiting + ' on a follow-up' : '') + (hw.open ? '' : ' · closed') + '</span></div><div class="acts">' +
+      '<a class="small-btn" href="' + esc(SITE + "/hw/" + hw.code) + '?preview=1" target="_blank" rel="noopener">Preview</a>' +
+      (hwSent ? '<button class="small-btn" type="button" data-hwmsg="' + hw.id + '">Copy again</button><button class="small-btn" type="button" data-unmark="hw|' + hw.id + '">Mark as not sent</button>'
+              : '<button class="small-btn main" type="button" data-hwmsg="' + hw.id + '">Copy Teams message</button>') + '</div></div>';
+    else if (plan) html += '<p class="note">Planned: <b>' + esc(plan.new) + '</b>' + (plan.recent && plan.recent !== "–" ? '; recent: ' + esc(plan.recent) : '') + (plan.distant && plan.distant !== "–" ? '; distant: ' + esc(plan.distant) : '') + '. It appears here once it is in the library.</p>';
+    else html += '<p class="note">No homework is planned for this week.</p>';
+    html += '</section>';
+
+    // 3. Worksheets in class
+    html += '<section class="step' + (stage === 3 ? " now" : "") + '"><div class="step-h"><div>' + num(3, ls.length && wsOpen === ls.length) + '<div><h2>In class: worksheets</h2><p>Open each one at the start of its lesson. Opened worksheets stay open.</p></div></div></div>' +
+      ls.map(function (l) {
+        var at = sentAt(g.id, "ws", l.id), b = built(g.course, l.id, "ws");
+        if (l.kind !== "lesson") return '<div class="row-i"><div>' + lessonLine(l) + '</div><span class="pill off">' + (l.kind === "assess" ? "Assessment" : "Feedback lesson") + '</span></div>';
+        return '<div class="row-i"' + (at ? '' : ' style="border-color:var(--navy)"') + '><div>' + lessonLine(l) + (at ? '<span class="m">Opened ' + day(at) + '</span>' : '') + '</div><div class="acts">' +
+          (b ? '' : '<span class="pill off">Not built yet</span>') +
+          (at ? '<span class="pill ok">Open</span><button class="small-btn" type="button" data-ws="' + l.id + '" data-on="false">Close</button>'
+              : '<button class="small-btn main" type="button" data-ws="' + l.id + '" data-on="true">Open worksheet</button>') + '</div></div>';
+      }).join("") + '</section>';
+
+    // 4. Preps for next week, then move on
+    html += '<section class="step' + (stage === 4 ? " now" : "") + '"><div class="step-h"><div>' + num(4, nextSent) + '<div><h2>Friday: preps for next week</h2><p>' +
+      (next ? weekLabel(next) + " has " + nls.length + " lesson" + (nls.length === 1 ? "" : "s") + (nextSent ? " · sent " + day(nextSent) : "") : "This is the last week of the plan") + '</p></div></div>' +
+      (next ? (nextSent ? '<button class="small-btn" type="button" data-prep="' + next.key + '">Copy again</button>' : '<button class="small-btn main" type="button" data-prep="' + next.key + '">Copy Teams message</button>') : '') + '</div>' +
+      nls.map(function (l) { return '<div class="row-i"><div>' + lessonLine(l) + '</div><span class="pill ' + (built(g.course, l.id, "prep") ? "ok\">Prep ready" : "off\">Prep not built yet") + '</span></div>'; }).join("") +
+      (next && isCur ? '<div class="acts" style="margin-top:12px"><button class="small-btn main" type="button" data-setpos="' + next.key + '">Week done: move ' + esc(gName(g)) + ' on to ' + weekLabel(next) + '</button></div>' : '') + '</section>';
+
+    // Side: what's come in, and what needs you
+    var recent = HWL ? HWL.homeworks.filter(function (h) { return h.course === g.course && h.sow_id; }).filter(function (h) { return sentAt(g.id, "hw", h.id); }).slice(0, 3) : [];
+    html += '</div><aside class="wk-side"><div class="side"><h2>Homework coming in</h2>' + (recent.length ? recent.map(function (h) {
+      return '<div style="margin:0 0 10px"><div style="display:flex;justify-content:space-between;gap:8px"><span>' + esc(h.title) + '</span><b>' + h.submitted + '</b></div>' +
+        '<span class="hint" style="margin:0">handed in, all groups' + (h.awaiting ? ' · ' + h.awaiting + ' on a follow-up' : '') + '</span></div>';
+    }).join("") : '<p class="hint" style="margin:0">Nothing sent to this group yet.</p>') +
+      '<p class="hint" style="margin:6px 0 0">Each hand-in is emailed to ' + esc(t ? t.name + " (" + t.email + ")" : (HWL && HWL.email) || "the main school address") + '.</p></div>' +
+      '<div class="side"><h2>Moving at a different pace?</h2><p class="hint" style="margin:0">Use the arrows to look at any week, then <b>Make this ' + esc(gName(g)) + '\'s current week</b> to move the group back or forward.</p></div></aside></div>';
+    $("w-body").innerHTML = html;
   }
-  // AI marking used today against this site's daily budget (Cloudflare's free allowance is 10,000 a day for the account)
+
+  function prepMessage(g, key) {
+    var w = null; sowYears(g.course).some(function (y) { w = weeksOf(g.course, y).find(function (x) { return x.key === key; }); return !!w; });
+    var ls = lessonsOf(g.course, w).filter(function (l) { return l.kind === "lesson"; });
+    return "Computer Science prep for " + weekLabel(w) + ". Please work through each page before its lesson:\n" +
+      ls.map(function (l) { return "• Lesson " + l.lesson + ": " + l.focus + " " + prepLink(l); }).join("\n");
+  }
+  function mark(g, kind, ref, on) { return call("mark", { group_id: g.id, kind: kind, ref: ref, on: on }).then(load); }
+
+  // ================= Homework library =================
+  var LIB = { course: "gcse2", year: 10 };
+  function drawLibrary() {
+    if (!HWL) { $("l-list").innerHTML = '<p class="lede">Loading…</p>'; return; }
+    aiDraw(HWL.ai);
+    sowLoad("gcse2").then(function () {
+      var opts = sowYears("gcse2").map(function (y) { return { course: "gcse2", year: y, label: "GCSE two-year · Year " + y }; });
+      $("l-course").innerHTML = opts.map(function (o) { return '<button type="button" data-lib="' + o.course + "|" + o.year + '" aria-pressed="' + (o.course === LIB.course && o.year === LIB.year) + '">' + o.label + '</button>'; }).join("");
+      var s = SOW[LIB.course], plan = s ? s.years[LIB.year].homework : [], ready = 0, html = "", lastT = 0;
+      var cur = {}; D.groups.forEach(function (g) { if (g.course === LIB.course) { var w = groupWeek(g); if (w) cur[w.key] = (cur[w.key] || []).concat(gName(g)); } });
+      plan.forEach(function (p) {
+        var key = p.id, h = HWL.homeworks.find(function (x) { return x.course === LIB.course && x.sow_id === key; });
+        if (h) ready++;
+        if (p.term !== lastT) { html += '<h2 class="lib-t">Term ' + p.term + ': ' + esc(s.years[LIB.year].terms[p.term] || "") + '</h2>'; lastT = p.term; }
+        var sentTo = h ? D.groups.filter(function (g) { return sentAt(g.id, "hw", h.id); }).map(gName) : [];
+        html += '<div class="row-i' + (cur[key] ? " this" : "") + '"><span class="wkl">T' + p.term + ' · W' + p.week + '</span><div><b>' + esc(h ? h.title : p.new) + ' <span class="m" style="display:inline">· ' + esc(p.type) + '</span></b>' +
+          '<span class="m">' + (p.recent && p.recent !== "–" ? "Recent: " + esc(p.recent) : "") + (p.distant && p.distant !== "–" ? " · Distant: " + esc(p.distant) : "") + '</span>' +
+          (cur[key] ? '<span class="m" style="color:var(--navy);font-weight:800">This week for ' + esc(cur[key].join(", ")) + '</span>' : '') +
+          (sentTo.length ? '<span class="m">Sent to ' + esc(sentTo.join(", ")) + ' · ' + h.submitted + ' handed in</span>' : '') + '</div><div class="acts">' +
+          (h ? (h.open ? '<span class="pill ok">Ready</span>' : '<span class="pill off">Closed</span>') + hwButtons(h) : '<span class="pill off">Not built yet</span>') + '</div></div>';
+      });
+      $("l-tiles").innerHTML = '<div class="tile"><b>' + ready + '</b> ready</div><div class="tile"><b>' + (plan.length - ready) + '</b> still to build for Year ' + LIB.year + '</div>';
+      $("l-list").innerHTML = html;
+      var other = HWL.homeworks.filter(function (h) { return !h.sow_id; });
+      $("l-other").innerHTML = other.length ? '<h2 class="lib-t">Other homeworks</h2>' + other.map(function (h) {
+        return '<div class="row-i"><div><b>' + esc(h.title) + '</b><span class="m">' + (h.course ? COURSES[h.course] : "Year " + h.year) + ' · ' + h.total + ' marks · ' + h.submitted + ' handed in · added ' + new Date(h.created_at).toLocaleDateString("en-GB") + '</span></div><div class="acts">' +
+          (h.open ? '<span class="pill ok">Open</span>' : '<span class="pill off">Closed</span>') + hwButtons(h) + '</div></div>';
+      }).join("") : "";
+      sowOptions();
+    });
+  }
+  function hwButtons(h) {
+    var link = SITE + "/hw/" + h.code;
+    return '<a class="small-btn" href="' + esc(link) + '?preview=1" target="_blank" rel="noopener">Preview</a>' +
+      '<button class="small-btn main" type="button" data-hcopy="' + esc(link) + '">Copy link</button>' +
+      '<details style="position:relative"><summary class="small-btn" style="list-style:none">More</summary><div class="acts" style="position:absolute;right:0;z-index:3;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;box-shadow:0 8px 20px rgba(15,23,42,.12);flex-direction:column;align-items:stretch;min-width:170px">' +
+      '<button class="small-btn" type="button" data-hopen="' + h.id + '" data-on="' + (!h.open) + '">' + (h.open ? "Close" : "Open") + '</button>' +
+      '<button class="small-btn" type="button" data-hedit="' + h.id + '">Replace</button>' +
+      '<button class="small-btn" type="button" data-hreset="' + h.id + '">Allow redo</button>' +
+      '<button class="small-btn danger" type="button" data-hdel="' + h.id + '">Delete</button></div></details>';
+  }
   function aiDraw(ai) {
     if (!ai) return;
-    var BUDGET = 8000, t = ai.today || 0, pct = Math.min(100, Math.round(100 * t / BUDGET)), wk = (ai.days || []).slice(0, 7);
+    var BUDGET = 8000, t = ai.today || 0, pct = Math.min(100, Math.round(100 * t / BUDGET));
     $("hw-ai").innerHTML = '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><b>AI marking today</b>' +
-      '<span class="hint">' + t.toLocaleString() + ' of ' + BUDGET.toLocaleString() + ' units · resets at midnight UTC · about 70 per worksheet</span></div>' +
-      '<div style="height:10px;background:var(--lock-soft);border-radius:999px;overflow:hidden;margin:8px 0"><i style="display:block;height:100%;width:' + pct + '%;background:' + (pct >= 90 ? "var(--bad)" : pct >= 70 ? "#d97706" : "var(--navy)") + '"></i></div>' +
-      '<p class="hint" style="margin:0">' + (pct >= 100 ? "Limit reached: written answers handed in today go to you to mark. Everything else is still marked automatically." : "If the limit is reached, written answers go to you to mark instead, so nothing is charged and nothing fails.") +
-      (wk.length ? ' Last 7 days: ' + wk.map(function (d) { return new Date(d.day).toLocaleDateString("en-GB", { weekday: "short" }) + " " + d.neurons; }).join(", ") + '.' : '') + '</p>';
+      '<span class="hint" style="margin:0">' + t.toLocaleString() + ' of ' + BUDGET.toLocaleString() + ' units · resets at midnight UTC</span></div>' +
+      '<div class="bar2"><i style="width:' + pct + '%;background:' + (pct >= 90 ? "var(--bad)" : pct >= 70 ? "#d97706" : "var(--navy)") + '"></i></div>' +
+      '<p class="hint" style="margin:0">' + (pct >= 100 ? "Limit reached: written answers handed in today go to the teacher to mark." : "If the limit is reached, written answers go to the teacher to mark instead, so nothing is charged and nothing fails.") + '</p>';
   }
-  function hwDraw() {
-    var list = HWL.homeworks;
-    $("hw-list").innerHTML = !list.length ? '<p class="lede">No homework yet. Add one below.</p>' : list.map(function (h) {
-      var link = SITE + "/hw/" + h.code;
-      return '<div class="hwc' + (h.open ? "" : " closed") + '"><h3>' + esc(h.title) + '<span class="status ' + (h.open ? "on" : "off") + '">' + (h.open ? "Open" : "Closed") + '</span></h3>' +
-        '<p class="m">Year ' + h.year + (h.spec ? " · " + esc(h.spec) : "") + ' · ' + h.total + ' marks · ' + h.submitted + ' handed in' + (h.awaiting ? ' · ' + h.awaiting + ' awaiting follow-up' : '') + ' · added ' + new Date(h.created_at).toLocaleDateString("en-GB") + '</p>' +
-        '<div class="link">' + esc(link) + '</div><div class="acts">' +
-        '<button class="small-btn" type="button" data-hcopy="' + esc(link) + '">Copy link for Teams</button>' +
-        '<a class="small-btn" style="text-decoration:none;color:var(--ink)" href="' + esc(link) + '?preview=1" target="_blank" rel="noopener">Preview</a>' +
-        '<button class="small-btn" type="button" data-hopen="' + h.id + '" data-on="' + (!h.open) + '">' + (h.open ? "Close" : "Open") + '</button>' +
-        '<button class="small-btn" type="button" data-hedit="' + h.id + '">Edit</button>' +
-        '<button class="small-btn" type="button" data-hreset="' + h.id + '">Allow redo</button>' +
-        '<button class="small-btn danger" type="button" data-hdel="' + h.id + '">Delete</button></div></div>';
-    }).join("");
+  function sowOptions() {
+    var c = $("hw-course").value, y = +$("hw-year").value, cur = $("hw-sow").value;
+    var plan = SOW[c] && SOW[c].years[y] ? SOW[c].years[y].homework : [];
+    $("hw-sow").innerHTML = '<option value="">Not part of the plan</option>' + plan.map(function (p) { return '<option value="' + p.id + '">Term ' + p.term + ', Week ' + p.week + ': ' + esc(p.new.slice(0, 50)) + '</option>'; }).join("");
+    if (cur) $("hw-sow").value = cur;
   }
+  $("hw-course").addEventListener("change", function () { sowLoad(this.value).then(sowOptions); });
+  $("hw-year").addEventListener("change", sowOptions);
+
+  var hwEditId = null, hwParsed = null;
   function hwCheck() {
     var text = $("hw-text").value;
     hwParsed = null; $("hw-publish").disabled = true; $("hw-err").textContent = "";
@@ -382,16 +520,16 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     if (!text.trim()) { $("hw-err").textContent = "Choose a file or paste the homework text."; return; }
     var p = window.HWCore.parseHomework(text), hw = p.homework, qs = [].concat.apply([], hw.sections.map(function (s) { return s.questions; }));
     var counts = {}; qs.forEach(function (q) { var t = q.type === "long" || q.type === "short" ? "written" : q.type; counts[t] = (counts[t] || 0) + 1; });
-    var names = { mcq: "multiple choice", tf: "true/false", quick: "quick", written: "written (AI-marked)" };
-    var html = '<h3 style="margin:10px 0 4px;font-family:var(--head);font-weight:600">' + esc(hw.title || "(no title)") + '</h3><p class="m" style="color:var(--muted);margin:0 0 8px">' +
-      qs.length + ' questions · ' + hw.totalMarks + ' marks · ' + Object.keys(counts).map(function (k) { return counts[k] + " " + names[k]; }).join(", ") + '</p>' +
-      p.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join("");
+    var names = { mcq: "multiple choice", tf: "true/false", quick: "quick", written: "written (AI-marked)", code: "code", examiner: "be the examiner" };
+    var html = '<h3 style="margin:10px 0 4px;font-family:var(--head);font-weight:600">' + esc(hw.title || "(no title)") + '</h3><p class="hint" style="margin:0 0 8px">' +
+      qs.length + ' questions · ' + hw.totalMarks + ' marks · ' + Object.keys(counts).map(function (k) { return counts[k] + " " + (names[k] || k); }).join(", ") + '</p>' +
+      p.warnings.map(function (w) { return '<div class="warnbox">' + esc(w) + '</div>'; }).join("");
     hw.sections.forEach(function (s) {
       if (s.name) html += '<h4 class="kind-h">' + esc(s.name) + '</h4>';
       s.questions.forEach(function (q) {
         var t = q.type === "long" || q.type === "short" ? "written" : q.type;
         var ans = q.type === "mcq" ? (q.correct ? "Answer: " + q.correct : "") : q.type === "quick" ? "Accepts: " + (q.accepted || []).join(" | ") : q.answer;
-        html += '<div class="pv-q"><b>' + q.num + '.</b> ' + esc(q.text) + ' <span class="badge">' + names[t] + '</span><span class="badge">' + q.marks + ' mark' + (q.marks > 1 ? "s" : "") + '</span>' +
+        html += '<div class="pv-q"><b>' + q.num + '.</b> ' + esc(q.text) + ' <span class="badge">' + (names[t] || t) + '</span><span class="badge">' + q.marks + ' mark' + (q.marks > 1 ? "s" : "") + '</span>' +
           (q.options.length ? '<div>' + q.options.map(function (o) { return esc(o.key + ") " + o.text); }).join("<br>") + '</div>' : '') + (ans ? '<pre>' + esc(ans) + '</pre>' : '') +
           (q.followups || []).map(function (f) { return '<div class="pv-fu"><b>Follow-up</b> [' + f.marks + '] ' + esc(f.text) + (f.answer ? '<pre>' + esc(f.answer) + '</pre>' : '') + '</div>'; }).join("") + '</div>';
       });
@@ -415,137 +553,87 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
   $("hw-publish").addEventListener("click", function () {
     if (!hwParsed) return;
     var hw = hwParsed.hw, b = this; b.disabled = true;
-    call("hw_save", { id: hwEditId || "", year: +$("hw-year").value, title: hw.title, spec: hw.spec || "", source: hwParsed.text,
-      data: hw, student: window.HWCore.studentView(hw), total: hw.totalMarks }).then(function (r) {
+    var sow = $("hw-sow").value, clash = sow && HWL.homeworks.find(function (h) { return h.course === $("hw-course").value && h.sow_id === sow && h.id !== hwEditId; });
+    if (clash && !confirm("“" + clash.title + "” is already the homework for that week. Replace it in the plan with this one? The old one stays under Other homeworks.")) { b.disabled = false; return; }
+    // The homework that held this week keeps its link and moves to Other homeworks (hw_save needs the whole record)
+    var pre = clash ? call("hw_get", { id: clash.id }).then(function (old) {
+      var o = old.homework; return call("hw_save", { id: o.id, year: o.year, title: o.title, spec: o.data.spec || "", source: o.source, data: o.data, student: window.HWCore.studentView(o.data), total: o.data.totalMarks, course: o.course || "", sow_id: "" });
+    }) : Promise.resolve();
+    pre.then(function () {
+      return call("hw_save", { id: hwEditId || "", year: +$("hw-year").value, title: hw.title, spec: hw.spec || "", source: hwParsed.text,
+        data: hw, student: window.HWCore.studentView(hw), total: hw.totalMarks, course: $("hw-course").value, sow_id: sow });
+    }).then(function (r) {
       if (!r.ok) { $("hw-err").textContent = r.error || "Couldn't save."; b.disabled = false; return; }
-      toast(hwEditId ? "Homework updated" : "Published. Copy the link below.");
-      hwResetForm(); hwLoad(); window.scrollTo({ top: 0, behavior: "smooth" });
+      toast(hwEditId ? "Homework replaced" : "Published"); hwResetForm(); $("hw-more").open = false; hwLoad(); window.scrollTo({ top: 0, behavior: "smooth" });
     }).catch(function () { b.disabled = false; });
   });
-  $("f-email").addEventListener("submit", function (e) {
-    e.preventDefault();
-    call("teacher_email", { email: $("hw-email").value.trim() }).then(function (r) {
-      $("email-err").textContent = r.ok ? "" : (r.error || "Couldn't save."); if (r.ok) toast("Saved");
+
+  // ================= Groups and settings =================
+  var GEDIT = null;
+  function drawSettings() {
+    $("g-table").innerHTML = '<table><thead><tr><th>Group</th><th>Teacher</th><th>Course</th><th>Where they are</th><th>Password</th><th><span class="sr">Actions</span></th></tr></thead><tbody>' +
+      D.groups.map(function (g) {
+        var t = teacher(g.teacher_id), w = g.course !== "ks3" && SOW[g.course] ? groupWeek(g) : null;
+        return '<tr' + (GEDIT === g.id ? ' style="background:var(--navy-soft)"' : '') + '><td><b>' + esc(gName(g)) + '</b></td><td>' + (t ? esc(t.name) : '<span class="pill todo">None</span>') + '</td><td>' + COURSES[g.course] +
+          '</td><td>' + (g.course === "ks3" ? "Workbook switches" : w ? "Year " + w.year + " plan, " + weekLabel(w) : "–") + '</td><td>' + esc(g.pw) + '</td>' +
+          '<td style="text-align:right;white-space:nowrap"><button class="small-btn" type="button" data-gedit="' + g.id + '">Edit</button> <button class="small-btn danger" type="button" data-gdel="' + g.id + '">Delete</button></td></tr>';
+      }).join("") + '</tbody></table>';
+    $("t-table").innerHTML = '<table><thead><tr><th>Teacher</th><th>School email</th><th>Groups</th><th><span class="sr">Actions</span></th></tr></thead><tbody>' +
+      D.teachers.map(function (t) {
+        var n = D.groups.filter(function (g) { return g.teacher_id === t.id; }).map(gName);
+        return '<tr><td><label class="sr" for="tn-' + t.id + '">Name</label><input id="tn-' + t.id + '" type="text" value="' + esc(t.name) + '" maxlength="40" style="font:inherit;padding:8px;border:1px solid var(--field);border-radius:8px;width:100%"></td>' +
+          '<td><label class="sr" for="te-' + t.id + '">Email</label><input id="te-' + t.id + '" type="text" value="' + esc(t.email) + '" style="font:inherit;padding:8px;border:1px solid var(--field);border-radius:8px;width:100%;min-width:220px"></td>' +
+          '<td>' + (n.length ? esc(n.join(", ")) : '<span class="hint" style="margin:0">None</span>') + '</td>' +
+          '<td style="text-align:right;white-space:nowrap"><button class="small-btn" type="button" data-tsave="' + t.id + '">Save</button> <button class="small-btn danger" type="button" data-tdel="' + t.id + '">Remove</button></td></tr>';
+      }).join("") + '</tbody></table>';
+    var sel = $("g-teacher").value;
+    $("g-teacher").innerHTML = '<option value="">No teacher</option>' + D.teachers.map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join("");
+    $("g-teacher").value = sel || (WHO || (D.teachers[0] || {}).id || "");
+    posOptions();
+  }
+  function posOptions(keep) {
+    var c = $("g-course").value, has = c !== "ks3" && SOW[c];
+    $("g-pos-w").style.display = has ? "" : "none";
+    if (c !== "ks3" && SOW[c] === undefined) { sowLoad(c).then(function () { posOptions(keep); }); return; }
+    if (!has) return;
+    var y = keep ? keep.y : +$("g-pos-y").value, ys = sowYears(c);
+    if (ys.indexOf(y) < 0) y = ys.indexOf(+$("g-year").value) >= 0 ? +$("g-year").value : ys[0];
+    $("g-pos-y").innerHTML = ys.map(function (v) { return '<option value="' + v + '">Year ' + v + ' plan</option>'; }).join(""); $("g-pos-y").value = y;
+    var ws = weeksOf(c, y), terms = ws.map(function (w) { return w.term; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    var t = keep ? keep.t : +$("g-pos-t").value; if (terms.indexOf(t) < 0) t = terms[0];
+    $("g-pos-t").innerHTML = terms.map(function (v) { return '<option value="' + v + '">Term ' + v + '</option>'; }).join(""); $("g-pos-t").value = t;
+    var wks = ws.filter(function (w) { return w.term === t; }).map(function (w) { return w.week; });
+    var k = keep ? keep.w : +$("g-pos-wk").value; if (wks.indexOf(k) < 0) k = wks[0];
+    $("g-pos-wk").innerHTML = wks.map(function (v) { return '<option value="' + v + '">Week ' + v + '</option>'; }).join(""); $("g-pos-wk").value = k;
+  }
+  ["g-course", "g-pos-y", "g-pos-t", "g-year"].forEach(function (id) { $(id).addEventListener("change", function () { posOptions(); }); });
+  function gForm(g) {
+    GEDIT = g ? g.id : null;
+    $("g-form-h").textContent = g ? "Edit " + gName(g) : "Add a group"; $("g-save").textContent = g ? "Save changes" : "Add group";
+    $("g-cancel").classList.toggle("hidden", !g); $("g-err").textContent = "";
+    $("g-year").value = g ? String(g.year) : "10"; $("g-name").value = g ? g.name : ""; $("g-pw").value = g ? g.pw : "";
+    $("g-course").value = g ? g.course : "gcse2"; $("g-teacher").value = g ? (g.teacher_id || "") : (WHO || (D.teachers[0] || {}).id || "");
+    posOptions(g && g.pos_term ? { y: g.pos_year, t: g.pos_term, w: g.pos_week } : null);
+    drawSettings();
+  }
+  $("g-cancel").addEventListener("click", function () { gForm(null); });
+  $("g-save").addEventListener("click", function () {
+    var name = $("g-name").value.trim(), pw = $("g-pw").value.trim(), c = $("g-course").value, has = c !== "ks3" && SOW[c];
+    var old = GEDIT && D.groups.find(function (x) { return x.id === GEDIT; });
+    if (!name) { $("g-err").textContent = "Give the group a name."; return; }
+    if (pw.length < 4) { $("g-err").textContent = "Give the group a password of 4 or more characters."; return; }
+    if (old && old.pw !== pw.toLowerCase() && !confirm("Change " + gName(old) + "'s password? Every device signed in to it will be signed out.")) return;
+    call("group_save", { id: GEDIT || "", year: +$("g-year").value, name: name, pw: pw, teacher_id: $("g-teacher").value, course: c,
+      pos_year: has ? $("g-pos-y").value : "", pos_term: has ? $("g-pos-t").value : "", pos_week: has ? $("g-pos-wk").value : "" }).then(function (r) {
+      if (!r.ok) { $("g-err").textContent = r.error || "Couldn't save."; return; }
+      toast(GEDIT ? "Saved" : "Group added"); GEDIT = null; return load().then(function () { gForm(null); });
     }).catch(function () {});
   });
-
-  function results(quiet) {
-    if (!D) return;
-    var items = D.items.filter(function (i) { return i.year === year; });
-    if (!items.some(function (i) { return i.item === rItem; })) { rItem = items.length ? items[0].item : null; rLesson = null; }
-    var gs = groupsOf(year);
-    $("r-years").innerHTML = $("years").innerHTML.replace(/data-y=/g, "data-ry=");
-    $("r-grps").innerHTML = '<button type="button" class="all" data-rg="all" aria-pressed="' + (gid === "all") + '">Whole year</button>' +
-      gs.map(function (g) { return '<button type="button" data-rg="' + g.id + '" aria-pressed="' + (g.id === gid) + '">' + year + esc(g.name) + '</button>'; }).join("");
-    $("r-items").innerHTML = items.map(function (i) { return '<button type="button" data-ri="' + i.item + '" aria-pressed="' + (i.item === rItem) + '">' + esc(i.title) + '</button>'; }).join("");
-    if (!rItem) { $("r-lessons").innerHTML = ""; $("r-body").innerHTML = '<p class="lede">Nothing set up for Year ' + year + ' yet.</p>'; return; }
-    if (!quiet) $("r-body").innerHTML = '<p class="lede">Loading…</p>';
-    call("results", { year: year, group_id: gid === "all" ? "" : gid, item: rItem }).then(function (r) { R = r.questions || []; RC = r.confidence || []; drawResults(); }).catch(function () {});
-  }
-  function drawResults() {
-    var lessons = []; R.forEach(function (q) { if (lessons.indexOf(q.lesson) < 0) lessons.push(q.lesson); });
-    if (!rLesson || lessons.indexOf(rLesson) < 0) {
-      // default: the last lesson that has any answers, else lesson 1
-      rLesson = lessons[0];
-      R.forEach(function (q) { if (q.counts.some(function (c) { return c > 0; })) rLesson = q.lesson; });
-    }
-    $("r-lessons").innerHTML = lessons.map(function (l) { return '<button type="button" data-rl="' + l + '" aria-pressed="' + (l === rLesson) + '">Lesson ' + l.slice(1) + '</button>'; }).join("");
-    var qs = R.filter(function (q) { return q.lesson === rLesson; }), html = '<div class="r-tools"><button class="small-btn" type="button" data-rrefresh>Refresh now</button><button class="small-btn danger" type="button" data-rclear>Clear Lesson ' + rLesson.slice(1) + ' results</button></div>', last = "";
-    qs.forEach(function (q) {
-      if (q.kind !== last) { html += '<h2 class="kind-h">' + KINDS[q.kind] + '</h2>'; last = q.kind; }
-      var n = q.counts.reduce(function (a, b) { return a + b; }, 0), right = q.counts[q.answer] || 0;
-      var worst = -1, wmax = 0; q.counts.forEach(function (c, i) { if (i !== q.answer && c > wmax) { wmax = c; worst = i; } });
-      html += '<div class="rq"><h3>' + esc(q.q) + '</h3><p class="score">' + (n ? '<b>' + right + ' of ' + n + '</b> correct (' + Math.round(100 * right / n) + '%)' : 'No answers yet') + '</p>' +
-        q.opts.map(function (o, i) {
-          var c = q.counts[i] || 0, pc = n ? Math.round(100 * c / n) : 0;
-          return '<div class="opt' + (i === q.answer ? " right" : "") + (i === worst ? " common" : "") + '"><span>' + "ABCD"[i] + '. ' + esc(o) + (i === q.answer ? ' ✓' : '') + (i === worst ? '<span class="tag">most common wrong answer</span>' : '') + '</span>' +
-            '<span class="meter" aria-hidden="true"><i style="width:' + pc + '%"></i></span><span class="n">' + c + '</span></div>';
-        }).join("") + '</div>';
-    });
-    var cs = RC.filter(function (c) { return c.lesson === rLesson; });
-    if (cs.length) {
-      var LBL = ["Not yet", "Getting there", "Got it"], COL = ["#dc2626", "#d97706", "#15803d"];
-      html += '<h2 class="kind-h">Exit ticket: how confident they are</h2><div class="rq">' + cs.map(function (c) {
-        var n = c.counts.reduce(function (a, b) { return a + b; }, 0);
-        return '<div style="margin:0 0 14px"><b>' + esc(c.text) + '</b> <span style="color:var(--muted);font-size:14px">' + (n ? n + " rated" : "no ratings yet") + '</span>' +
-          '<div style="display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--lock-soft);margin:6px 0 4px">' +
-          c.counts.map(function (v, i) { return n ? '<i style="width:' + (100 * v / n) + '%;background:' + COL[i] + '"></i>' : ''; }).join("") + '</div>' +
-          '<span style="font-size:14px">' + c.counts.map(function (v, i) { return '<span style="color:' + COL[i] + ';font-weight:700">' + LBL[i] + '</span> ' + v; }).join(" · ") + '</span></div>';
-      }).join("") + '</div>';
-    }
-    $("r-body").innerHTML = html;
-  }
-  document.addEventListener("click", function (e) {
-    var hc = e.target.closest("[data-hcopy]");
-    if (hc) { navigator.clipboard.writeText(hc.dataset.hcopy).then(function () { toast("Link copied"); }, function () { prompt("Copy this link:", hc.dataset.hcopy); }); return; }
-    var ho = e.target.closest("[data-hopen]");
-    if (ho) { call("hw_open", { id: ho.dataset.hopen, on: ho.dataset.on === "true" }).then(function () { toast(ho.dataset.on === "true" ? "Opened" : "Closed"); hwLoad(); }).catch(function () {}); return; }
-    var he = e.target.closest("[data-hedit]");
-    if (he) {
-      call("hw_get", { id: he.dataset.hedit }).then(function (r) {
-        var h = r.homework; hwEditId = h.id; $("hw-text").value = h.source; $("hw-year").value = String(h.year);
-        $("hw-form-h").textContent = "Editing: " + h.title; $("hw-publish").textContent = "Save changes"; $("hw-cancel").classList.remove("hidden");
-        hwCheck(); $("hw-form-h").scrollIntoView({ behavior: "smooth" });
-      }).catch(function () {});
-      return;
-    }
-    var hr = e.target.closest("[data-hreset]");
-    if (hr) {
-      if (!confirm("Let everyone hand this homework in again? Use this if a student needs a redo. Hand-ins already emailed to you are not affected. Anyone still on a follow-up task will need to start again.")) return;
-      call("hw_reset", { id: hr.dataset.hreset }).then(function () { toast("Students can hand in again"); hwLoad(); }).catch(function () {});
-      return;
-    }
-    var hd = e.target.closest("[data-hdel]");
-    if (hd) {
-      if (!confirm("Delete this homework? Its link stops working. Emails you already have are not affected.")) return;
-      call("hw_delete", { id: hd.dataset.hdel }).then(function () { toast("Deleted"); hwLoad(); }).catch(function () {});
-      return;
-    }
-    var ry = e.target.closest("[data-ry]"); if (ry) { year = +ry.dataset.ry; gid = "all"; rItem = null; rLesson = null; render(); results(); return; }
-    var rg = e.target.closest("[data-rg]"); if (rg) { gid = rg.dataset.rg; render(); results(); return; }
-    var ri = e.target.closest("[data-ri]"); if (ri) { rItem = ri.dataset.ri; rLesson = null; results(); return; }
-    var rl = e.target.closest("[data-rl]"); if (rl) { rLesson = rl.dataset.rl; drawResults(); return; }
-    if (e.target.closest("[data-rrefresh]")) { results(true); return; }
-    if (e.target.closest("[data-rclear]")) {
-      var who = gid === "all" ? "every Year " + year + " group" : year + ((groupsOf(year).find(function (g) { return g.id === gid; }) || {}).name || "");
-      if (!confirm("Clear the Lesson " + rLesson.slice(1) + " results for " + who + "? The counts go back to zero and only answers given after this are counted.")) return;
-      call("results_clear", { year: year, group_id: gid === "all" ? "" : gid, item: rItem, lesson: rLesson }).then(function () { toast("Cleared"); results(true); }).catch(function () {});
-      return;
-    }
-    var y = e.target.closest("[data-y]"); if (y) { year = +y.dataset.y; gid = "all"; render(); return; }
-    var g = e.target.closest("[data-g]"); if (g) { gid = g.dataset.g; render(); return; }
-    var t = e.target.closest(".tog");
-    if (t) {
-      var on = t.getAttribute("aria-pressed") !== "true", item = t.dataset.item, lesson = t.dataset.lesson;
-      t.disabled = true;
-      var p = gid === "all" ? call("switch_year", { year: year, item: item, lesson: lesson, on: on }) : call("switch", { group_id: gid, item: item, lesson: lesson, on: on });
-      p.then(load).then(function () { toast((on ? "Switched on: " : "Switched off: ") + (lesson === "WS" ? "Workshop" : "Lesson " + lesson.slice(1))); })
-       .catch(function (err) { if (err.message !== "auth") toast("Couldn't save. Check your connection."); render(); });
-      return;
-    }
-    var s = e.target.closest("[data-save]");
-    if (s) {
-      var pw = $("pw-" + s.dataset.save).value.trim();
-      if (pw.length < 4) { toast("Passwords need 4 or more characters."); return; }
-      if (!confirm("Change this password? Every device signed in to this group will be signed out.")) return;
-      call("group_pw", { group_id: s.dataset.save, pw: pw }).then(function (r) { toast(r.ok ? "Password changed" : (r.error || "Couldn't save")); return load(); }).catch(function () {});
-      return;
-    }
-    var d = e.target.closest("[data-del]");
-    if (d) {
-      var gr = D.groups.find(function (x) { return x.id === d.dataset.del; });
-      if (!confirm("Delete group " + gr.year + gr.name + "? Its switches go too, and its students are signed out.")) return;
-      call("group_delete", { group_id: gr.id }).then(load).then(function () { toast("Group deleted"); }).catch(function () {});
-    }
-  });
-
-  $("f-add").addEventListener("submit", function (e) {
+  $("f-teacher").addEventListener("submit", function (e) {
     e.preventDefault();
-    var name = $("add-name").value.trim(), pw = $("add-pw").value.trim();
-    if (!name || pw.length < 4) { $("add-err").textContent = "Give the group a name and a password of 4 or more characters."; return; }
-    call("group_add", { year: +$("add-year").value, name: name, pw: pw }).then(function (r) {
-      if (!r.ok) { $("add-err").textContent = r.error || "Couldn't add the group."; return; }
-      $("add-err").textContent = ""; $("add-name").value = ""; $("add-pw").value = ""; toast("Group added"); return load();
+    call("teacher_save", { name: $("t-name").value, email: $("t-email").value }).then(function (r) {
+      if (!r.ok) { $("t-err").textContent = r.error || "Couldn't add."; return; }
+      $("t-err").textContent = ""; $("t-name").value = ""; $("t-email").value = ""; toast("Teacher added"); return load();
     }).catch(function () {});
   });
   function pwForm(form, input, errEl, action, min, msg) {
@@ -561,9 +649,214 @@ td input{max-width:200px;font-size:16px;padding:8px 10px}
     });
   }
   pwForm("f-site", "site-new", "site-err", "site_pw", 4, "Change the site password? Students already signed in stay signed in; new sign-ins need the new password.");
-  pwForm("f-admin", "admin-new", "admin-err", "admin_pw", 10, "Change the admin password?");
+  pwForm("f-admin", "admin-new", "admin-err", "admin_pw", 10, "Change the admin password? Tell anyone else who uses the admin.");
 
-  if (PW) { Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) { if (r.ok) { D = r; $("tabs").classList.remove("hidden"); tab("lessons"); } else logout(); }).catch(function () { logout("Can't reach the server."); }); }
+  // ================= Class results (KS3 workbooks) =================
+  var RC = [], R = null, rYear = 7, rGid = "all", rItem = null, rLesson = null, KINDS = { dn: "Do now", hg: "Hinge question", ex: "Exit ticket" };
+  function ks3Years() { return [7, 8, 9].filter(function (y) { return D.items.some(function (i) { return i.year === y; }); }); }
+  function results(quiet) {
+    if (!D) return;
+    var ys = ks3Years(); if (ys.indexOf(rYear) < 0) rYear = ys[0] || 7;
+    var items = D.items.filter(function (i) { return i.year === rYear; });
+    if (!items.some(function (i) { return i.item === rItem; })) { rItem = items.length ? items[0].item : null; rLesson = null; }
+    var gs = groupsShown().filter(function (g) { return g.year === rYear && g.course === "ks3"; });
+    if (rGid !== "all" && !gs.some(function (g) { return g.id === rGid; })) rGid = "all";
+    $("r-years").innerHTML = ys.map(function (y) { return '<button type="button" data-ry="' + y + '" aria-pressed="' + (y === rYear) + '">Year ' + y + '</button>'; }).join("");
+    $("r-grps").innerHTML = '<button type="button" class="all" data-rg="all" aria-pressed="' + (rGid === "all") + '">Whole year</button>' +
+      gs.map(function (g) { return '<button type="button" data-rg="' + g.id + '" aria-pressed="' + (g.id === rGid) + '">' + esc(gName(g)) + '</button>'; }).join("");
+    $("r-items").innerHTML = items.map(function (i) { return '<button type="button" data-ri="' + i.item + '" aria-pressed="' + (i.item === rItem) + '">' + esc(i.title) + '</button>'; }).join("");
+    if (!rItem) { $("r-lessons").innerHTML = ""; $("r-body").innerHTML = '<p class="lede">Nothing set up for Year ' + rYear + ' yet.</p>'; return; }
+    if (!quiet) $("r-body").innerHTML = '<p class="lede">Loading…</p>';
+    call("results", { year: rYear, group_id: rGid === "all" ? "" : rGid, item: rItem }).then(function (r) { R = r.questions || []; RC = r.confidence || []; drawResults(); }).catch(function () {});
+  }
+  function drawResults() {
+    var lessons = []; R.forEach(function (q) { if (lessons.indexOf(q.lesson) < 0) lessons.push(q.lesson); });
+    if (!rLesson || lessons.indexOf(rLesson) < 0) { rLesson = lessons[0]; R.forEach(function (q) { if (q.counts.some(function (c) { return c > 0; })) rLesson = q.lesson; }); }
+    $("r-lessons").innerHTML = lessons.map(function (l) { return '<button type="button" data-rl="' + l + '" aria-pressed="' + (l === rLesson) + '">Lesson ' + l.slice(1) + '</button>'; }).join("");
+    if (!rLesson) { $("r-body").innerHTML = '<p class="lede">No quiz questions in this workbook yet.</p>'; return; }
+    var qs = R.filter(function (q) { return q.lesson === rLesson; }), html = '<div class="r-tools"><button class="small-btn" type="button" data-rrefresh>Refresh now</button><button class="small-btn danger" type="button" data-rclear>Clear Lesson ' + rLesson.slice(1) + ' results</button></div>', last = "";
+    qs.forEach(function (q) {
+      if (q.kind !== last) { html += '<h2 class="kind-h">' + KINDS[q.kind] + '</h2>'; last = q.kind; }
+      var n = q.counts.reduce(function (a, b) { return a + b; }, 0), right = q.counts[q.answer] || 0, worst = -1, wmax = 0;
+      q.counts.forEach(function (c, i) { if (i !== q.answer && c > wmax) { wmax = c; worst = i; } });
+      html += '<div class="rq"><h3>' + esc(q.q) + '</h3><p class="score">' + (n ? '<b>' + right + ' of ' + n + '</b> correct (' + Math.round(100 * right / n) + '%)' : 'No answers yet') + '</p>' +
+        q.opts.map(function (o, i) {
+          var c = q.counts[i] || 0, pc = n ? Math.round(100 * c / n) : 0;
+          return '<div class="opt' + (i === q.answer ? " right" : "") + (i === worst ? " common" : "") + '"><span>' + "ABCD"[i] + '. ' + esc(o) + (i === q.answer ? ' ✓' : '') + (i === worst ? '<span class="tag">most common wrong answer</span>' : '') + '</span>' +
+            '<span class="meter" aria-hidden="true"><i style="width:' + pc + '%"></i></span><span class="n">' + c + '</span></div>';
+        }).join("") + '</div>';
+    });
+    var cs = RC.filter(function (c) { return c.lesson === rLesson; });
+    if (cs.length) {
+      var LBL = ["Not yet", "Getting there", "Got it"], COL = ["#dc2626", "#d97706", "#15803d"];
+      html += '<h2 class="kind-h">Exit ticket: how confident they are</h2><div class="rq">' + cs.map(function (c) {
+        var n = c.counts.reduce(function (a, b) { return a + b; }, 0);
+        return '<div style="margin:0 0 14px"><b>' + esc(c.text) + '</b> <span style="color:var(--muted);font-size:14px">' + (n ? n + " rated" : "no ratings yet") + '</span>' +
+          '<div style="display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--lock-soft);margin:6px 0 4px">' + c.counts.map(function (v, i) { return n ? '<i style="width:' + (100 * v / n) + '%;background:' + COL[i] + '"></i>' : ''; }).join("") + '</div>' +
+          '<span style="font-size:14px">' + c.counts.map(function (v, i) { return '<span style="color:' + COL[i] + ';font-weight:700">' + LBL[i] + '</span> ' + v; }).join(" · ") + '</span></div>';
+      }).join("") + '</div>';
+    }
+    $("r-body").innerHTML = html;
+  }
+
+  // ================= Class questions =================
+  var PQ = { groups: [], poll: null };
+  function pqGroups() {
+    call("poll_groups").then(function (r) {
+      PQ.groups = r.groups || [];
+      var cur = $("pq-group").value;
+      $("pq-group").innerHTML = PQ.groups.map(function (g) { return '<option value="' + g.id + '">' + (g.demo ? "Demo (Year " + g.year + ")" : g.year + esc(g.name)) + '</option>'; }).join("") || '<option value="">No groups yet</option>';
+      if (cur) $("pq-group").value = cur;
+      pqState();
+    }).catch(function () {});
+  }
+  function pqState() {
+    var gid = $("pq-group").value; if (!gid) { $("pq-out").innerHTML = ""; return; }
+    call("poll_state", { group_id: gid }).then(function (r) {
+      PQ.poll = r.poll; $("pq-devices").textContent = r.devices + " device" + (r.devices === 1 ? "" : "s") + " signed in to this group.";
+      var p = r.poll;
+      if (!p) { $("pq-out").innerHTML = '<p style="color:var(--muted)">No question running. Start one above.</p>'; return; }
+      var labels = p.kind === "tf" ? ["True", "False"] : ["A", "B", "C", "D"], max = Math.max.apply(null, p.counts.concat([1]));
+      $("pq-out").innerHTML = '<p style="margin:0 0 10px;font-weight:700">' + (p.closed ? "Answers closed" : "Answers open") + ' · ' + p.total + ' answer' + (p.total === 1 ? "" : "s") + '</p><div class="pq-bars">' +
+        labels.map(function (l, i) {
+          return '<div class="pq-bar' + (p.correct === i ? " right" : "") + '"><span class="pq-l">' + l + '</span><span class="pq-track"><i style="width:' + Math.round(100 * p.counts[i] / max) + '%"></i></span><span class="pq-n">' + p.counts[i] + '</span>' +
+            (p.correct == null ? '<button class="small-btn" type="button" data-pqright="' + i + '">Reveal as answer</button>' : (p.correct === i ? '<b style="color:var(--ok)">✓ Answer</b>' : '')) + '</div>';
+        }).join("") + '</div><div class="acts" style="margin-top:12px">' + (p.closed ? "" : '<button class="btn ghost" type="button" id="pq-close">Close answers</button>') +
+        '<button class="small-btn" type="button" id="pq-end">Finish this question</button></div>';
+    }).catch(function () {});
+  }
+  function pqStart(kind) { var gid = $("pq-group").value; if (!gid) return; call("poll_start", { group_id: gid, kind: kind }).then(function () { toast("Question started"); pqState(); }); }
+  $("pq-abcd").addEventListener("click", function () { pqStart("abcd"); });
+  $("pq-tf").addEventListener("click", function () { pqStart("tf"); });
+  $("pq-group").addEventListener("change", pqState);
+  $("pq-out").addEventListener("click", function (e) {
+    if (!PQ.poll) return;
+    var r = e.target.closest("[data-pqright]");
+    if (r) { call("poll_reveal", { id: PQ.poll.id, correct: Number(r.dataset.pqright) }).then(pqState); return; }
+    if (e.target.closest("#pq-close")) call("poll_close", { id: PQ.poll.id }).then(pqState);
+    if (e.target.closest("#pq-end")) call("poll_end", { id: PQ.poll.id }).then(pqState);
+  });
+
+  // ================= Tabs, login, clicks =================
+  function tab(t) {
+    TAB = t;
+    document.querySelectorAll("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
+    show("p-" + t); clearInterval(timer); timer = null;
+    if (t === "results") { results(); timer = setInterval(function () { if (!document.hidden) results(true); }, 10000); }
+    if (t === "questions") { pqGroups(); timer = setInterval(function () { if (!document.hidden) pqState(); }, 2000); }
+    if (t === "week" || t === "library") hwLoad().catch(function () {});
+    if (t === "settings") sowLoad("gcse2").then(function () { gForm(null); });
+    draw();
+  }
+  document.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  $("who").addEventListener("change", function () { WHO = this.value; try { localStorage.setItem("abity-admin-who", WHO); } catch (e) {} if (TAB === "results") results(); draw(); });
+  function start(r) { D = r; $("tabs").classList.remove("hidden"); tab("week"); }
+  $("f-login").addEventListener("submit", function (e) {
+    e.preventDefault(); PW = $("admin-pw").value;
+    var b = this.querySelector("button"); b.disabled = true;
+    Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) {
+      if (!r.ok) { $("login-err").textContent = r.wait ? "Too many wrong tries. Wait 15 minutes." : "That password isn't right."; PW = null; return; }
+      try { sessionStorage.setItem("abity-admin", PW); } catch (e) {}
+      $("admin-pw").value = ""; start(r);
+    }).catch(function () { $("login-err").textContent = "Can't reach the server."; }).then(function () { b.disabled = false; });
+  });
+  $("logout").addEventListener("click", function () { logout(); });
+  function demo(year) {
+    var w = window.open("about:blank", "_blank");
+    call("demo", { year: year }).then(function (r) {
+      if (!r.ok) { if (w) w.close(); toast("Couldn't start the demo."); return; }
+      Abity.setMe({ token: r.token, year: r.year, group: r.group, name: "Demo Student" });
+      if (w) w.location = "/group"; else location.href = "/group";
+    }).catch(function () { if (w) w.close(); });
+  }
+  $("demo").addEventListener("click", function () { demo(7); });
+  $("demo10").addEventListener("click", function () { demo(10); });
+
+  document.addEventListener("click", function (e) {
+    var el, g = D && D.groups.find(function (x) { return x.id === WG; });
+    // This week
+    if ((el = e.target.closest("[data-wg]"))) { WG = el.dataset.wg; VIEW = null; try { localStorage.setItem("abity-admin-group", WG); } catch (er) {} drawWeek(); return; }
+    if ((el = e.target.closest("[data-view]"))) { var by = +el.dataset.view; VIEW = by ? Object.assign({ course: g.course }, shift(g.course, VIEW, by)) : null; drawWeek(); return; }
+    if ((el = e.target.closest("[data-setpos]"))) {
+      var k = el.dataset.setpos.match(/^y(\d+)-t(\d+)-w(\d+)$/);
+      call("group_pos", { group_id: g.id, pos_year: +k[1], pos_term: +k[2], pos_week: +k[3] }).then(function () { VIEW = null; toast(gName(g) + " is now on Term " + k[2] + ", Week " + k[3]); return load(); }).catch(function () {});
+      return;
+    }
+    if ((el = e.target.closest("[data-prep]"))) { var key = el.dataset.prep; copy(prepMessage(g, key), "Teams message copied: paste it into the class team"); mark(g, "prep", key, true); return; }
+    if ((el = e.target.closest("[data-hwmsg]"))) {
+      var h = HWL.homeworks.find(function (x) { return x.id === el.dataset.hwmsg; });
+      copy("Homework: " + h.title + ". Due Friday after school. Sign in to abity first, then open: " + SITE + "/hw/" + h.code, "Teams message copied: paste it into the class team");
+      mark(g, "hw", h.id, true); return;
+    }
+    if ((el = e.target.closest("[data-unmark]"))) { var p = el.dataset.unmark.split("|"); mark(g, p[0], p[1], false); return; }
+    if ((el = e.target.closest("[data-ws]"))) {
+      var on = el.dataset.on === "true"; el.disabled = true;
+      mark(g, "ws", el.dataset.ws, on).then(function () { toast(on ? "Worksheet open for " + gName(g) : "Worksheet closed"); }).catch(function () { el.disabled = false; });
+      return;
+    }
+    if ((el = e.target.closest(".tog"))) {
+      var t2 = el, on2 = t2.getAttribute("aria-pressed") !== "true", all = $("ks3-all") && $("ks3-all").checked; t2.disabled = true;
+      (all ? call("switch_year", { year: g.year, item: t2.dataset.item, lesson: t2.dataset.lesson, on: on2 }) : call("switch", { group_id: g.id, item: t2.dataset.item, lesson: t2.dataset.lesson, on: on2 }))
+        .then(load).then(function () { toast((on2 ? "Opened" : "Closed") + (all ? " for every Year " + g.year + " group" : " for " + gName(g))); })
+        .catch(function (err) { if (err.message !== "auth") toast("Couldn't save. Check your connection."); drawWeek(); });
+      return;
+    }
+    // Library
+    if ((el = e.target.closest("[data-lib]"))) { var q = el.dataset.lib.split("|"); LIB = { course: q[0], year: +q[1] }; drawLibrary(); return; }
+    if ((el = e.target.closest("[data-hcopy]"))) { copy(el.dataset.hcopy, "Link copied"); return; }
+    if ((el = e.target.closest("[data-hopen]"))) { call("hw_open", { id: el.dataset.hopen, on: el.dataset.on === "true" }).then(function () { toast(el.dataset.on === "true" ? "Opened" : "Closed"); hwLoad(); }).catch(function () {}); return; }
+    if ((el = e.target.closest("[data-hedit]"))) {
+      call("hw_get", { id: el.dataset.hedit }).then(function (r) {
+        var h = r.homework; hwEditId = h.id; $("hw-text").value = h.source; $("hw-year").value = String(h.year); $("hw-course").value = h.course || "";
+        sowLoad(h.course || "gcse2").then(function () { sowOptions(); $("hw-sow").value = h.sow_id || ""; });
+        $("hw-form-h").textContent = "Replacing: " + h.title; $("hw-publish").textContent = "Save changes"; $("hw-cancel").classList.remove("hidden");
+        $("hw-more").open = true; hwCheck(); $("hw-more").scrollIntoView({ behavior: "smooth" });
+      }).catch(function () {});
+      return;
+    }
+    if ((el = e.target.closest("[data-hreset]"))) {
+      if (!confirm("Let everyone hand this homework in again? Hand-ins already emailed are not affected. Anyone still on a follow-up task will need to start again.")) return;
+      call("hw_reset", { id: el.dataset.hreset }).then(function () { toast("Students can hand in again"); hwLoad(); }).catch(function () {});
+      return;
+    }
+    if ((el = e.target.closest("[data-hdel]"))) {
+      if (!confirm("Delete this homework? Its link stops working. Emails already sent are not affected.")) return;
+      call("hw_delete", { id: el.dataset.hdel }).then(function () { toast("Deleted"); hwLoad(); }).catch(function () {});
+      return;
+    }
+    // Results
+    if ((el = e.target.closest("[data-ry]"))) { rYear = +el.dataset.ry; rGid = "all"; rItem = null; rLesson = null; results(); return; }
+    if ((el = e.target.closest("[data-rg]"))) { rGid = el.dataset.rg; results(); return; }
+    if ((el = e.target.closest("[data-ri]"))) { rItem = el.dataset.ri; rLesson = null; results(); return; }
+    if ((el = e.target.closest("[data-rl]"))) { rLesson = el.dataset.rl; drawResults(); return; }
+    if (e.target.closest("[data-rrefresh]")) { results(true); return; }
+    if (e.target.closest("[data-rclear]")) {
+      var who = rGid === "all" ? "every Year " + rYear + " group" : gName(D.groups.find(function (x) { return x.id === rGid; }) || { year: "", name: "" });
+      if (!confirm("Clear the Lesson " + rLesson.slice(1) + " results for " + who + "? The counts go back to zero.")) return;
+      call("results_clear", { year: rYear, group_id: rGid === "all" ? "" : rGid, item: rItem, lesson: rLesson }).then(function () { toast("Cleared"); results(true); }).catch(function () {});
+      return;
+    }
+    // Settings
+    if ((el = e.target.closest("[data-gedit]"))) { gForm(D.groups.find(function (x) { return x.id === el.dataset.gedit; })); $("g-form").scrollIntoView({ behavior: "smooth" }); return; }
+    if ((el = e.target.closest("[data-gdel]"))) {
+      var gr = D.groups.find(function (x) { return x.id === el.dataset.gdel; });
+      if (!confirm("Delete group " + gName(gr) + "? Its students are signed out and its switches and sent history go too.")) return;
+      call("group_delete", { group_id: gr.id }).then(load).then(function () { toast("Group deleted"); }).catch(function () {});
+      return;
+    }
+    if ((el = e.target.closest("[data-tsave]"))) {
+      var id = el.dataset.tsave;
+      call("teacher_save", { id: id, name: $("tn-" + id).value, email: $("te-" + id).value }).then(function (r) { toast(r.ok ? "Saved" : (r.error || "Couldn't save")); return load(); }).catch(function () {});
+      return;
+    }
+    if ((el = e.target.closest("[data-tdel]"))) {
+      var tt = teacher(el.dataset.tdel);
+      if (!confirm("Remove " + tt.name + "? Their groups will have no teacher until you choose one, and their results go to the fallback address meanwhile.")) return;
+      call("teacher_delete", { id: tt.id }).then(load).then(function () { toast("Removed"); }).catch(function () {});
+    }
+  });
+
+  if (PW) { Abity.rpc("site_admin", { p_pw: PW, p_action: "list" }).then(function (r) { if (r.ok) start(r); else logout(); }).catch(function () { logout("Can't reach the server."); }); }
   else show("login");
 })();
 </script>

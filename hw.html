@@ -142,24 +142,29 @@ html:not(.a11y-assist) main input,html:not(.a11y-assist) main textarea,html:not(
     var hw = r.hw;
     document.title = hw.title + " · Homework";
     $("title").textContent = hw.title;
-    $("meta").textContent = [hw.spec, "Year " + r.year, hw.totalMarks + " marks"].filter(Boolean).join(" · ");
+    $("meta").textContent = [hw.spec, hw.totalMarks + " marks"].filter(Boolean).join(" · ");
     $("intro").textContent = hw.intro || "";
     if (preview) { $("who").classList.add("hidden"); $("submit-box").innerHTML = '<p class="lede" style="margin:0"><b>Preview:</b> this is what students see. Hand-in is switched off here.</p>'; }
 
-    $("groups").innerHTML = r.groups.map(function (g) {
-      return '<button type="button" data-g="' + esc(g) + '" aria-pressed="false">' + r.year + esc(g) + '</button>';
-    }).join("") || '<p class="hint">No groups set up for this year yet. Tell your teacher.</p>';
+    // Groups set this homework: objects {year, name} (older servers sent names for the homework's year)
+    var gl = (r.groups || []).map(function (g) { return typeof g === "string" ? { year: r.year, name: g } : g; });
+    var years = gl.map(function (g) { return g.year; }).filter(function (y, i, a) { return a.indexOf(y) === i; });
+    $("groups").innerHTML = gl.map(function (g) {
+      return '<button type="button" data-g="' + esc(g.name) + '" aria-pressed="false">' + g.year + esc(g.name) + '</button>';
+    }).join("") || '<p class="hint">No groups are set this homework yet. Tell your teacher.</p>';
     if (S.name) $("name").value = S.name;
-    // Hand-in needs this device signed in to the website as a student in this year; the group comes from that sign-in
+    // Hand-in needs this device signed in to the website as a student in one of those groups; the group comes from that sign-in
     var me = Abity.me();
-    if (me && me.token && me.year === r.year && (r.groups.indexOf(me.group) >= 0 || me.group === "DEMO")) {
+    var ok = me && me.token && (gl.some(function (g) { return g.year === me.year && g.name === me.group; }) || (me.group === "DEMO" && years.indexOf(me.year) >= 0));
+    if (ok) {
       pick(me.group);
-      $("groups").innerHTML = '<p class="hint" style="margin:0"><b>' + r.year + esc(me.group) + '</b> (from your sign-in on this device)</p>';
+      $("groups").innerHTML = '<p class="hint" style="margin:0"><b>' + me.year + esc(me.group) + '</b> (from your sign-in on this device)</p>';
       if (!S.name && me.name && me.name !== "Demo Student") $("name").value = me.name;
     } else if (!preview) {
       group = null;
-      $("groups").innerHTML = '<p class="hint" style="margin:0;color:var(--bad,#b91c1c)"><b>Sign in first.</b> To hand in, this device must be signed in to the website as a Year ' + r.year +
-        ' student. <a href="/?next=/hw/' + encodeURIComponent(code) + '">Sign in here</a> and you\'ll come straight back. Your answers are saved on this device meanwhile.</p>';
+      $("groups").innerHTML = '<p class="hint" style="margin:0;color:var(--bad,#b91c1c)"><b>Sign in first.</b> To hand in, this device must be signed in to the website as a student in ' +
+        (gl.length ? gl.map(function (g) { return g.year + esc(g.name); }).join(", ") : "Year " + r.year) +
+        '. <a href="/?next=/hw/' + encodeURIComponent(code) + '">Sign in here</a> and you\'ll come straight back. Your answers are saved on this device meanwhile.</p>';
     }
 
     var html = "";
